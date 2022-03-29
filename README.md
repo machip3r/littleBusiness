@@ -1,2 +1,3 @@
-# littleBusiness
-Administrator of little business in the University of Guanajuato. School project for software engineering subject.
+# LittleBusiness
+Administrator of little business in the University of Guanajuato.
+Post your business on the school.

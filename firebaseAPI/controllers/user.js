@@ -1,4 +1,4 @@
-import { app, db } from "/firebaseAPI/connection.js";
+import {db} from "/firebaseAPI/connection.js";
 import {
   collection,
   doc,
@@ -26,65 +26,58 @@ export class User {
   // - - - - -  Document Manipulation  - - - - -
   async addUser(body) {
     try {
-      body.id_user = await this.#newID();
+      body.id_user = await this.#newIDUser();
 
       const docRef = await addDoc(usersCollection, body);
 
       return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
+
       return error;
     }
   }
 
   async readUsers() {
-    return this.#getArrayFromDocument(await getDocs(usersCollection));
+    return this.#getObjectFromDocuments(await getDocs(usersCollection));
   }
 
   async readUsersLimit(limit) {
     const queryRes = query(usersCollection, limit(limit));
 
-    return this.#getArrayFromDocument(await getDocs(queryRes));
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
   }
 
-  async readUserWithID(id) {
-    const queryRes = query(usersCollection, where("id_user", "==", id));
+  async readUserWithID(id_user) {
+    const queryRes = query(usersCollection, where("id_user", "==", id_user));
 
-    return this.#getArrayFromDocument(await getDocs(queryRes));
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
   }
 
-  async updateUser(id, body) {
-    const user = doc(db, collectionName, id);
+  async updateUser(id_user, body) {
+    const user = doc(db, collectionName, id_user);
 
     await updateDoc(user, body);
   }
 
-  #getArrayFromDocument(documents) {
-    const array = [];
+  #getObjectFromDocuments(documents) {
     const obj = {};
 
-    documents.forEach((doc) => {
-      obj[doc.id] = doc.data();
-      array.push(doc.data());
-    });
+    documents.forEach((doc) => (obj[doc.id] = doc.data()));
 
     return obj;
   }
 
-  #getObjectFromDocument(documents) {}
-
   // - - - - -  Utility Functions  - - - - -
-  async #newID() {
+  async #newIDUser() {
     const docs = await this.readUsers();
-    const SIZE = docs.length;
     let newID = this.#randID();
 
-    for (let i = 0; i < SIZE; i++) {
+    for (let i = 0; i < docs.length; i++)
       if (docs[i].id_user === newID) {
         newID = this.#randID();
         i = 0;
       }
-    }
 
     return newID;
   }

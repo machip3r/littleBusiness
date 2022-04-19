@@ -135,8 +135,7 @@
 </template>
 
 <script>
-// Import the functions you need from the SDKs you need
-import { User } from "/firebaseAPI/controllers/user.js";
+import {User} from "/firebaseAPI/controllers/user.js";
 
 const UserClass = new User();
 
@@ -191,9 +190,8 @@ export default {
           this.queryRes = res[userID];
           this.user = this.queryRes;
 
-          Object.assign(this.user, { firebaseID: userID });
+          Object.assign(this.user, {firebaseID: userID});
         })
-
         .catch();
     },
 

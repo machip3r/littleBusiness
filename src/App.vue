@@ -1,7 +1,131 @@
 <template>
   <div id="app">
-    <button v-on:click="readDocuments">print documents</button>
-    <button v-on:click="addNewDocument">add Chikis</button>
+    <div>
+      <h2>All Users</h2>
+      <table class="myTable">
+        <thead>
+          <tr>
+            <th>Firebase Key</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="key in keys" v-bind:key="key">
+            <td>{{ key }}</td>
+            <td>{{ allUsers[key].id_user }}</td>
+            <td>{{ allUsers[key].u_name }}</td>
+            <td>{{ allUsers[key].u_type }}</td>
+            <td>{{ allUsers[key].u_status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="header">
+        <h2>Searched User</h2>
+        <div class="input">
+          <input
+            type="number"
+            placeholder="User ID to look for"
+            v-model="txtFieldID"
+          />
+          <button v-on:click="searchUserWithID(txtFieldID)">
+            Search con este puto ID joto
+          </button>
+        </div>
+      </div>
+      <table class="myTable">
+        <thead>
+          <tr>
+            <th>Firebase Key</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ user.firebaseID }}</td>
+            <td>{{ user.id_user }}</td>
+            <td>{{ user.u_name }}</td>
+            <td>{{ user.u_type }}</td>
+            <td>{{ user.u_status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="form">
+      <h2>Add a wey</h2>
+      <form id="form" v-on:submit.prevent="addNewDocument">
+        <div>
+          <label for="username"></label>
+          <input
+            type="text"
+            id="username"
+            placeholder="username"
+            v-model="user.u_name"
+          />
+        </div>
+        <div>
+          <label for="usertype"></label>
+          <input
+            type="text"
+            id="usertype"
+            placeholder="user type"
+            v-model="user.u_type"
+          />
+        </div>
+        <div>
+          <label for="userstatus"></label>
+          <input
+            type="text"
+            id="userstatus"
+            placeholder="user status"
+            v-model="user.u_status"
+          />
+        </div>
+        <input type="submit" value="Agregar mono" />
+      </form>
+    </div>
+    <div class="form">
+      <h2>Edit a wey</h2>
+      <form id="form" v-on:submit.prevent="updateDocument(user)">
+        <div>
+          <label for="username"></label>
+          <input
+            type="text"
+            id="username"
+            placeholder="username"
+            v-model="user.u_name"
+          />
+        </div>
+        <div>
+          <label for="usertype"></label>
+          <input
+            type="text"
+            id="usertype"
+            placeholder="user type"
+            v-model="user.u_type"
+          />
+        </div>
+        <div>
+          <label for="userstatus"></label>
+          <input
+            type="text"
+            id="userstatus"
+            placeholder="user status"
+            v-model="user.u_status"
+          />
+        </div>
+        <input type="submit" value="Edita al mono" />
+      </form>
+    </div>
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
@@ -12,49 +136,79 @@
 
 <script>
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { User } from "/firebaseAPI/controllers/user.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDfuzKqfMuT9qDR0ysEjIlVUKZYe8DHMJE",
-  authDomain: "littlebusiness-f5acf.firebaseapp.com",
-  databaseURL: "https://littlebusiness-f5acf-default-rtdb.firebaseio.com",
-  projectId: "littlebusiness-f5acf",
-  storageBucket: "littlebusiness-f5acf.appspot.com",
-  messagingSenderId: "199861037180",
-  appId: "1:199861037180:web:26649bc0d8e41b224e41f9",
-  measurementId: "G-BLMC9SLE52",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-const db = getFirestore(app);
+const UserClass = new User();
 
 export default {
+  data() {
+    return {
+      txtFieldID: 0,
+      allUsers: {},
+      keys: [],
+      user: {
+        id: "",
+        id_user: 0,
+        u_name: "",
+        u_type: "",
+        u_status: "",
+      },
+      queryRes: {
+        id_user: 0,
+        u_name: "",
+        u_type: "",
+        u_status: "",
+      },
+    };
+  },
+
+  async created() {
+    await UserClass.readUsers().then((res) =>
+      Object.assign(this.allUsers, res)
+    );
+
+    this.keys = Object.keys(this.allUsers);
+  },
+
   methods: {
     async readDocuments() {
-      const querySnapshot = await getDocs(collection(db, "user"));
-      querySnapshot.forEach((doc) => {
-        console.log(doc.data());
-      });
+      UserClass.readUsers()
+        .then((res) => {
+          this.allUsers = res;
+        })
+        .catch((err) => console.error(err));
     },
 
     async addNewDocument() {
-      try {
-        const docRef = await addDoc(collection(db, "user"), {
-          id_user: 2,
-          u_name: "Chikis",
-          u_status: "a",
-          u_type: "client",
+      console.log(this.user);
+      UserClass.addUser(this.user).then();
+    },
+
+    async searchUserWithID(id) {
+      UserClass.readUserWithID(+id)
+        .then((res) => {
+          const userID = Object.keys(res)[0];
+          this.queryRes = res[userID];
+          this.user = this.queryRes;
+
+          Object.assign(this.user, { firebaseID: userID });
+        })
+
+        .catch();
+    },
+
+    async updateDocument(body) {
+      const firebaseID = body.firebaseID;
+      delete body.firebaseID;
+
+      UserClass.updateUser(firebaseID, body)
+        .then((res) => {
+          console.log("Updated Successfully");
+          this.readDocuments();
+        })
+        .catch((err) => {
+          console.log("Error while updating: ", err);
         });
-      } catch (error) {}
     },
   },
 };
@@ -80,5 +234,23 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.container {
+  background-color: #2c3e50;
+}
+
+.myTable {
+  text-align: left;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  margin: 0 auto;
 }
 </style>

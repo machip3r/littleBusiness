@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <div class="login-container"></div>
-  </v-container>
+  <v-container> </v-container>
 </template>
 
 <script>

@@ -1,3 +1,6 @@
 module.exports = {
-  transpileDependencies: ["@splidejs"],
+  transpileDependencies: [
+    '@splidejs',
+    'vuetify'
+  ],
 };

@@ -1,0 +1,80 @@
+/* FONTS */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;900&family=Roboto:wght@300;400;900&display=swap");
+
+/*
+    NUNITO
+    font-family: 'Nunito Sans', sans-serif;
+        LIGHT
+        font-weight: 300;
+        BLACK
+        font-weight: 900;
+    ROBOTO
+    font-family: 'Roboto', sans-serif;
+        LIGHT
+        font-weight: 300;
+        REGULAR
+        font-weight: 400;
+        BLACK
+        font-weight: 900;
+*/
+
+/* COLORS */
+/*
+  HEX
+    AZUL CLARO: 28BFDB
+    HUESO: F8F0EE
+    ROJO CLARO: EF424C
+    AZUL OSCURO 2D3440
+*/
+
+/* GENERAL */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 2.4em;
+}
+
+h3 {
+  font-size: 2em;
+}
+
+h4 {
+  font-size: 1.6em;
+}
+
+h5 {
+  font-size: 1.2em;
+}
+
+h6 {
+  font-size: 0.8em;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  background-color: #ffffff;
+}
+
+.container {
+  background-color: #ffffff !important;
+}

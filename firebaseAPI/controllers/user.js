@@ -1,4 +1,4 @@
-import {db} from "/firebaseAPI/connection.js";
+import { db } from "/firebaseAPI/connection.js";
 import {
   collection,
   doc,
@@ -26,9 +26,9 @@ export class User {
   // - - - - -  Document Manipulation  - - - - -
   async addUser(body) {
     try {
-      body.id_user = await this.#newIDUser();
+      body[0].id_user = await this.#newIDUser();
 
-      const docRef = await addDoc(usersCollection, body);
+      const docRef = await addDoc(usersCollection, body[0]);
 
       return docRef.id;
     } catch (error) {
@@ -92,5 +92,16 @@ export class User {
     for (let i = 0; i < 6; i++) randID += this.#randInt(0, 9);
 
     return parseInt(randID);
+  }
+
+  docsObjectToArray(documents) {
+    let arr = [];
+
+    Object.keys(documents).forEach((key) => {
+      Object.assign(documents[key], { firebaseID: key });
+      arr.push(documents[key]);
+    });
+
+    return arr;
   }
 }

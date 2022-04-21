@@ -1,139 +1,87 @@
 <template>
   <v-app>
     <v-main>
-      <div>
-        <h2>All Users</h2>
-        <table class="myTable">
-          <thead>
-            <tr>
-              <th>Firebase Key</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="key in keys" v-bind:key="key">
-              <td>{{ key }}</td>
-              <td>{{ allUsers[key].id_user }}</td>
-              <td>{{ allUsers[key].u_name }}</td>
-              <td>{{ allUsers[key].u_type }}</td>
-              <td>{{ allUsers[key].u_status }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="pa-8 mx-8">
+        <v-card>
+          <h2>All Users</h2>
+          <v-data-table
+            dense
+            :headers="headers"
+            :items="allUsersArray"
+            item-key="user"
+          ></v-data-table
+        ></v-card>
+      </div>
+      <div class="pa-8 mx-8">
+        <v-card>
+          <div class="header">
+            <h2>Searched User</h2>
+            <v-spacer></v-spacer>
+            <div class="d-flex pa-4 align-center">
+              <v-text-field v-model="txtFieldID" label="User ID">
+              </v-text-field>
+              <v-btn @click="searchUserWithID(txtFieldID)">
+                <v-icon>fas fa-search</v-icon></v-btn
+              >
+            </div>
+          </div>
+          <v-data-table
+            dense
+            :headers="headers"
+            :items="user"
+            item-key="user"
+            class="elevation-1"
+          >
+          </v-data-table
+        ></v-card>
       </div>
 
-      <div>
-        <div class="header">
-          <h2>Searched User</h2>
-          <div class="input">
-            <input
-              type="number"
-              placeholder="User ID to look for"
-              v-model="txtFieldID"
-            />
-            <button v-on:click="searchUserWithID(txtFieldID)">
-              Search con este puto ID joto
-            </button>
-          </div>
-        </div>
-        <table class="myTable">
-          <thead>
-            <tr>
-              <th>Firebase Key</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ user.firebaseID }}</td>
-              <td>{{ user.id_user }}</td>
-              <td>{{ user.u_name }}</td>
-              <td>{{ user.u_type }}</td>
-              <td>{{ user.u_status }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="d-flex pa-8 mx-8 justify-space-around">
+        <v-card class="pa-8" width="40%">
+          <h2>Add a wey</h2>
+          <form @submit.prevent="addNewDocument">
+            <v-text-field
+              v-model="user[0].u_name"
+              label="Nombre"
+            ></v-text-field>
+            <v-text-field
+              v-model="user[0].u_type"
+              label="Tipo de usuario"
+            ></v-text-field>
+            <v-text-field
+              v-model="user[0].u_status"
+              label="Estado"
+            ></v-text-field>
+            <v-btn type="submit">Agregar usuario</v-btn>
+          </form></v-card
+        >
+        <v-card class="pa-8" width="40%">
+          <h2>Edit a wey</h2>
+          <form @submit.prevent="updateDocument(queryRes)">
+            <v-text-field
+              v-model="queryRes[0].u_name"
+              label="Nombre"
+            ></v-text-field>
+            <v-text-field
+              v-model="queryRes[0].u_type"
+              label="Tipo de usuario"
+            ></v-text-field>
+            <v-text-field
+              v-model="queryRes[0].u_status"
+              label="Estado"
+            ></v-text-field>
+            <v-btn type="submit">Editar usuario</v-btn>
+          </form>
+        </v-card>
       </div>
-
-      <div class="form">
-        <h2>Add a wey</h2>
-        <form id="form" v-on:submit.prevent="addNewDocument">
-          <div>
-            <label for="username"></label>
-            <input
-              type="text"
-              id="username"
-              placeholder="username"
-              v-model="user.u_name"
-            />
-          </div>
-          <div>
-            <label for="usertype"></label>
-            <input
-              type="text"
-              id="usertype"
-              placeholder="user type"
-              v-model="user.u_type"
-            />
-          </div>
-          <div>
-            <label for="userstatus"></label>
-            <input
-              type="text"
-              id="userstatus"
-              placeholder="user status"
-              v-model="user.u_status"
-            />
-          </div>
-          <input type="submit" value="Agregar mono" />
-        </form>
-      </div>
-      <div class="form">
-        <h2>Edit a wey</h2>
-        <form id="form" v-on:submit.prevent="updateDocument(user)">
-          <div>
-            <label for="username"></label>
-            <input
-              type="text"
-              id="username"
-              placeholder="username"
-              v-model="user.u_name"
-            />
-          </div>
-          <div>
-            <label for="usertype"></label>
-            <input
-              type="text"
-              id="usertype"
-              placeholder="user type"
-              v-model="user.u_type"
-            />
-          </div>
-          <div>
-            <label for="userstatus"></label>
-            <input
-              type="text"
-              id="userstatus"
-              placeholder="user status"
-              v-model="user.u_status"
-            />
-          </div>
-          <input type="submit" value="Edita al mono" />
-        </form>
-      </div>
+      <div class="form"></div>
     </v-main>
   </v-app>
 </template>
 
 <script>
 // Import the functions you need from the SDKs you need
-import {User} from "/firebaseAPI/controllers/user.js";
+import { User } from "/firebaseAPI/controllers/user.js";
 
 const UserClass = new User();
 
@@ -141,22 +89,34 @@ export default {
   name: "User",
   data() {
     return {
+      headers: [
+        { text: "Firebase Key", value: "firebaseID" },
+        { text: "User ID", value: "id_user" },
+        { text: "Name", value: "u_name" },
+        { text: "Status", value: "u_status" },
+        { text: "Type", value: "u_type" },
+      ],
       txtFieldID: 0,
       allUsers: {},
+      allUsersArray: [],
       keys: [],
-      user: {
-        id: "",
-        id_user: 0,
-        u_name: "",
-        u_type: "",
-        u_status: "",
-      },
-      queryRes: {
-        id_user: 0,
-        u_name: "",
-        u_type: "",
-        u_status: "",
-      },
+      user: [
+        {
+          firebaseID: "",
+          id_user: 0,
+          u_name: "",
+          u_type: "",
+          u_status: "",
+        },
+      ],
+      queryRes: [
+        {
+          id_user: 0,
+          u_name: "",
+          u_type: "",
+          u_status: "",
+        },
+      ],
     };
   },
 
@@ -165,12 +125,13 @@ export default {
       Object.assign(this.allUsers, res)
     );
 
+    this.allUsersArray = UserClass.docsObjectToArray(this.allUsers);
     this.keys = Object.keys(this.allUsers);
   },
 
   methods: {
     async readDocuments() {
-      UserClass.readUsers()
+      await UserClass.readUsers()
         .then((res) => {
           this.allUsers = res;
         })
@@ -179,30 +140,31 @@ export default {
 
     async addNewDocument() {
       console.log(this.user);
-      UserClass.addUser(this.user).then();
+      UserClass.addUser(this.user)
+        .then((res) => console.log("Created succesfully"))
+        .catch((err) => console.log("Error", err));
+      await this.readDocuments();
     },
 
     async searchUserWithID(id) {
-      UserClass.readUserWithID(+id)
+      await UserClass.readUserWithID(+id)
         .then((res) => {
-          const userID = Object.keys(res)[0];
-          this.queryRes = res[userID];
+          this.queryRes = UserClass.docsObjectToArray(res);
           this.user = this.queryRes;
-
-          Object.assign(this.user, {firebaseID: userID});
         })
-
         .catch();
+
+      console.log("queryRes: ", this.queryRes);
+      console.log("user: ", this.user);
     },
 
     async updateDocument(body) {
-      const firebaseID = body.firebaseID;
-      delete body.firebaseID;
+      const firebaseID = body[0].firebaseID;
+      delete body[0].firebaseID;
 
-      UserClass.updateUser(firebaseID, body)
+      UserClass.updateUser(firebaseID, body[0])
         .then((res) => {
           console.log("Updated Successfully");
-          this.readDocuments();
         })
         .catch((err) => {
           console.log("Error while updating: ", err);

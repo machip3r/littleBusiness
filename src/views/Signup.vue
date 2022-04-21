@@ -30,6 +30,21 @@
           required
           @click:append="showPassword = !showPassword"
         ></v-text-field>
+        <v-text-field
+          label="Repite la contraseña"
+          color="primary"
+          background-color="secondary"
+          prepend-inner-icon="fas fa-lock"
+          :rules="this.rules.required"
+          :append-icon="showPasswordRepeat ? 'fas fa-eye-slash' : 'fas fa-eye'"
+          :type="showPasswordRepeat ? 'text' : 'password'"
+          v-model="passwordRepeat"
+          filled
+          rounded
+          dense
+          required
+          @click:append="showPasswordRepeat = !showPasswordRepeat"
+        ></v-text-field>
         <div class="buttons-area">
           <v-btn class="button" color="accent" rounded dense large>
             Iniciar Sesión
@@ -47,18 +62,21 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState } from "vuex";
 
 export default {
-  name: "Login",
+  name: "Signup",
   computed: {
     ...mapState(["rules"]),
   },
+
   data: () => {
     return {
       email: "",
       password: "",
+      passwordRepeat: "",
       showPassword: false,
+      showPasswordRepeat: false,
       valid: true,
     };
   },

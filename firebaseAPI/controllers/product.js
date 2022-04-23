@@ -1,4 +1,4 @@
-import {db} from "/firebaseAPI/connection.js";
+import {db, storage} from "/firebaseAPI/connection.js";
 import {
   collection,
   doc,
@@ -11,14 +11,16 @@ import {
   where,
   getDoc,
 } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 
 const collectionName = "product";
 const productsCollection = collection(db, collectionName);
 
 export class Product {
-  constructor(p_name, p_photo, p_description, p_category) {
+  constructor(p_name, p_photo, p_price, p_description, p_category) {
     this.p_name = p_name;
     this.p_photo = p_photo;
+    this.p_price = p_price;
     this.p_description = p_description;
     this.p_category = p_category;
   }
@@ -27,13 +29,65 @@ export class Product {
   async addProduct(body) {
     try {
       body.id_product = await this.#newIDProduct();
+      const metadata = {
+        contentType: 'image/jpeg'
+      };
+      const storageRef = ref(storage, `products/${Date.now()}_${body.p_photo.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, body.p_photo, metadata);
+      body.p_saved = true;
 
-      const docRef = await addDoc(productsCollection, body);
-
-      return docRef.id;
+      uploadTask.on('state_changed',
+                    (snapshot) => {
+                      // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      // console.log('Upload is ' + progress + '% done');
+                      // switch (snapshot.state) {
+                      //   case 'paused':
+                      //     console.log('Upload is paused');
+                      //     break;
+                      //   case 'running':
+                      //     console.log('Upload is running');
+                      //     break;
+                      // }
+                    },
+                    (error) => {
+                      switch (error.code) {
+                        case 'storage/unauthorized':
+                          // User doesn't have permission to access the object
+                          console.log('No tienes permiso de subir archivos padrino');
+                          break;
+                        case 'storage/canceled':
+                          // User canceled the upload
+                          console.log('Cancelaste la subida mi hermano');
+                          break;
+                        case 'storage/unknown':
+                          // Unknown error occurred, inspect error.serverResponse
+                          console.log('¿Qué pasó?');
+                          break;
+                      }
+                      body.p_saved = false;
+                    },
+                    () => {
+                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        async function save() {
+                          const docRef = await addDoc(productsCollection, {
+                            id_product: body.id_product,
+                            id_user: body.id_user,
+                            p_name: body.p_name,
+                            p_price: body.p_price,
+                            p_photo: downloadURL,
+                            p_description: body.p_description,
+                            p_category: body.p_category
+                          });
+                          body.p_saved = false;
+                          return docRef.id;
+                        }
+                        return save();
+                      });
+                    }
+                   );
     } catch (error) {
-      console.error("Error adding document: ", error);
-
+      console.error("Error adding product: ", error);
       return error;
     }
   }

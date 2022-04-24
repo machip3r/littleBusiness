@@ -47,7 +47,17 @@
     </div>
 
     <div class="d-flex flex-wrap my-4">
-      <v-card width="169" height="230"> asdf </v-card>
+      <v-card
+        width="169"
+        height="230"
+        v-for="(product, index) in allProducts"
+        :key="index"
+        class="ml-4 mb-5"
+      >
+        <v-img height="169" :src="product.p_photo"></v-img>
+        <h5>${{ product.p_price }}</h5>
+        <p>{{ product.p_name }}</p>
+      </v-card>
     </div>
   </div>
 </template>
@@ -55,13 +65,21 @@
 <script>
 import { Product } from "/firebaseAPI/controllers/product.js";
 
-const ProductClass = new Product();
-
-module.exports = {
+export default {
   name: "Products",
   data() {
     return {
-      categories: {},
+      product: {
+        id_user: 1,
+        id_product: 0,
+        p_photo: null,
+        p_name: "",
+        p_price: 0,
+        p_description: "",
+        p_category: "",
+        p_saved: false,
+      },
+      allProducts: [],
       categories: [
         { name: "All", icon: "fas fa-globe" },
         { name: "Food", icon: "fas fa-utensils" },
@@ -76,9 +94,17 @@ module.exports = {
       ],
     };
   },
+
+  async created() {
+    await this.readDocuments();
+  },
+
   methods: {
     async readDocuments() {
-      await ProductClass.readProducts().then((res) => console.log(res));
+      const P = new Product();
+      await P.readProducts().then(
+        (res) => (this.allProducts = P.docsObjectToArray(res))
+      );
     },
   },
 };

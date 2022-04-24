@@ -1,4 +1,4 @@
-import {db, storage} from "/firebaseAPI/connection.js";
+import { db, storage } from "/firebaseAPI/connection.js";
 import {
   collection,
   doc,
@@ -11,7 +11,7 @@ import {
   where,
   getDoc,
 } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const collectionName = "product";
 const productsCollection = collection(db, collectionName);
@@ -30,62 +30,70 @@ export class Product {
     try {
       body.id_product = await this.#newIDProduct();
       const metadata = {
-        contentType: 'image/jpeg'
+        contentType: "image/jpeg",
       };
-      const storageRef = ref(storage, `products/${Date.now()}_${body.p_photo.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, body.p_photo, metadata);
+      const storageRef = ref(
+        storage,
+        `products/${Date.now()}_${body.p_photo.name}`
+      );
+      const uploadTask = uploadBytesResumable(
+        storageRef,
+        body.p_photo,
+        metadata
+      );
       body.p_saved = true;
 
-      uploadTask.on('state_changed',
-                    (snapshot) => {
-                      // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                      // console.log('Upload is ' + progress + '% done');
-                      // switch (snapshot.state) {
-                      //   case 'paused':
-                      //     console.log('Upload is paused');
-                      //     break;
-                      //   case 'running':
-                      //     console.log('Upload is running');
-                      //     break;
-                      // }
-                    },
-                    (error) => {
-                      switch (error.code) {
-                        case 'storage/unauthorized':
-                          // User doesn't have permission to access the object
-                          console.log('No tienes permiso de subir archivos padrino');
-                          break;
-                        case 'storage/canceled':
-                          // User canceled the upload
-                          console.log('Cancelaste la subida mi hermano');
-                          break;
-                        case 'storage/unknown':
-                          // Unknown error occurred, inspect error.serverResponse
-                          console.log('¿Qué pasó?');
-                          break;
-                      }
-                      body.p_saved = false;
-                    },
-                    () => {
-                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        console.log('File available at', downloadURL);
-                        async function save() {
-                          const docRef = await addDoc(productsCollection, {
-                            id_product: body.id_product,
-                            id_user: body.id_user,
-                            p_name: body.p_name,
-                            p_price: body.p_price,
-                            p_photo: downloadURL,
-                            p_description: body.p_description,
-                            p_category: body.p_category
-                          });
-                          body.p_saved = false;
-                          return docRef.id;
-                        }
-                        return save();
-                      });
-                    }
-                   );
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          // console.log('Upload is ' + progress + '% done');
+          // switch (snapshot.state) {
+          //   case 'paused':
+          //     console.log('Upload is paused');
+          //     break;
+          //   case 'running':
+          //     console.log('Upload is running');
+          //     break;
+          // }
+        },
+        (error) => {
+          switch (error.code) {
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              console.log("No tienes permiso de subir archivos padrino");
+              break;
+            case "storage/canceled":
+              // User canceled the upload
+              console.log("Cancelaste la subida mi hermano");
+              break;
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              console.log("¿Qué pasó?");
+              break;
+          }
+          body.p_saved = false;
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            async function save() {
+              const docRef = await addDoc(productsCollection, {
+                id_product: body.id_product,
+                id_user: body.id_user,
+                p_name: body.p_name,
+                p_price: body.p_price,
+                p_photo: downloadURL,
+                p_description: body.p_description,
+                p_category: body.p_category,
+              });
+              body.p_saved = false;
+              return docRef.id;
+            }
+            return save();
+          });
+        }
+      );
     } catch (error) {
       console.error("Error adding product: ", error);
       return error;
@@ -103,7 +111,10 @@ export class Product {
   }
 
   async readProductWithID(id_product) {
-    const queryRes = query(productsCollection, where("id_product", "==", id_product));
+    const queryRes = query(
+      productsCollection,
+      where("id_product", "==", id_product)
+    );
 
     return this.#getObjectFromDocuments(await getDocs(queryRes));
   }
@@ -146,5 +157,16 @@ export class Product {
     for (let i = 0; i < 6; i++) randID += this.#randInt(0, 9);
 
     return parseInt(randID);
+  }
+
+  docsObjectToArray(documents) {
+    let arr = [];
+
+    Object.keys(documents).forEach((key) => {
+      Object.assign(documents[key], { firebaseID: key });
+      arr.push(documents[key]);
+    });
+
+    return arr;
   }
 }

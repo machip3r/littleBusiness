@@ -21,6 +21,18 @@
         <span class="mr-2">Login</span>
       </v-btn>
       <v-spacer></v-spacer>
+      <v-btn href="/signup" text>
+        <v-icon>fas fa-home</v-icon>
+        &nbsp;
+        <span class="mr-2">Sign up</span>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn href="/products" text>
+        <v-icon>fas fa-store</v-icon>
+        &nbsp;
+        <span class="mr-2">Products</span>
+      </v-btn>
+      <v-spacer></v-spacer>
     </v-app-bar>
 
     <v-main>

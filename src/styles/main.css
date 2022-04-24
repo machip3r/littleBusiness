@@ -29,6 +29,13 @@
 
 /* GENERAL */
 
+:root {
+  --light-blue: #28bfdb;
+  --bone: #f8f0ee;
+  --light-red: #ef424c;
+  --dark-blue: #2d3440;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -99,4 +106,13 @@ body {
   width: 10%;
   width: 50px;
   height: 50px !important;
+}
+
+.gradient-background {
+  background: var(--light-blue);
+  background: linear-gradient(
+    235deg,
+    var(--light-blue) 0%,
+    rgb(183, 233, 243) 100%
+  );
 }

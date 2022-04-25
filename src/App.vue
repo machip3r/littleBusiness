@@ -12,7 +12,7 @@
       <v-btn href="/user" text>
         <v-icon>fas fa-home</v-icon>
         &nbsp;
-        <span class="mr-2">Users (template by Aldo)</span>
+        <span class="mr-2">Users (debug only)</span>
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn href="/login" text>
@@ -27,10 +27,16 @@
         <span class="mr-2">Sign up</span>
       </v-btn>
       <v-spacer></v-spacer>
+      <v-btn href="/addProduct" text>
+        <v-icon>fas fa-store</v-icon>
+        &nbsp;
+        <span class="mr-2">Add New Products</span>
+      </v-btn>
+      <v-spacer></v-spacer>
       <v-btn href="/products" text>
         <v-icon>fas fa-store</v-icon>
         &nbsp;
-        <span class="mr-2">Products</span>
+        <span class="mr-2">All Products</span>
       </v-btn>
       <v-spacer></v-spacer>
     </v-app-bar>

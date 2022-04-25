@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
+import store from "../store/index";
 Vue.use(VueRouter);
 
 const routes = [
@@ -33,6 +33,14 @@ const routes = [
     path: "/products",
     name: "Products",
     component: () => import("../views/Store/Products/Products.vue"),
+  },
+  {
+    path: "/addbusiness",
+    name: "AddBusiness",
+    component: () => import("../views/AddBusiness.vue"),
+    beforeEnter: (to, from, next) => {
+      console.log(store.getters.isAuth);
+    },
   },
 ];
 

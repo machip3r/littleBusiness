@@ -1,3 +1,4 @@
+import { getAuth } from "firebase/auth";
 import Vue from "vue";
 import Vuex from "vuex";
 
@@ -19,8 +20,26 @@ export default new Vuex.Store({
           "Campo requerido",
       ],
     },
+    user: null,
   },
-  mutations: {},
+
+  mutations: {
+    setSession(state, payload) {
+      state.user = payload;
+    },
+  },
+  getters: {
+    getName(state) {
+      return state.user.displayName;
+    },
+    getAccesToken(state) {
+      return state.user.accesToken;
+    },
+    isAuth(state) {
+      if (state.user) return true;
+      else return false;
+    },
+  },
   actions: {},
   modules: {},
 });

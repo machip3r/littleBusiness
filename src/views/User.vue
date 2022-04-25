@@ -38,7 +38,7 @@
 
       <div class="d-flex pa-8 mx-8 justify-space-around">
         <v-card class="pa-8" width="40%">
-          <h2>Add a wey</h2>
+          <h2>Add an User</h2>
           <form @submit.prevent="addNewDocument">
             <v-text-field
               v-model="user[0].u_name"
@@ -56,7 +56,7 @@
           </form></v-card
         >
         <v-card class="pa-8" width="40%">
-          <h2>Edit a wey</h2>
+          <h2>Edit an User</h2>
           <form @submit.prevent="updateDocument(queryRes)">
             <v-text-field
               v-model="queryRes[0].u_name"

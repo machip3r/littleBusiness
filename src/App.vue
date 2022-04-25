@@ -12,7 +12,7 @@
       <v-btn href="/user" text>
         <v-icon>fas fa-home</v-icon>
         &nbsp;
-        <span class="mr-2">Users (template by Aldo)</span>
+        <span class="mr-2">Users (debug only)</span>
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn href="/login" text>

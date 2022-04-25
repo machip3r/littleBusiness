@@ -12,18 +12,51 @@ import {
   getDoc,
 } from "firebase/firestore";
 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+
 const collectionName = "user";
 const usersCollection = collection(db, collectionName);
+const auth = getAuth();
 
 export class User {
-  constructor(u_name, u_photo, u_type, u_status) {
+  constructor(u_name, u_photo, u_type, u_status, email, password) {
     this.u_name = u_name;
     this.u_photo = u_photo;
     this.u_type = u_type;
     this.u_status = u_status;
+    this.email = email;
+    this.password = password;
   }
 
   // - - - - -  Document Manipulation  - - - - -
+
+  async createAccountUser() {
+    const response = await createUserWithEmailAndPassword(
+      auth,
+      this.email,
+      this.password
+    );
+    const uid = response.user.uid;
+    let resUpdate = await updateProfile(response.user, {
+      displayName: this.u_name,
+      photoURL: this.u_photo,
+    });
+
+    let additionalData = {
+      uid: uid,
+      type: this.u_type,
+      status: this.u_status,
+    };
+    const docRef = await addDoc(collection(db, "user"), additionalData);
+    console.log("DOcumento escrito ", docRef.id);
+    return { docRef, resUpdate, response };
+  }
+
   async addUser(body) {
     try {
       body[0].id_user = await this.#newIDUser();
@@ -36,6 +69,12 @@ export class User {
 
       return error;
     }
+  }
+
+  static async login(email, password) {
+    let response = await signInWithEmailAndPassword(auth, email, password);
+    const user = response.user;
+    return auth.currentUser;
   }
 
   async readUsers() {

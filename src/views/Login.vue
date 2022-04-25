@@ -31,7 +31,14 @@
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <div class="buttons-area">
-          <v-btn class="button" color="accent" rounded dense large>
+          <v-btn
+            class="button"
+            color="accent"
+            @click="login()"
+            rounded
+            dense
+            large
+          >
             Iniciar Sesión
           </v-btn>
           <v-btn class="button-fab" fab color="secondary">
@@ -48,6 +55,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
+import { User } from "../../firebaseAPI/controllers/user";
 
 export default {
   name: "Login",
@@ -62,9 +70,13 @@ export default {
       valid: true,
     };
   },
-
   async created() {},
-
-  methods: {},
+  methods: {
+    async login() {
+      let user = await User.login(this.email, this.password);
+      this.$store.commit("setSession", user);
+      console.log(this.$store.getters.getName);
+    },
+  },
 };
 </script>

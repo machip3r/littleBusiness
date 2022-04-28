@@ -27,6 +27,11 @@ export default new Vuetify({
         info: "#2196F3",
         success: "#4CAF50",
         warning: "#FFC107",
+
+        lightblue: "#28BFDB",
+        bone: "#F8F0EE",
+        lightred: "#EF424C",
+        darkblue: "#2D3440",
       },
     },
   },

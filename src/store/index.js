@@ -21,6 +21,15 @@ export default new Vuex.Store({
       ],
     },
     user: null,
+    order: [
+      {
+        id_order: "",
+        id_user: 0,
+        o_products: [{ id_product: 0, op_quantity: 0 }],
+        o_datetime: "",
+        o_status: "",
+      },
+    ],
   },
 
   mutations: {

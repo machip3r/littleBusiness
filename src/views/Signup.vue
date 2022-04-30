@@ -12,6 +12,7 @@
           filled
           rounded
           dense
+          :rules="this.rules.required"
           required
         ></v-text-field>
         <v-text-field
@@ -46,7 +47,7 @@
           color="primary"
           background-color="secondary"
           prepend-inner-icon="fas fa-lock"
-          :rules="this.rules.required"
+          :rules="[this.rules.required, passwordRule]"
           :append-icon="showPasswordRepeat ? 'fas fa-eye-slash' : 'fas fa-eye'"
           :type="showPasswordRepeat ? 'text' : 'password'"
           v-model="passwordRepeat"
@@ -65,7 +66,7 @@
         <div class="buttons-area">
           <v-btn
             class="button"
-            @click="signUp()"
+            @click="signUp('c')"
             color="accent"
             rounded
             dense
@@ -73,10 +74,10 @@
           >
             Sign Up
           </v-btn>
-          <v-btn class="button-fab" fab color="secondary">
+          <v-btn class="button-fab" @click="signUp('g')" fab color="secondary">
             <v-icon color="primary">fab fa-google</v-icon>
           </v-btn>
-          <v-btn class="button-fab" fab color="secondary">
+          <v-btn class="button-fab" @click="signUp('f')" fab color="secondary">
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
         </div>
@@ -92,6 +93,11 @@ export default {
   name: "Signup",
   computed: {
     ...mapState(["rules"]),
+    passwordRule() {
+      return () =>
+        this.password.localeCompare(this.passwordRepeat) === 0 ||
+        "Las contraseñas no coinciden";
+    },
   },
 
   data: () => {
@@ -106,14 +112,12 @@ export default {
       valid: true,
     };
   },
-
   async created() {},
 
   methods: {
-    async signUp() {
-      if (this.password.localeCompare(this.passwordRepeat) != 0) {
-        console.log("Dialogo para contraseñas que no coinciden");
-      } else {
+    async signUp(type) {
+      if (type == "c") this.$refs.form.validate();
+      if (this.valid) {
         let user = new User(
           this.name,
           "fotogenerica.com",
@@ -123,8 +127,13 @@ export default {
           this.password
         );
         try {
-          let response = await user.createAccountUser();
-          console.log(response);
+          let response = await user.createAccountUser(type);
+          this.$store.commit("setSession", response);
+          if (this.seller) {
+            this.$router.push("AddBusiness");
+          } else {
+            this.$router.push("Products");
+          }
         } catch (error) {
           console.error(error);
         }

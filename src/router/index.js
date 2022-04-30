@@ -38,9 +38,6 @@ const routes = [
     path: "/addbusiness",
     name: "AddBusiness",
     component: () => import("../views/AddBusiness.vue"),
-    beforeEnter: (to, from, next) => {
-      console.log(store.getters.isAuth);
-    },
   },
 ];
 

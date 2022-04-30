@@ -30,10 +30,15 @@
 /* GENERAL */
 
 :root {
+  --lighter-blue: #b7e9f3;
   --light-blue: #28bfdb;
-  --bone: #f8f0ee;
-  --light-red: #ef424c;
   --dark-blue: #2d3440;
+
+  --lighter-red: #ffd5d5;
+  --light-red: #ef424c;
+
+  --bone: #f8f0ee;
+  --main-font: "Nunito", sans-serif;
 }
 
 * {

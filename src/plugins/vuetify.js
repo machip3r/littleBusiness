@@ -28,10 +28,14 @@ export default new Vuetify({
         success: "#4CAF50",
         warning: "#FFC107",
 
+        lighterblue: "#b7e9f3",
         lightblue: "#28BFDB",
-        bone: "#F8F0EE",
-        lightred: "#EF424C",
         darkblue: "#2D3440",
+
+        lighter_red: "#ffd5d5",
+        lightred: "#EF424C",
+
+        bone: "#F8F0EE",
       },
     },
   },

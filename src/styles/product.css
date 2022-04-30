@@ -1,0 +1,45 @@
+/* GENERAL */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;900&family=Roboto:wght@300;400;900&display=swap");
+
+:root {
+  --lighter-blue: #b7e9f3;
+  --light-blue: #28bfdb;
+  --dark-blue: #2d3440;
+
+  --lighter-red: #ffd5d5;
+  --light-red: #ef424c;
+
+  --bone: #f8f0ee;
+  --main-font: "Nunito", sans-serif;
+}
+
+* {
+  font-family: var(--main-font);
+}
+
+.quantityContainer {
+  display: flex;
+  width: 99px;
+  height: 33px;
+  border-radius: 40px;
+  background-color: var(--lighter-blue);
+  margin-bottom: 21px;
+}
+
+input[type="number"],
+button {
+  width: 33%;
+  font-weight: bold;
+  text-align: center;
+}
+
+input[type="number"] {
+  background-color: white;
+  border-radius: 8px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

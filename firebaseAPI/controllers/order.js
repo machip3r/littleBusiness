@@ -65,11 +65,11 @@ export class Order {
   // - - - - -  Utility Functions  - - - - -
   async #newOrderID() {
     const docs = await this.readOrders();
-    let newID = this.#randID();
+    let newID = this.randID();
 
     for (let i = 0; i < docs.lenght; i++)
       if (docs[i].id_order === newID) {
-        newID = this.#randID();
+        newID = this.randID();
         i = 0;
       }
 
@@ -80,13 +80,13 @@ export class Order {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  #randID() {
+  randID() {
     const possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const STRING_SIZE = possible.length;
     let randID = "";
 
-    for (let i = 0; i < 6; i++)
+    for (let i = 0; i < 9; i++)
       randID += possible[this.#randInt(0, STRING_SIZE - 1)];
 
     return randID;

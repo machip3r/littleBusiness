@@ -13,18 +13,32 @@
       <p>
         {{ product.p_description }}
       </p>
-      <h1>$ {{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
+      <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
       <div class="d-flex ma-4 align-center">
         <!-- Incrementador y botón de ordenar -->
         <div>
           <!-- Incrementador -->
-          <button style="background-color: var(--bone); width: 80px">-</button>
-          <input style="background-color: var(--bone)" type="number" disabled />
-          <button style="background-color: var(--bone); width: 80px">+</button>
+          <button
+            style="background-color: var(--bone); width: 80px"
+            @click="decrement"
+          >
+            -
+          </button>
+          <input
+            style="background-color: var(--bone)"
+            type="number"
+            v-model="quantity"
+          />
+          <button
+            style="background-color: var(--bone); width: 80px"
+            @click="increment"
+          >
+            +
+          </button>
         </div>
 
         <!-- Order Button -->
-        <v-btn class="ml-4">
+        <v-btn class="ml-4" @click="addToCart(product.id_product)">
           <v-icon>fas fa-rocket</v-icon>
           <span>Order</span>
         </v-btn>
@@ -34,14 +48,124 @@
 </template>
 
 <script>
-module.exports = {
+import { mapState, mapActions } from "vuex";
+import { Product } from "/firebaseAPI/controllers/product.js";
+import { Order } from "/firebaseAPI/controllers/order.js";
+
+export default {
   name: "ProductDetails",
+
   props: ["product"],
+
   data: () => {
-    return {};
+    return {
+      quantity: 1,
+      productDialog: false,
+      order: {
+        id_order: "",
+        id_user: 0,
+        o_products: [],
+        o_datetime: "",
+        o_status: "",
+      },
+    };
   },
-  methods: {},
+
+  computed: {
+    ...mapState(["cart"]),
+  },
+
+  created() {},
+
+  methods: {
+    ...mapActions([
+      "addOrder",
+      "addProducts",
+      "incrementQuantity",
+      "decrementQuantity",
+    ]),
+
+    increment() {
+      this.quantity = this.quantity > 0 ? this.quantity + 1 : 1;
+    },
+
+    decrement() {
+      this.quantity = this.quantity > 0 ? this.quantity - 1 : 1;
+    },
+
+    addToCart(id_product) {
+      const ORDER_PRODUCTS_SIZE = this.cart.o_products.length;
+      const product = { id_product: id_product, op_quantity: this.quantity };
+
+      if (ORDER_PRODUCTS_SIZE > 0) {
+        console.log("Cart not empty");
+
+        console.log("Verify it the product is already in the cart");
+        for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
+          if (id_product == this.cart.o_products[i].id_product) {
+            console.log("This product exists in the cart. Adding quantity");
+            this.incrementQuantity(product);
+
+            this.quantity = 1;
+            this.$emit("close-dialog");
+
+            return;
+          }
+        }
+
+        // If it gets to this part, it means the product is new.
+        console.log("New product. Adding it to the cart");
+        this.addProducts(product);
+
+        this.quantity = 1;
+        this.$emit("close-dialog");
+
+        return;
+      } else {
+        console.log("The cart is empty. Creating order and adding product");
+        this.createOrder(product);
+
+        this.quantity = 1;
+        this.$emit("close-dialog");
+
+        return;
+      }
+
+      // this.$emit("close-dialog");
+    },
+
+    createOrder(product) {
+      const currDate = this.getDateTime();
+
+      this.order.id_user = 1;
+      this.order.o_datetime = currDate;
+      this.order.o_status = "Pending";
+      this.order.o_products.push(product);
+
+      console.log("Adding order: ", this.order);
+
+      this.addOrder(this.order);
+    },
+
+    leadingZeros(number) {
+      return number.toString().padStart(2, "0");
+    },
+
+    getDateTime() {
+      const today = new Date();
+      return `${today.getFullYear()}-${this.leadingZeros(
+        today.getMonth() + 1
+      )}-${this.leadingZeros(today.getDate())} ${this.leadingZeros(
+        today.getHours()
+      )}:${this.leadingZeros(today.getMinutes())}:${this.leadingZeros(
+        today.getSeconds()
+      )}`;
+    },
+  },
 };
 </script>
 
-<style></style>
+<style lang="css">
+@import "../styles/main.css";
+@import "../styles/product.css";
+</style>

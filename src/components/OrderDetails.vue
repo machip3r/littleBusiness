@@ -16,83 +16,114 @@
       <p>Revisa los productos y agrega unos cuantos ;)</p>
     </v-card>
   </v-card>
-  <v-row v-else>
-    <v-col
-      v-for="(product, index) in orderedProducts"
-      :key="index"
-      v-model="orderedProducts"
-    >
-      <v-card
-        width="400"
-        class="ml-4 pa-5 mb-5 rounded-xl fill-height"
-        elevation="4"
-        color="bone"
+  <v-card v-else elevation="0">
+    <v-row>
+      <v-col
+        v-for="(product, index) in orderedProducts"
+        :key="index"
+        v-model="orderedProducts"
       >
-        <v-row>
-          <v-col>
-            <v-img
-              max-width="90"
-              max-height="90"
-              centered
-              contain
-              lazy-src="https://www.purina-latam.com/sites/g/files/auxxlc391/files/styles/large/public/2021-10/los-mejores-juegos-de-perritos-cachorros-por-mes-de-edad.png?itok=UNEbd6Xh"
-              :src="product.p_photo"
-            ></v-img>
-          </v-col>
-          <v-col class="text-left">
-            <v-row>
-              <v-col justify-content="start">
-                <p class="ma-0 font-weight-bold">{{ product.p_name }}</p>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <p class="ma-0 font-weight-light">Business Name</p>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <p class="ma-0 font-weight-bold">
-                  ${{ parseFloat(product.p_price).toFixed(2) }} MXN
-                </p>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-col align-self="center">
-            <v-row>
-              <v-col>
-                <div class="d-flex quantityContainer">
-                  <button @click="decrement(product.id_product)">-</button>
-                  <input type="number" v-model="product.op_quantity" min="1" />
-                  <button @click="increment(product.id_product)">+</button>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn
-                  large
-                  color="lighter_red"
-                  width="99px"
-                  height="33px"
-                  rounded
-                  elevation="0"
-                  @click="deleteFromCart(product.id_product)"
-                >
-                  <v-icon color="lightred">fas fa-trash</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
-  </v-row>
+        <v-card
+          width="400"
+          class="ml-4 pa-5 mb-5 rounded-xl fill-height"
+          elevation="4"
+          color="bone"
+        >
+          <v-row>
+            <v-col>
+              <v-img
+                max-width="90"
+                max-height="90"
+                centered
+                contain
+                lazy-src="https://www.purina-latam.com/sites/g/files/auxxlc391/files/styles/large/public/2021-10/los-mejores-juegos-de-perritos-cachorros-por-mes-de-edad.png?itok=UNEbd6Xh"
+                :src="product.p_photo"
+              ></v-img>
+            </v-col>
+            <v-col class="text-left">
+              <v-row>
+                <v-col justify-content="start">
+                  <p class="ma-0 font-weight-bold">{{ product.p_name }}</p>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <p class="ma-0 font-weight-light">Business Name</p>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <p class="ma-0 font-weight-bold">
+                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
+                  </p>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col align-self="center">
+              <v-row>
+                <v-col>
+                  <div class="d-flex quantityContainer">
+                    <button @click="decrement(product.id_product)">-</button>
+                    <input
+                      type="number"
+                      v-model="product.op_quantity"
+                      min="1"
+                    />
+                    <button @click="increment(product.id_product)">+</button>
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn
+                    large
+                    color="lighter_red"
+                    width="99px"
+                    height="33px"
+                    rounded
+                    elevation="0"
+                    @click="deleteFromCart(product.id_product)"
+                  >
+                    <v-icon color="lightred">fas fa-trash</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <div style="background-color: var(--bone); margin-top: 50px">
+      <v-row color="bone">
+        <v-col>
+          <p>Total</p>
+          <h1>${{ calcTotal() }} MXN</h1>
+        </v-col>
+        <v-spacer></v-spacer>
+        <v-col class="my-auto">
+          <v-row class="mb-2">
+            <v-btn color="lightblue" large>
+              <v-icon left color="darkblue">fas fa-pencil-alt</v-icon>
+              Editar orden
+            </v-btn>
+          </v-row>
+          <v-row class="mt-2">
+            <v-btn color="success" large @click="uploadOrder()">
+              <v-icon left>fas fa-check</v-icon>
+              Generar recibo
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
+  </v-card>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
+import { Order } from "/firebaseAPI/controllers/order.js";
 
 export default {
   name: "OrderDetails",
@@ -109,12 +140,6 @@ export default {
   async created() {
     await this.readDocuments();
     this.getOrderedProducts();
-  },
-
-  watch: {
-    cart() {
-      console.log("Cart updated (?)");
-    },
   },
 
   computed: {
@@ -170,7 +195,10 @@ export default {
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
         if (id_product == this.orderedProducts[i].id_product)
-          this.orderedProducts[i].op_quantity--;
+          this.orderedProducts[i].op_quantity =
+            this.orderedProducts[i].op_quantity > 1
+              ? this.orderedProducts[i].op_quantity - 1
+              : 1;
 
       this.decrementQuantity({ id_product: id_product, op_quantity: 1 });
       this.$forceUpdate();
@@ -186,6 +214,30 @@ export default {
         }
 
       this.deleteProduct(id_product);
+    },
+
+    calcTotal() {
+      let sum = 0;
+      this.orderedProducts.forEach((prod) => {
+        sum += prod.op_quantity * prod.p_price;
+      });
+
+      return sum;
+    },
+
+    async uploadOrder() {
+      const O = new Order();
+      O.addOrder(this.cart)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    generateTicket() {
+      console.log(this.cart);
     },
   },
 };

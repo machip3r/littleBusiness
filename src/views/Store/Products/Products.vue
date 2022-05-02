@@ -174,7 +174,7 @@
             </v-chip>
           </v-col>
           <v-col cols="1">
-            <v-btn fab elevation="0" color="lighter_red">
+            <v-btn fab elevation="0" color="lighter_red" @click="resetOrder()">
               <v-icon color="lightred">fas fa-trash</v-icon>
             </v-btn>
           </v-col>
@@ -254,7 +254,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["addOrder", "addProducts", "deleteProducts"]),
+    ...mapActions(["resetOrder"]),
 
     async readDocuments() {
       const P = new Product();

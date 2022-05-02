@@ -87,7 +87,11 @@ export default new Vuex.Store({
           console.log(
             `From Store - Decremented ${payload.op_quantity} to product ${state.cart.o_products[i].id_product}`
           );
-          state.cart.o_products[i].op_quantity -= payload.op_quantity;
+          state.cart.o_products[i].op_quantity =
+            state.cart.o_products[i].op_quantity > 1
+              ? state.cart.o_products[i].op_quantity - payload.op_quantity
+              : 1;
+
           break;
         }
       }
@@ -144,7 +148,7 @@ export default new Vuex.Store({
     },
 
     resetOrder({ commit }) {
-      commit("resetOrders");
+      commit("resetOrder");
     },
   },
 

@@ -25,8 +25,12 @@
               <v-icon color="darkblue">fas fa-store</v-icon>
             </v-btn>
           </v-col>
-          <v-col v-if="o_products.length > 0">
-            <v-badge color="lightred" overlap :content="this.cart.length">
+          <v-col v-if="this.cart.o_products.length > 0">
+            <v-badge
+              color="lightred"
+              overlap
+              :content="this.cart.o_products.length"
+            >
               <v-btn
                 class="mx-2"
                 fab
@@ -50,7 +54,6 @@
               @click="orderDialog = true"
               elevation="0"
             >
-              <!-- @click="uploadToCart()" -->
               <v-icon color="bone">fas fa-shopping-cart</v-icon>
             </v-btn>
           </v-col>
@@ -130,10 +133,7 @@
         </div>
 
         <!-- Product Details dialog component -->
-        <ProductDetails
-          v-on:close-dialog="productDialog = false"
-          :product="product"
-        />
+        <ProductDetails @close-dialog="closeDialog()" :product="product" />
       </v-card>
     </v-dialog>
 
@@ -160,7 +160,7 @@
           <v-spacer></v-spacer>
           <v-col cols="9" class="ma-0">
             <h1>Carrito de compras</h1>
-            <h4 class="font-weight-light">29/04/2022</h4>
+            <h4 class="font-weight-light">{{ date }}</h4>
           </v-col>
           <v-col cols="1" class="ma-0">
             <v-chip
@@ -181,7 +181,7 @@
         </v-row>
 
         <!-- Ordered Products -->
-        <OrderDetails />
+        <OrderDetails :key="update" />
       </v-card>
     </v-dialog>
   </div>
@@ -206,6 +206,8 @@ export default {
     return {
       productDialog: false,
       orderDialog: false,
+      date: "",
+      update: 0,
       product: {
         id_user: 1,
         id_product: 0,
@@ -248,8 +250,7 @@ export default {
 
   async created() {
     await this.readDocuments();
-    console.log(this.cart);
-    console.log(this.getDateTime());
+    this.date = this.getDate();
   },
 
   methods: {
@@ -260,6 +261,11 @@ export default {
       await P.readProducts().then(
         (res) => (this.allProducts = P.docsObjectToArray(res))
       );
+    },
+
+    closeDialog() {
+      this.productDialog = false;
+      this.update++;
     },
 
     seeProduct(item) {
@@ -298,15 +304,11 @@ export default {
       return number.toString().padStart(2, "0");
     },
 
-    getDateTime() {
+    getDate() {
       const today = new Date();
-      return `${today.getFullYear()}-${this.leadingZeros(
+      return `${this.leadingZeros(today.getDate())}/${this.leadingZeros(
         today.getMonth() + 1
-      )}-${this.leadingZeros(today.getDate())} ${this.leadingZeros(
-        today.getHours()
-      )}:${this.leadingZeros(today.getMinutes())}:${this.leadingZeros(
-        today.getSeconds()
-      )}`;
+      )}/${today.getFullYear()}`;
     },
   },
 };

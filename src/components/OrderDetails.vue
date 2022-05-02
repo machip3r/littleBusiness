@@ -1,13 +1,30 @@
 <template>
-  <v-card elevation="0" v-if="this.o_products.length < 1">
-    <h1>Carrito vacío</h1>
+  <v-card
+    class="d-flex justify-center align-center"
+    elevation="0"
+    v-if="cart.o_products.length < 1"
+  >
+    <v-card
+      class="d-flex flex-column justify-center align-center rounded-xl"
+      width="40%"
+      height="500px"
+      color="bone"
+      elevation="0"
+    >
+      <v-icon class="my-4" size="100">fas fa-receipt</v-icon>
+      <h1>Sin pedidos</h1>
+      <p>Revisa los productos y agrega unos cuantos ;)</p>
+    </v-card>
   </v-card>
   <v-row v-else>
-    <v-col v-for="(product, index) in this.o_products" :key="index">
+    <v-col
+      v-for="(product, index) in orderedProducts"
+      :key="index"
+      v-model="orderedProducts"
+    >
       <v-card
         width="400"
         class="ml-4 pa-5 mb-5 rounded-xl fill-height"
-        v-model="order.o_products"
         elevation="4"
         color="bone"
       >
@@ -45,9 +62,9 @@
             <v-row>
               <v-col>
                 <div class="d-flex quantityContainer">
-                  <button @click="decrementar">-</button>
+                  <button @click="decrement(product.id_product)">-</button>
                   <input type="number" v-model="product.op_quantity" min="1" />
-                  <button @click="incrementar">+</button>
+                  <button @click="increment(product.id_product)">+</button>
                 </div>
               </v-col>
             </v-row>
@@ -60,7 +77,7 @@
                   height="33px"
                   rounded
                   elevation="0"
-                  @click="deleteFromCart(product)"
+                  @click="deleteFromCart(product.id_product)"
                 >
                   <v-icon color="lightred">fas fa-trash</v-icon>
                 </v-btn>
@@ -74,16 +91,103 @@
 </template>
 
 <script>
-module.exports = {
+import { mapState, mapActions } from "vuex";
+import { Product } from "/firebaseAPI/controllers/product.js";
+
+export default {
   name: "OrderDetails",
 
   props: ["products"],
 
   data: () => {
-    return {};
+    return {
+      allProducts: [],
+      orderedProducts: [],
+    };
   },
 
-  methods: {},
+  async created() {
+    await this.readDocuments();
+    this.getOrderedProducts();
+  },
+
+  watch: {
+    cart() {
+      console.log("Cart updated (?)");
+    },
+  },
+
+  computed: {
+    ...mapState(["cart"]),
+  },
+
+  methods: {
+    ...mapActions([
+      "incrementQuantity",
+      "decrementQuantity",
+      "deleteProduct",
+      "resetOrder",
+    ]),
+
+    async readDocuments() {
+      const P = new Product();
+      await P.readProducts().then(
+        (res) => (this.allProducts = P.docsObjectToArray(res))
+      );
+    },
+
+    getOrderedProducts() {
+      const PRODUCTS_SIZE = this.allProducts.length;
+
+      this.cart.o_products.forEach((prod) => {
+        for (let i = 0; i < PRODUCTS_SIZE; i++) {
+          if (prod.id_product == this.allProducts[i].id_product) {
+            this.orderedProducts.push(
+              Object.assign(this.allProducts[i], {
+                op_quantity: prod.op_quantity,
+              })
+            );
+            console.log(this.orderedProducts);
+            break;
+          }
+        }
+      });
+    },
+
+    increment(id_product) {
+      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
+
+      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
+        if (id_product == this.orderedProducts[i].id_product)
+          this.orderedProducts[i].op_quantity++;
+
+      this.incrementQuantity({ id_product: id_product, op_quantity: 1 });
+      this.$forceUpdate();
+    },
+
+    decrement(id_product) {
+      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
+
+      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
+        if (id_product == this.orderedProducts[i].id_product)
+          this.orderedProducts[i].op_quantity--;
+
+      this.decrementQuantity({ id_product: id_product, op_quantity: 1 });
+      this.$forceUpdate();
+    },
+
+    deleteFromCart(id_product) {
+      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
+
+      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
+        if (id_product == this.orderedProducts[i].id_product) {
+          this.orderedProducts.splice(i, 1);
+          break;
+        }
+
+      this.deleteProduct(id_product);
+    },
+  },
 };
 </script>
 

@@ -57,9 +57,8 @@ export default new Vuex.Store({
         if (payload == state.cart.o_products[i].id_product) {
           console.log("From store - Deleting: ", state.cart.o_products[i]);
           state.cart.o_products.splice(i, 1);
+          break;
         }
-
-        break;
       }
       console.log("From Store - Current Cart: ", state.cart);
     },
@@ -104,7 +103,7 @@ export default new Vuex.Store({
         o_datetime: "",
         o_status: "Pending",
       };
-      console.log(state.cart);
+      console.log("From Store - Reseted cart: ", state.cart);
     },
   },
 

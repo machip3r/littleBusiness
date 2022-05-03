@@ -30,6 +30,7 @@
           required
           @click:append="showPassword = !showPassword"
         ></v-text-field>
+
         <div class="buttons-area">
           <v-btn
             class="button"
@@ -41,13 +42,32 @@
           >
             Iniciar Sesión
           </v-btn>
-          <v-btn class="button-fab" fab color="secondary">
+          <v-btn
+            @click="loginGoogle()"
+            class="button-fab"
+            fab
+            color="secondary"
+          >
             <v-icon color="primary">fab fa-google</v-icon>
           </v-btn>
-          <v-btn class="button-fab" fab color="secondary">
+          <v-btn
+            class="button-fab"
+            @click="loginFacebook()"
+            fab
+            color="secondary"
+          >
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
         </div>
+        <v-alert
+          color="red"
+          dismissible
+          type="error"
+          style="margin-top: 1rem"
+          v-model="messageErrorShow"
+        >
+          {{ messageError }}
+        </v-alert>
       </v-form>
     </div>
   </div>
@@ -68,14 +88,52 @@ export default {
       password: "",
       showPassword: false,
       valid: true,
+      messageErrorShow: false,
+      messageError: "",
     };
   },
+  computed: {
+    rules() {
+      const rules = [];
+
+      return rules;
+    },
+  },
+
   async created() {},
   methods: {
+    async loginFacebook(tipo) {
+      try {
+        let user = await User.loginFacebook(false);
+        await this.$store.commit("setSession", user);
+        this.$router.push("Products");
+      } catch (error) {
+        this.messageError = error;
+        this.messageErrorShow = true;
+      }
+    },
+    async loginGoogle(tipo) {
+      try {
+        let user = await User.loginGoolge(false);
+        await this.$store.commit("setSession", user);
+        this.$router.push("Products");
+      } catch (error) {
+        this.messageError = error;
+        this.messageErrorShow = true;
+      }
+    },
     async login() {
-      let user = await User.login(this.email, this.password);
-      this.$store.commit("setSession", user);
-      console.log(this.$store.getters.getName);
+      try {
+        let user = await User.login(this.email, this.password);
+        await this.$store.commit("setSession", user);
+        this.$router.push("Products");
+      } catch (error) {
+        console.log(error);
+        if (error) {
+          this.messageError = error;
+          this.messageErrorShow = true;
+        }
+      }
     },
   },
 };

@@ -1,0 +1,66 @@
+@import url("http://fonts.cdnfonts.com/css/fake-receipt");
+
+/* Utils */
+.mar-0 {
+  margin: 0;
+}
+
+.receipt-font {
+  font-family: "Fake Receipt", sans-serif;
+}
+
+.mar-top-10 {
+  margin-top: 10px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* My Styles */
+.container {
+  width: 500px;
+  padding: 20px;
+}
+
+.header__info,
+.receipt-footer {
+  text-align: center;
+}
+
+.header__info {
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.header__order-info,
+.products-table {
+  text-align: left;
+}
+
+.header__order-info {
+  margin-bottom: 10px;
+}
+
+.header__order-info p,
+.receipt__row p {
+  margin: 0;
+}
+
+.products-table {
+  width: 100%;
+}
+
+.products-table tr th:last-of-type,
+.products-table tr td:last-of-type {
+  text-align: right;
+}
+
+.receipt__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.receipt-footer {
+  margin-top: 20px;
+}

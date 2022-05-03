@@ -49,8 +49,6 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
-import { Order } from "/firebaseAPI/controllers/order.js";
 
 export default {
   name: "ProductDetails",
@@ -75,15 +73,8 @@ export default {
     ...mapState(["cart"]),
   },
 
-  created() {},
-
   methods: {
-    ...mapActions([
-      "addOrder",
-      "addProducts",
-      "incrementQuantity",
-      "decrementQuantity",
-    ]),
+    ...mapActions(["addOrder", "addProducts"]),
 
     increment() {
       this.quantity = this.quantity > 0 ? this.quantity + 1 : 1;
@@ -98,12 +89,8 @@ export default {
       const product = { id_product: id_product, op_quantity: this.quantity };
 
       if (ORDER_PRODUCTS_SIZE > 0) {
-        console.log("Cart not empty");
-
-        console.log("Verify it the product is already in the cart");
         for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
           if (id_product == this.cart.o_products[i].id_product) {
-            console.log("This product exists in the cart. Adding quantity");
             this.incrementQuantity(product);
 
             this.quantity = 1;
@@ -114,7 +101,6 @@ export default {
         }
 
         // If it gets to this part, it means the product is new.
-        console.log("New product. Adding it to the cart");
         this.addProducts(product);
 
         this.quantity = 1;
@@ -122,7 +108,6 @@ export default {
 
         return;
       } else {
-        console.log("The cart is empty. Creating order and adding product");
         this.createOrder(product);
 
         this.quantity = 1;
@@ -130,8 +115,6 @@ export default {
 
         return;
       }
-
-      // this.$emit("close-dialog");
     },
 
     createOrder(product) {
@@ -141,8 +124,6 @@ export default {
       this.order.o_datetime = currDate;
       this.order.o_status = "Pending";
       this.order.o_products.push(product);
-
-      console.log("Adding order: ", this.order);
 
       this.addOrder(this.order);
     },

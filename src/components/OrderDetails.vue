@@ -117,6 +117,69 @@
         </v-col>
       </v-row>
     </div>
+
+    <!-- Receipt -->
+    <div class="container hidden" id="receipt">
+      <div class="receipt-header">
+        <div class="header__info">
+          <h1>LittleBusiness</h1>
+          <h4>Recibo de entrega</h4>
+        </div>
+
+        <div class="header__order-info">
+          <p class="mar-0 receipt-font">
+            Orden #{{ cart.id_order }} para User's Name
+          </p>
+          <p class="mar-0 receipt-font">{{ this.getDate() }}</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <table class="products-table">
+        <tr>
+          <th class="receipt-font">Cant.</th>
+          <th class="receipt-font">Item</th>
+          <th class="receipt-font">Precio</th>
+        </tr>
+        <tr v-for="(prod, index) in orderedProducts" :key="index">
+          <td class="receipt-font">{{ prod.op_quantity }}</td>
+          <td class="receipt-font">{{ prod.p_name }}</td>
+          <td class="receipt-font">
+            ${{ parseFloat(prod.p_price).toFixed(2) }}
+          </td>
+        </tr>
+      </table>
+
+      <hr />
+
+      <div class="receipt-resume">
+        <div class="receipt__row">
+          <p class="receipt-font">Total de Items:</p>
+          <p class="receipt-font">{{ orderedProducts.length }}</p>
+        </div>
+        <div class="receipt__row">
+          <p class="receipt-font">Precio total:</p>
+          <p class="receipt-font">${{ calcTotal() }}</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="receipt__row mar-top-10">
+        <p class="receipt-font">Atendido por: Business Owner</p>
+      </div>
+
+      <div class="receipt-footer">
+        <p class="receipt-font">
+          Gracias por apoyar mi <b class="receipt-font">Pequeño negocio</b>
+        </p>
+
+        <div id="qr"></div>
+
+        <p class="receipt-font">littlebusiness.com</p>
+      </div>
+    </div>
   </v-card>
 </template>
 
@@ -124,11 +187,14 @@
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
+import html2pdf from "html2pdf.js";
 
 export default {
   name: "OrderDetails",
 
   props: ["products"],
+
+  components: {},
 
   data: () => {
     return {
@@ -227,17 +293,76 @@ export default {
 
     async uploadOrder() {
       const O = new Order();
+
+      this.getDate();
+
       O.addOrder(this.cart)
         .then((res) => {
-          console.log(res);
+          this.generateReceipt();
         })
         .catch((error) => {
           console.log(error);
         });
     },
 
-    generateTicket() {
-      console.log(this.cart);
+    generateQR(data) {
+      const QR = require("qrcode");
+
+      QR.toCanvas(data, (err, canvas) => {
+        if (err) throw err;
+
+        const QRContainer = document.getElementById("qr");
+
+        QRContainer.innerHTML = "";
+        QRContainer.appendChild(canvas);
+      });
+    },
+
+    generateReceipt() {
+      this.generateQR(this.cart.id_order);
+
+      const receipt = document.getElementById("receipt");
+
+      receipt.classList.remove("hidden");
+      html2pdf(receipt, {
+        filename: "order_" + this.cart.id_order,
+      });
+
+      this.$nextTick(() => {
+        receipt.classList.add("hidden");
+      });
+    },
+
+    getDate() {
+      const today = new Date();
+      const months = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+      ];
+
+      const daysOfWeek = [
+        "Domingo",
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+      ];
+
+      return `${daysOfWeek[today.getDay()]}, ${
+        months[today.getMonth()]
+      } ${today.getDate()}, ${today.getFullYear()}`;
     },
   },
 };
@@ -246,4 +371,5 @@ export default {
 <style lang="css">
 @import "../styles/main.css";
 @import "../styles/product.css";
+@import "../styles/receipt.css";
 </style>

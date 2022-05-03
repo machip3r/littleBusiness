@@ -37,30 +37,23 @@ export default new Vuex.Store({
 
     addOrder(state, payload) {
       state.cart = payload;
-      console.log("From Store - Created New Order: ", state.cart);
     },
 
     addProducts(state, payload) {
       let products = state.cart.o_products;
 
       products.push(payload);
-      console.log("From Store - Added New Product: ", payload);
-      console.log("From Store - Current Cart: ", state.cart);
     },
 
     deleteProduct(state, payload) {
-      console.log("Payload from Store (deleteProduct): ", payload);
-
       const ORDER_PRODUCTS_SIZE = state.cart.o_products.length;
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
         if (payload == state.cart.o_products[i].id_product) {
-          console.log("From store - Deleting: ", state.cart.o_products[i]);
           state.cart.o_products.splice(i, 1);
           break;
         }
       }
-      console.log("From Store - Current Cart: ", state.cart);
     },
 
     incrementQuantity(state, payload) {
@@ -68,15 +61,10 @@ export default new Vuex.Store({
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
         if (payload.id_product == state.cart.o_products[i].id_product) {
-          console.log(
-            `From Store - Incremented ${payload.op_quantity} to product ${state.cart.o_products[i].id_product}`
-          );
           state.cart.o_products[i].op_quantity += payload.op_quantity;
           break;
         }
       }
-
-      console.log("From Store - Current cart: ", state.cart);
     },
 
     decrementQuantity(state, payload) {
@@ -84,9 +72,6 @@ export default new Vuex.Store({
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
         if (payload.id_product == state.cart.o_products[i].id_product) {
-          console.log(
-            `From Store - Decremented ${payload.op_quantity} to product ${state.cart.o_products[i].id_product}`
-          );
           state.cart.o_products[i].op_quantity =
             state.cart.o_products[i].op_quantity > 1
               ? state.cart.o_products[i].op_quantity - payload.op_quantity
@@ -95,8 +80,6 @@ export default new Vuex.Store({
           break;
         }
       }
-
-      console.log("From Store - Current cart: ", state.cart);
     },
 
     resetOrder(state) {
@@ -107,7 +90,6 @@ export default new Vuex.Store({
         o_datetime: "",
         o_status: "Pending",
       };
-      console.log("From Store - Reseted cart: ", state.cart);
     },
   },
 

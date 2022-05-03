@@ -163,13 +163,7 @@
             <h4 class="font-weight-light">{{ date }}</h4>
           </v-col>
           <v-col cols="1" class="ma-0">
-            <v-chip
-              class="pa-4"
-              large
-              text-color="bone"
-              color="darkblue"
-              @click="uploadToCart()"
-            >
+            <v-chip class="pa-4" large text-color="bone" color="darkblue">
               Something
             </v-chip>
           </v-col>
@@ -188,9 +182,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
-import { Order } from "/firebaseAPI/controllers/order.js";
 import ProductDetails from "../../../components/ProductDetails.vue";
 import OrderDetails from "../../../components/OrderDetails.vue";
 
@@ -218,16 +211,6 @@ export default {
         p_category: "",
         p_saved: false,
       },
-      order: {
-        id_order: "",
-        id_user: 0,
-        o_products: [],
-        o_datetime: "",
-        o_status: "",
-      },
-      // quantity: 1, // Pass to state's cart
-      o_products: [], // Pass to state's cart
-      orderedProducts: [], // Pass to cart component
       allProducts: [],
       categories: [
         { name: "All", icon: "fas fa-globe" },
@@ -271,32 +254,6 @@ export default {
     seeProduct(item) {
       this.product = item;
       this.productDialog = true;
-    },
-
-    deleteFromCart(product) {
-      const ORDER_PRODUCTS_SIZE = this.o_products.length;
-      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {
-        if (product.id_product == this.o_products[i].id_product) {
-          console.log("Deleting ", this.o_products[i]);
-          this.o_products.splice(i, 1);
-
-          break;
-        }
-      }
-    },
-
-    // Maybe move it to the products component.
-    getOrderedProducts() {
-      const PRODUCTS_SIZE = this.allProducts.length;
-
-      this.o_products.forEach((prod) => {
-        console.log("prod.id_product: ", prod.id_product);
-        for (let i = 0; i < PRODUCTS_SIZE; i++)
-          if (prod.id_product === this.allProducts[i].id_product) {
-            this.orderedProducts.push(this.allProducts[i]);
-            break;
-          }
-      });
     },
 
     // Adds zeros to the date so it has a consistant format.

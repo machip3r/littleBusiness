@@ -81,6 +81,15 @@
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
         </div>
+        <v-alert
+          color="red"
+          dismissible
+          type="error"
+          style="margin-top: 1rem"
+          v-model="messageErrorShow"
+        >
+          {{ messageError }}
+        </v-alert>
       </v-form>
     </div>
   </div>
@@ -110,17 +119,19 @@ export default {
       showPassword: false,
       showPasswordRepeat: false,
       valid: true,
+      messageError: "",
+      messageErrorShow: false,
     };
   },
   async created() {},
 
   methods: {
     async signUp(type) {
-      if (type == "c") this.$refs.form.validate();
+      if (type == "c") await this.$refs.form.validate();
       if (this.valid) {
         let user = new User(
           this.name,
-          "fotogenerica.com",
+          "https://previews.123rf.com/images/apollofoto/apollofoto0912/apollofoto091200221/6284572-foto-gen%C3%A9rica-de-hombre-de-negocios.jpg",
           this.seller,
           1,
           this.email,
@@ -128,6 +139,7 @@ export default {
         );
         try {
           let response = await user.createAccountUser(type);
+          console.log(response.accessToken);
           this.$store.commit("setSession", response);
           if (this.seller) {
             this.$router.push("AddBusiness");
@@ -135,7 +147,8 @@ export default {
             this.$router.push("Products");
           }
         } catch (error) {
-          console.error(error);
+          this.messageError = error;
+          this.messageErrorShow = true;
         }
       }
     },

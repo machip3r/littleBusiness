@@ -105,7 +105,8 @@ export default {
     async loginFacebook(tipo) {
       try {
         let user = await User.loginFacebook(false);
-        this.$store.commit("setSession", user);
+        await this.$store.commit("setSession", user);
+        this.$router.push("Products");
       } catch (error) {
         this.messageError = error;
         this.messageErrorShow = true;
@@ -114,7 +115,8 @@ export default {
     async loginGoogle(tipo) {
       try {
         let user = await User.loginGoolge(false);
-        this.$store.commit("setSession", user);
+        await this.$store.commit("setSession", user);
+        this.$router.push("Products");
       } catch (error) {
         this.messageError = error;
         this.messageErrorShow = true;
@@ -123,7 +125,7 @@ export default {
     async login() {
       try {
         let user = await User.login(this.email, this.password);
-        this.$store.commit("setSession", user);
+        await this.$store.commit("setSession", user);
         this.$router.push("Products");
       } catch (error) {
         console.log(error);

@@ -18,11 +18,23 @@ const routes = [
     path: "/login",
     name: "Login",
     component: () => import("../views/Login.vue"),
+    beforeEnter: (to, from, next) => {
+      if (store.getters.getAccessToken) {
+        router.push("Products");
+      }
+      next();
+    },
   },
   {
     path: "/signup",
     name: "Sign Up",
     component: () => import("../views/Signup.vue"),
+    beforeEnter: (to, from, next) => {
+      if (store.getters.getAccessToken) {
+        router.push("AddBusiness");
+      }
+      next();
+    },
   },
   {
     path: "/addProduct",

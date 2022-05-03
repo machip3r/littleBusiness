@@ -81,10 +81,20 @@ export class User {
     }
   }
 
+  static async getAdditionalDataUser(uid) {
+    const q = await query(usersCollection, where("uid", "==", uid));
+
+    const docs = await getDocs(q);
+    let userData = null;
+    docs.forEach((value) => {
+      userData = value;
+    });
+
+    return userData.data();
+  }
+
   static async login(email, password) {
     let response = await signInWithEmailAndPassword(auth, email, password);
-    console.log("Respuesta ", response);
-    const user = response.user;
     return auth.currentUser;
   }
 

@@ -238,7 +238,6 @@ export default {
                 op_quantity: prod.op_quantity,
               })
             );
-            console.log(this.orderedProducts);
             break;
           }
         }

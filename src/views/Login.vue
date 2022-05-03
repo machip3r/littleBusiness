@@ -79,9 +79,7 @@ import { User } from "../../firebaseAPI/controllers/user";
 
 export default {
   name: "Login",
-  computed: {
-    ...mapState(["rules"]),
-  },
+
   data: () => {
     return {
       email: "",
@@ -92,19 +90,18 @@ export default {
       messageError: "",
     };
   },
-  computed: {
-    rules() {
-      const rules = [];
 
-      return rules;
-    },
+  computed: {
+    ...mapState(["rules"]),
   },
 
   async created() {},
+
   methods: {
     async loginFacebook(tipo) {
       try {
         let user = await User.loginFacebook(false);
+
         await this.$store.commit("setSession", user);
         this.$router.push("Products");
       } catch (error) {
@@ -112,9 +109,11 @@ export default {
         this.messageErrorShow = true;
       }
     },
+
     async loginGoogle(tipo) {
       try {
         let user = await User.loginGoolge(false);
+
         await this.$store.commit("setSession", user);
         this.$router.push("Products");
       } catch (error) {
@@ -122,9 +121,11 @@ export default {
         this.messageErrorShow = true;
       }
     },
+
     async login() {
       try {
         let user = await User.login(this.email, this.password);
+
         await this.$store.commit("setSession", user);
         this.$router.push("Products");
       } catch (error) {

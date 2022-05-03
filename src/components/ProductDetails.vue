@@ -74,7 +74,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["addOrder", "addProducts"]),
+    ...mapActions(["addOrder", "addProducts", "incrementQuantity"]),
 
     increment() {
       this.quantity = this.quantity > 0 ? this.quantity + 1 : 1;

@@ -98,8 +98,10 @@
 <script>
 import { mapState } from "vuex";
 import { User } from "../../firebaseAPI/controllers/user";
+
 export default {
   name: "Signup",
+
   computed: {
     ...mapState(["rules"]),
     passwordRule() {
@@ -128,6 +130,7 @@ export default {
   methods: {
     async signUp(type) {
       if (type == "c") await this.$refs.form.validate();
+
       if (this.valid) {
         let user = new User(
           this.name,
@@ -137,15 +140,15 @@ export default {
           this.email,
           this.password
         );
+
         try {
           let response = await user.createAccountUser(type);
+
           console.log(response.accessToken);
           this.$store.commit("setSession", response);
-          if (this.seller) {
-            this.$router.push("AddBusiness");
-          } else {
-            this.$router.push("Products");
-          }
+
+          if (this.seller) this.$router.push("AddBusiness");
+          else this.$router.push("Products");
         } catch (error) {
           this.messageError = error;
           this.messageErrorShow = true;

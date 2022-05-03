@@ -119,6 +119,7 @@ export default new Vuex.Store({
       return localStorage.getItem("accessToken");
     },
 
+    // This is not in chikis' commit
     isAuth(state) {
       if (state.user) return true;
       else return false;

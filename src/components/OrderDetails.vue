@@ -42,6 +42,25 @@
             </v-col>
             <v-col class="text-left">
               <v-row>
+                <v-col justify-content="start" class="pa-0">
+                  <span class="ma-0 font-weight-bold">{{
+                    product.p_name
+                  }}</span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="pa-0">
+                  <span class="ma-0 font-weight-light">Business Name</span>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="pa-0">
+                  <span class="ma-0 font-weight-bold"
+                    >${{ parseFloat(product.p_price).toFixed(2) }} MXN</span
+                  >
+                </v-col>
+              </v-row>
+              <!-- <v-row>
                 <v-col justify-content="start">
                   <p class="ma-0 font-weight-bold">{{ product.p_name }}</p>
                 </v-col>
@@ -57,9 +76,9 @@
                     ${{ parseFloat(product.p_price).toFixed(2) }} MXN
                   </p>
                 </v-col>
-              </v-row>
+              </v-row> -->
             </v-col>
-            <v-col align-self="center">
+            <v-col align-self="center" v-if="editable">
               <v-row>
                 <v-col>
                   <div class="d-flex quantityContainer">
@@ -89,6 +108,13 @@
                 </v-col>
               </v-row>
             </v-col>
+            <v-col class="d-flex justify-center align-center" v-else>
+              <v-row>
+                <div class="quantityContainer centered">
+                  <span class="quantity">X{{ product.op_quantity }}</span>
+                </div>
+              </v-row>
+            </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -103,10 +129,14 @@
         <v-spacer></v-spacer>
         <v-col class="my-auto">
           <v-row class="mb-2">
-            <v-btn color="lightblue" large>
-              <v-icon left color="darkblue">fas fa-pencil-alt</v-icon>
-              Editar orden
-            </v-btn>
+            <v-switch
+              inset
+              color="lightblue"
+              large
+              @click="editable = !editable"
+              label="Editar orden"
+            >
+            </v-switch>
           </v-row>
           <v-row class="mt-2">
             <v-btn color="success" large @click="uploadOrder()">
@@ -200,6 +230,7 @@ export default {
     return {
       allProducts: [],
       orderedProducts: [],
+      editable: false,
     };
   },
 

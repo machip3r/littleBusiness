@@ -17,13 +17,30 @@
   font-family: var(--main-font);
 }
 
+.no-margin {
+  margin: 0;
+}
+
+.quantity {
+  font-weight: bold;
+}
+
+.centered {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.non-editable p {
+}
+
 .quantityContainer {
   display: flex;
   width: 99px;
   height: 33px;
   border-radius: 40px;
   background-color: var(--lighter-blue);
-  margin-bottom: 21px;
+  margin: 0 auto;
 }
 
 input[type="number"],

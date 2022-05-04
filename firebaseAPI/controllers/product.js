@@ -80,12 +80,13 @@ export class Product {
             async function save() {
               const docRef = await addDoc(productsCollection, {
                 id_product: body.id_product,
-                id_user: body.id_user,
+                id_business: body.id_business,
                 p_name: body.p_name,
                 p_price: body.p_price,
                 p_photo: downloadURL,
                 p_description: body.p_description,
                 p_category: body.p_category,
+                p_status: true,
               });
               body.p_saved = false;
               return docRef.id;

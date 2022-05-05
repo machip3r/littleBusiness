@@ -1,8 +1,17 @@
 <template>
-  <h1>Agregando negocio</h1>
+  <div></div>
 </template>
+
 <script>
 export default {
-  setup() {},
+  name: "AddBusiness",
+
+  data: () => {
+    return {};
+  },
+
+  methods: {},
 };
 </script>
+
+<style></style>

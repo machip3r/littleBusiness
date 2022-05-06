@@ -17,6 +17,9 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  FacebookAuthProvider,
 } from "firebase/auth";
 
 const collectionName = "user";
@@ -35,26 +38,33 @@ export class User {
 
   // - - - - -  Document Manipulation  - - - - -
 
-  async createAccountUser() {
-    const response = await createUserWithEmailAndPassword(
-      auth,
-      this.email,
-      this.password
-    );
-    const uid = response.user.uid;
-    let resUpdate = await updateProfile(response.user, {
-      displayName: this.u_name,
-      photoURL: this.u_photo,
-    });
+  async createAccountUser(t) {
+    let user = null;
+    if (t == "c") {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        this.email,
+        this.password
+      );
+      const uid = response.user.uid;
+      let additionalData = {
+        uid: uid,
+        type: this.u_type,
+        status: this.u_status,
+      };
+      let resUpdate = await updateProfile(response.user, {
+        displayName: this.u_name,
+        photoURL: this.u_photo,
+      });
+      const docRef = await addDoc(collection(db, "user"), additionalData);
 
-    let additionalData = {
-      uid: uid,
-      type: this.u_type,
-      status: this.u_status,
-    };
-    const docRef = await addDoc(collection(db, "user"), additionalData);
-    console.log("DOcumento escrito ", docRef.id);
-    return { docRef, resUpdate, response };
+      user = response.user;
+    } else if (t == "g") {
+      user = await User.loginGoolge(this.u_type);
+    } else {
+      user = await User.loginFacebook(this.u_type);
+    }
+    return user;
   }
 
   async addUser(body) {
@@ -71,10 +81,68 @@ export class User {
     }
   }
 
+  static async getAdditionalDataUser(uid) {
+    const q = await query(usersCollection, where("uid", "==", uid));
+
+    const docs = await getDocs(q);
+    let userData = null;
+    docs.forEach((value) => {
+      userData = value;
+    });
+
+    return userData.data();
+  }
+
   static async login(email, password) {
     let response = await signInWithEmailAndPassword(auth, email, password);
-    const user = response.user;
     return auth.currentUser;
+  }
+
+  static async searchUid(uid) {
+    const q = query(usersCollection, where("uid", "==", uid));
+    const docs = await getDocs(q);
+
+    return docs;
+  }
+
+  static async loginFacebook(type) {
+    const provider = new FacebookAuthProvider();
+    const auth = getAuth();
+    auth.languageCode = "es";
+    let result = await signInWithPopup(auth, provider);
+    let q = await User.searchUid(result.user.uid.toString());
+
+    if (q.empty) {
+      let additionalData = {
+        uid: result.user.uid,
+        type: type,
+        status: 1,
+      };
+      const docRef = await addDoc(collection(db, "user"), additionalData);
+    }
+
+    console.log(result.user.photoURL, " ", result.user.displayName);
+
+    return result.user;
+  }
+
+  static async loginGoolge(type) {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    auth.languageCode = "es";
+    let result = await signInWithPopup(auth, provider);
+    let q = await User.searchUid(result.user.uid.toString());
+
+    if (q.empty) {
+      let additionalData = {
+        uid: result.user.uid,
+        type: type,
+        status: 1,
+      };
+      const docRef = await addDoc(collection(db, "user"), additionalData);
+    }
+
+    return result.user;
   }
 
   async readUsers() {

@@ -1,6 +1,7 @@
 import { getAuth } from "firebase/auth";
 import Vue from "vue";
 import Vuex from "vuex";
+import { User } from "../../firebaseAPI/controllers/user";
 
 Vue.use(Vuex);
 
@@ -24,20 +25,30 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    setSession(state, payload) {
-      state.user = payload;
+    async setSession(state, payload) {
+      localStorage.setItem("accessToken", JSON.stringify(payload.accessToken));
+
+      let doc = await User.getAdditionalDataUser(payload.uid);
+
+      let userData = {
+        name: payload.displayName,
+        photo: payload.photoURL,
+        uid: payload.uid,
+        type: doc.type,
+      };
+      this.state.user = userData;
+    },
+    cerrarSesion() {
+      localStorage.removeItem("accessToken");
+      this.state.user = null;
     },
   },
   getters: {
     getName(state) {
       return state.user.displayName;
     },
-    getAccesToken(state) {
-      return state.user.accesToken;
-    },
-    isAuth(state) {
-      if (state.user) return true;
-      else return false;
+    getAccessToken(state) {
+      return localStorage.getItem("accessToken");
     },
   },
   actions: {},

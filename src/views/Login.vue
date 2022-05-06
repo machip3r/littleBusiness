@@ -1,7 +1,13 @@
 <template>
   <div class="login-container">
+    <div class="text-mobile">
+      <h1 class="title-mobile">Ingresa</h1>
+      <p class="subtitle-mobile">
+        Accede y disfruta de viajes a tu comodidad y a la hora que decidas
+      </p>
+    </div>
     <div class="form-container">
-      <h1>Bienvenido a Little Business</h1>
+      <h1 class="title-desktop">Bienvenido a Little Business</h1>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           label="Correo electrónico"
@@ -54,8 +60,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import {mapState, mapMutations, mapActions} from "vuex";
+import {User} from "../../firebaseAPI/controllers/user";
 
 export default {
   name: "Login",

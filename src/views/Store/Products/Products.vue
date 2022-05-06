@@ -26,11 +26,11 @@
       <h2>Categorías</h2>
     </div>
 
-    <div class="d-flex justify-space-around">
+    <div class="d-flex justify-space-between">
       <v-icon>fas fa-fork</v-icon>
       <v-btn
-        width="120"
-        height="120"
+        width="90"
+        height="90"
         class="gradient-background"
         elevation="0"
         rounded
@@ -38,10 +38,10 @@
         :key="index"
       >
         <div class="flex-column">
-          <v-icon size="55">{{ category.icon }}</v-icon>
-          <h5>
+          <v-icon size="25">{{ category.icon }}</v-icon>
+          <h6>
             {{ category.name }}
-          </h5>
+          </h6>
         </div>
       </v-btn>
     </div>
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { Product } from "/firebaseAPI/controllers/product.js";
+import {Product} from "/firebaseAPI/controllers/product.js";
 
 export default {
   name: "Products",
@@ -81,16 +81,16 @@ export default {
       },
       allProducts: [],
       categories: [
-        { name: "All", icon: "fas fa-globe" },
-        { name: "Food", icon: "fas fa-utensils" },
-        { name: "Clothes", icon: "fas fa-tshirt" },
-        { name: "Art", icon: "fas fa-paint-brush" },
-        { name: "Services", icon: "fas fa-handshake" },
-        { name: "All", icon: "fas fa-globe" },
-        { name: "Food", icon: "fas fa-utensils" },
-        { name: "Clothes", icon: "fas fa-tshirt" },
-        { name: "Art", icon: "fas fa-paint-brush" },
-        { name: "Services", icon: "fas fa-handshake" },
+        {name: "All", icon: "fas fa-globe"},
+        {name: "Food", icon: "fas fa-utensils"},
+        {name: "Clothes", icon: "fas fa-tshirt"},
+        {name: "Art", icon: "fas fa-paint-brush"},
+        {name: "Services", icon: "fas fa-handshake"},
+        {name: "All", icon: "fas fa-globe"},
+        {name: "Food", icon: "fas fa-utensils"},
+        {name: "Clothes", icon: "fas fa-tshirt"},
+        {name: "Art", icon: "fas fa-paint-brush"},
+        {name: "Services", icon: "fas fa-handshake"},
       ],
     };
   },

@@ -109,10 +109,10 @@ body {
 }
 
 .gradient-background {
-  background: var(--light-blue);
-  background: linear-gradient(
-    235deg,
-    var(--light-blue) 0%,
+  /* background: linear-gradient(
+    210deg,
+    var(--light-blue) 20%,
     rgb(183, 233, 243) 100%
-  );
+  ); */
+  background: linear-gradient(45deg, rgba(183,233,243,1) 0%, rgba(111,212,231,1) 48%, rgba(40,191,219,1) 100%);
 }

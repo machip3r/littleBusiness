@@ -66,6 +66,12 @@
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
         </div>
+        <div class="login-link-container">
+          <p class="login-link-text">
+            ¿No tienes cuenta?
+            <a class="login-link" href="/signup">Regístrate aquí</a>
+          </p>
+        </div>
         <v-alert
           color="red"
           dismissible

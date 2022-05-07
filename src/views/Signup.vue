@@ -1,8 +1,8 @@
 <template>
   <div class="register-container">
     <div class="text-mobile">
-      <h1 class="title-mobile-register">Regístrate</h1>
-      <p class="subtitle-mobile-register">
+      <h1 class="title-mobile">Regístrate</h1>
+      <p class="subtitle-mobile">
         Regístrate y sé parte de esta nueva aplicación y su comunidad
       </p>
     </div>
@@ -92,6 +92,12 @@
           <v-btn class="button-fab" @click="signUp('f')" fab color="secondary">
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
+        </div>
+        <div class="login-link-container">
+          <p class="login-link-text">
+            ¿Ya tienes cuenta?
+            <a class="login-link" href="/">Ingresa aquí</a>
+          </p>
         </div>
         <v-alert
           color="red"

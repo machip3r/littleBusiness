@@ -8,21 +8,28 @@ const routes = [
     path: "/",
     name: "Login",
     component: () => import("../views/Login.vue"),
+    beforeEnter: (to, from, next) => {
+      if (store.getters.getAccessToken) {
+        router.push("Products");
+      }
+      next();
+    },
+  },
+  {
+    path: "/signup",
+    name: "SignUp",
+    component: () => import("../views/SignUp.vue"),
+    beforeEnter: (to, from, next) => {
+      if (store.getters.getAccessToken) {
+        router.push("Products");
+      }
+      next();
+    },
   },
   {
     path: "/user",
     name: "User",
     component: () => import("../views/User.vue"),
-  },
-  /* {
-    path: "/login",
-    name: "Login",
-    component: () => import("../views/Login.vue"),
-  }, */
-  {
-    path: "/signup",
-    name: "SignUp",
-    component: () => import("../views/SignUp.vue"),
   },
   {
     path: "/addProduct",
@@ -38,9 +45,6 @@ const routes = [
     path: "/addbusiness",
     name: "AddBusiness",
     component: () => import("../views/AddBusiness.vue"),
-    beforeEnter: (to, from, next) => {
-      console.log(store.getters.isAuth);
-    },
   },
 ];
 

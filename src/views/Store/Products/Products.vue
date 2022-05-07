@@ -59,6 +59,7 @@
         <p>{{ product.p_name }}</p>
       </v-card>
     </div>
+    <v-btn @click="logOut()" large color="error">Cerrar sesión</v-btn>
   </div>
 </template>
 
@@ -69,6 +70,7 @@ export default {
   name: "Products",
   data() {
     return {
+      messageError: "",
       product: {
         id_user: 1,
         id_product: 0,
@@ -105,6 +107,13 @@ export default {
       await P.readProducts().then(
         (res) => (this.allProducts = P.docsObjectToArray(res))
       );
+    },
+    async logOut() {
+      try {
+        await this.$store.commit("logOut");
+      } catch (error) {
+        this.messageError = error;
+      }
     },
   },
 };

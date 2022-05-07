@@ -77,7 +77,7 @@
         </v-switch>
         <div class="buttons-area">
           <v-btn
-            class="button"
+            class="button button-register"
             @click="signUp('c')"
             color="accent"
             rounded
@@ -99,6 +99,26 @@
             <a class="login-link" href="/">Ingresa aquí</a>
           </p>
         </div>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginGoogle()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-google</v-icon>
+          Iniciar con Google
+        </v-btn>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginFacebook()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-facebook</v-icon>
+          Iniciar con FB
+        </v-btn>
         <v-alert
           color="red"
           dismissible
@@ -157,13 +177,9 @@ export default {
         );
         try {
           let response = await user.createAccountUser(type);
-          console.log(response.accessToken);
           this.$store.commit("setSession", response);
-          if (this.seller) {
-            this.$router.push("AddBusiness");
-          } else {
-            this.$router.push("Products");
-          }
+          if (this.seller) this.$router.push("/addBusiness");
+          else this.$router.push("/products");
         } catch (error) {
           this.messageError = error;
           this.messageErrorShow = true;

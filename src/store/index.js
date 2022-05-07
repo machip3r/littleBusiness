@@ -1,7 +1,7 @@
-import { getAuth } from "firebase/auth";
+import {getAuth} from "firebase/auth";
 import Vue from "vue";
 import Vuex from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import {User} from "../../firebaseAPI/controllers/user";
 
 Vue.use(Vuex);
 
@@ -37,10 +37,12 @@ export default new Vuex.Store({
         type: doc.type,
       };
       this.state.user = userData;
+      window.location.reload();
     },
-    cerrarSesion() {
+    logOut() {
       localStorage.removeItem("accessToken");
       this.state.user = null;
+      window.location.reload();
     },
   },
   getters: {

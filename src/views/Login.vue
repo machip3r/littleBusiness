@@ -3,7 +3,8 @@
     <div class="text-mobile">
       <h1 class="title-mobile">Ingresa</h1>
       <p class="subtitle-mobile">
-        Accede y disfruta de viajes a tu comodidad y a la hora que decidas
+        Accede y disfruta de los productos de la comodidad y a la hora que
+        decidas
       </p>
     </div>
     <div class="form-container">
@@ -40,7 +41,7 @@
 
         <div class="buttons-area">
           <v-btn
-            class="button"
+            class="button button-login"
             color="accent"
             @click="login()"
             rounded
@@ -72,6 +73,26 @@
             <a class="login-link" href="/signup">Regístrate aquí</a>
           </p>
         </div>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginGoogle()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-google</v-icon>
+          Iniciar con Google
+        </v-btn>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginFacebook()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-facebook</v-icon>
+          Iniciar con FB
+        </v-btn>
         <v-alert
           color="red"
           dismissible
@@ -115,7 +136,7 @@ export default {
 
   async created() {},
   methods: {
-    async loginFacebook(tipo) {
+    async loginFacebook() {
       try {
         let user = await User.loginFacebook(false);
         await this.$store.commit("setSession", user);
@@ -125,7 +146,7 @@ export default {
         this.messageErrorShow = true;
       }
     },
-    async loginGoogle(tipo) {
+    async loginGoogle() {
       try {
         let user = await User.loginGoolge(false);
         await this.$store.commit("setSession", user);

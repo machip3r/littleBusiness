@@ -52,7 +52,7 @@ const routes = [
   {
     path: "/addBusiness",
     name: "AddBusiness",
-    component: () => import("../views/AddBusiness.vue"),
+    component: () => import("../views/Store/Business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();

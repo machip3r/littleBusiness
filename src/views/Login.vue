@@ -7,7 +7,8 @@
       </p>
     </div>
     <div class="form-container">
-      <h1 class="title-desktop">Bienvenido a Little Business</h1>
+      <h1 class="title-desktop">Ingresa a LittleBusiness</h1>
+      <br />
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           label="Correo electrónico"

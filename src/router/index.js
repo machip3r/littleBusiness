@@ -6,16 +6,6 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("../views/Home.vue"),
-  },
-  {
-    path: "/user",
-    name: "User",
-    component: () => import("../views/User.vue"),
-  },
-  {
-    path: "/login",
     name: "Login",
     component: () => import("../views/Login.vue"),
     beforeEnter: (to, from, next) => {
@@ -27,18 +17,23 @@ const routes = [
   },
   {
     path: "/signup",
-    name: "Sign Up",
-    component: () => import("../views/Signup.vue"),
+    name: "SignUp",
+    component: () => import("../views/SignUp.vue"),
     beforeEnter: (to, from, next) => {
       if (store.getters.getAccessToken) {
-        router.push("AddBusiness");
+        router.push("Products");
       }
       next();
     },
   },
   {
+    path: "/user",
+    name: "User",
+    component: () => import("../views/User.vue"),
+  },
+  {
     path: "/addProduct",
-    name: "New Product",
+    name: "NewProduct",
     component: () => import("../views/Store/Products/AddProduct.vue"),
   },
   {

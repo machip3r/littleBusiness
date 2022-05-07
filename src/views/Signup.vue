@@ -1,7 +1,14 @@
 <template>
-  <div class="login-container">
-    <div class="form-container">
-      <h1>Bienvenido a Little Business</h1>
+  <div class="register-container">
+    <div class="text-mobile">
+      <h1 class="title-mobile-register">Regístrate</h1>
+      <p class="subtitle-mobile-register">
+        Regístrate y sé parte de esta nueva aplicación y su comunidad
+      </p>
+    </div>
+    <div class="form-container-register">
+      <h1 class="title-desktop">Regístrate en LB</h1>
+      <br />
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           label="Nombre"
@@ -43,7 +50,7 @@
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-text-field
-          label="Repite la contraseña"
+          label="Confirma contraseña"
           color="primary"
           background-color="secondary"
           prepend-inner-icon="fas fa-lock"
@@ -57,12 +64,17 @@
           required
           @click:append="showPasswordRepeat = !showPasswordRepeat"
         ></v-text-field>
-        <v-checkbox
+        <v-switch
+          class="switch-seller"
           v-model="seller"
-          color="primary"
-          background-color="secondary"
-          :label="'¿Eres vendedor?'"
-        ></v-checkbox>
+          color="accent"
+          inset
+          dark
+        >
+          <template v-slot:label>
+            <h6 class="switch-label">¿Eres Vendedor?</h6>
+          </template>
+        </v-switch>
         <div class="buttons-area">
           <v-btn
             class="button"
@@ -96,8 +108,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import {mapState} from "vuex";
+import {User} from "../../firebaseAPI/controllers/user";
 export default {
   name: "Signup",
   computed: {

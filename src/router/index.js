@@ -41,24 +41,6 @@ const routes = [
     },
   },
   {
-    path: "/addProduct",
-    name: "NewProduct",
-    component: () => import("../views/products/AddProduct.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-  },
-  {
-    path: "/products",
-    name: "Products",
-    component: () => import("../views/products/Products.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-  },
-  {
     path: "/addBusiness",
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
@@ -72,6 +54,69 @@ const routes = [
     path: "/business",
     name: "Business",
     component: () => import("../views/business/Business.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: () => import("../views/business/Dashboard.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/information",
+    name: "Information",
+    component: () => import("../views/business/Information.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/review",
+    name: "Review",
+    component: () => import("../views/business/Review.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/addProduct",
+    name: "AddProduct",
+    component: () => import("../views/products/AddProduct.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: () => import("../views/products/Cart.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/product",
+    name: "Product",
+    component: () => import("../views/products/ProductInfo.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/products",
+    name: "Products",
+    component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();

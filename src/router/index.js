@@ -6,50 +6,121 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("../views/Home.vue"),
-  },
-  {
-    path: "/user",
-    name: "User",
-    component: () => import("../views/User.vue"),
-  },
-  {
-    path: "/login",
     name: "Login",
     component: () => import("../views/Login.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) {
-        router.push("Products");
-      }
+      if (store.getters.getAccessToken) router.push("/products");
       next();
     },
   },
   {
     path: "/signup",
-    name: "Sign Up",
+    name: "SignUp",
     component: () => import("../views/Signup.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) {
-        router.push("AddBusiness");
-      }
+      if (store.getters.getAccessToken) router.push("/products");
+      next();
+    },
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: () => import("../views/Home.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/user",
+    name: "User",
+    component: () => import("../views/User.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/addBusiness",
+    name: "AddBusiness",
+    component: () => import("../views/business/AddBusiness.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  /* Agregar restriccion de entrada si no es vendedor */
+  {
+    path: "/business",
+    name: "Business",
+    component: () => import("../views/business/Business.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: () => import("../views/business/Dashboard.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/information",
+    name: "Information",
+    component: () => import("../views/business/Information.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/review",
+    name: "Review",
+    component: () => import("../views/business/Review.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
       next();
     },
   },
   {
     path: "/addProduct",
-    name: "New Product",
-    component: () => import("../views/Store/Products/AddProduct.vue"),
+    name: "AddProduct",
+    component: () => import("../views/products/AddProduct.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
   },
+  // {
+  //   path: "/cart",
+  //   name: "Cart",
+  //   component: () => import("../views/products/Cart.vue"),
+  //   beforeEnter: (to, from, next) => {
+  //     if (!store.getters.getAccessToken) router.push("/");
+  //     next();
+  //   },
+  // },
+  // {
+  //   path: "/product",
+  //   name: "Product",
+  //   component: () => import("../views/products/ProductInfo.vue"),
+  //   beforeEnter: (to, from, next) => {
+  //     if (!store.getters.getAccessToken) router.push("/");
+  //     next();
+  //   },
+  // },
   {
     path: "/products",
     name: "Products",
-    component: () => import("../views/Store/Products/Products.vue"),
-  },
-  {
-    path: "/addBusiness",
-    name: "AddBusiness",
-    component: () => import("../views/AddBusiness.vue"),
+    component: () => import("../views/products/Products.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
   },
 ];
 

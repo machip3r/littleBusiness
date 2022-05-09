@@ -178,14 +178,15 @@
         <OrderDetails :key="update" />
       </v-card>
     </v-dialog>
+    <v-btn @click="logOut()" large color="error">Cerrar sesión</v-btn>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
-import ProductDetails from "../../../components/ProductDetails.vue";
-import OrderDetails from "../../../components/OrderDetails.vue";
+import ProductDetails from "../../components/ProductDetails.vue";
+import OrderDetails from "../../components/OrderDetails.vue";
 
 export default {
   name: "Products",
@@ -267,11 +268,19 @@ export default {
         today.getMonth() + 1
       )}/${today.getFullYear()}`;
     },
+
+    async logOut() {
+      try {
+        await this.$store.commit("logOut");
+      } catch (error) {
+        this.messageError = error;
+      }
+    },
   },
 };
 </script>
 
 <style lang="css">
-@import "../../../styles/main.css";
-@import "../../../styles/product.css";
+@import "../../styles/main.css";
+@import "../../styles/product.css";
 </style>

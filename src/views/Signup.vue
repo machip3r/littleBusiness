@@ -1,7 +1,14 @@
 <template>
-  <div class="login-container">
-    <div class="form-container">
-      <h1>Bienvenido a Little Business</h1>
+  <div class="register-container">
+    <div class="text-mobile">
+      <h1 class="title-mobile">Regístrate</h1>
+      <p class="subtitle-mobile">
+        Regístrate y sé parte de esta nueva aplicación y su comunidad
+      </p>
+    </div>
+    <div class="form-container-register">
+      <h1 class="title-desktop">Regístrate en LB</h1>
+      <br />
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
           label="Nombre"
@@ -43,7 +50,7 @@
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-text-field
-          label="Repite la contraseña"
+          label="Confirma contraseña"
           color="primary"
           background-color="secondary"
           prepend-inner-icon="fas fa-lock"
@@ -57,15 +64,20 @@
           required
           @click:append="showPasswordRepeat = !showPasswordRepeat"
         ></v-text-field>
-        <v-checkbox
+        <v-switch
+          class="switch-seller"
           v-model="seller"
-          color="primary"
-          background-color="secondary"
-          :label="'¿Eres vendedor?'"
-        ></v-checkbox>
+          color="accent"
+          inset
+          dark
+        >
+          <template v-slot:label>
+            <h6 class="switch-label">¿Eres Vendedor?</h6>
+          </template>
+        </v-switch>
         <div class="buttons-area">
           <v-btn
-            class="button"
+            class="button button-register"
             @click="signUp('c')"
             color="accent"
             rounded
@@ -81,6 +93,32 @@
             <v-icon color="primary">fab fa-facebook</v-icon>
           </v-btn>
         </div>
+        <div class="login-link-container">
+          <p class="login-link-text">
+            ¿Ya tienes cuenta?
+            <a class="login-link" href="/">Ingresa aquí</a>
+          </p>
+        </div>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginGoogle()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-google</v-icon>
+          Iniciar con Google
+        </v-btn>
+        <v-btn
+          class="button button-large"
+          color="secondary"
+          @click="loginFacebook()"
+          rounded
+          dense
+          large
+          ><v-icon left color="primary">fab fa-facebook</v-icon>
+          Iniciar con FB
+        </v-btn>
         <v-alert
           color="red"
           dismissible
@@ -143,12 +181,9 @@ export default {
 
         try {
           let response = await user.createAccountUser(type);
-
-          console.log(response.accessToken);
           this.$store.commit("setSession", response);
-
-          if (this.seller) this.$router.push("AddBusiness");
-          else this.$router.push("Products");
+          if (this.seller) this.$router.push("/addBusiness");
+          else this.$router.push("/products");
         } catch (error) {
           this.messageError = error;
           this.messageErrorShow = true;

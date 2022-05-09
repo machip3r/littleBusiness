@@ -45,11 +45,12 @@ export default new Vuex.Store({
       };
 
       this.state.user = userData;
+      window.location.reload();
     },
-
-    cerrarSesion() {
+    logOut() {
       localStorage.removeItem("accessToken");
       this.state.user = null;
+      window.location.reload();
     },
 
     addOrder(state, payload) {

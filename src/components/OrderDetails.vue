@@ -60,23 +60,6 @@
                   >
                 </v-col>
               </v-row>
-              <!-- <v-row>
-                <v-col justify-content="start">
-                  <p class="ma-0 font-weight-bold">{{ product.p_name }}</p>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <p class="ma-0 font-weight-light">Business Name</p>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <p class="ma-0 font-weight-bold">
-                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
-                  </p>
-                </v-col>
-              </v-row> -->
             </v-col>
             <v-col align-self="center" v-if="editable">
               <v-row>

@@ -23,6 +23,15 @@ const routes = [
     },
   },
   {
+    path: "/home",
+    name: "Home",
+    component: () => import("../views/Home.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
     path: "/user",
     name: "User",
     component: () => import("../views/User.vue"),
@@ -34,7 +43,7 @@ const routes = [
   {
     path: "/addProduct",
     name: "NewProduct",
-    component: () => import("../views/Store/Products/AddProduct.vue"),
+    component: () => import("../views/products/AddProduct.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();
@@ -43,7 +52,7 @@ const routes = [
   {
     path: "/products",
     name: "Products",
-    component: () => import("../views/Store/Products/Products.vue"),
+    component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();
@@ -52,7 +61,17 @@ const routes = [
   {
     path: "/addBusiness",
     name: "AddBusiness",
-    component: () => import("../views/Store/Business/AddBusiness.vue"),
+    component: () => import("../views/business/AddBusiness.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  /* Agregar restriccion de entrada si no es vendedor */
+  {
+    path: "/business",
+    name: "Business",
+    component: () => import("../views/business/Business.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();

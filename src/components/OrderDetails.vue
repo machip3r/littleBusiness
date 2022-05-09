@@ -197,9 +197,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
-import { Order } from "/firebaseAPI/controllers/order.js";
+import {mapState, mapActions} from "vuex";
+import {Product} from "/firebaseAPI/controllers/product.js";
+import {Order} from "/firebaseAPI/controllers/order.js";
 import html2pdf from "html2pdf.js";
 
 export default {
@@ -265,7 +265,7 @@ export default {
         if (id_product == this.orderedProducts[i].id_product)
           this.orderedProducts[i].op_quantity++;
 
-      this.incrementQuantity({ id_product: id_product, op_quantity: 1 });
+      this.incrementQuantity({id_product: id_product, op_quantity: 1});
       this.$forceUpdate();
     },
 
@@ -279,7 +279,7 @@ export default {
               ? this.orderedProducts[i].op_quantity - 1
               : 1;
 
-      this.decrementQuantity({ id_product: id_product, op_quantity: 1 });
+      this.decrementQuantity({id_product: id_product, op_quantity: 1});
       this.$forceUpdate();
     },
 
@@ -380,9 +380,3 @@ export default {
   },
 };
 </script>
-
-<style lang="css">
-@import "../styles/main.css";
-@import "../styles/product.css";
-@import "../styles/receipt.css";
-</style>

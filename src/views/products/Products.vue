@@ -183,8 +183,8 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
+import {mapState, mapActions} from "vuex";
+import {Product} from "/firebaseAPI/controllers/product.js";
 import ProductDetails from "../../components/ProductDetails.vue";
 import OrderDetails from "../../components/OrderDetails.vue";
 
@@ -214,16 +214,16 @@ export default {
       },
       allProducts: [],
       categories: [
-        { name: "All", icon: "fas fa-globe" },
-        { name: "Food", icon: "fas fa-utensils" },
-        { name: "Clothes", icon: "fas fa-tshirt" },
-        { name: "Art", icon: "fas fa-paint-brush" },
-        { name: "Services", icon: "fas fa-handshake" },
-        { name: "All", icon: "fas fa-globe" },
-        { name: "Food", icon: "fas fa-utensils" },
-        { name: "Clothes", icon: "fas fa-tshirt" },
-        { name: "Art", icon: "fas fa-paint-brush" },
-        { name: "Services", icon: "fas fa-handshake" },
+        {name: "All", icon: "fas fa-globe"},
+        {name: "Food", icon: "fas fa-utensils"},
+        {name: "Clothes", icon: "fas fa-tshirt"},
+        {name: "Art", icon: "fas fa-paint-brush"},
+        {name: "Services", icon: "fas fa-handshake"},
+        {name: "All", icon: "fas fa-globe"},
+        {name: "Food", icon: "fas fa-utensils"},
+        {name: "Clothes", icon: "fas fa-tshirt"},
+        {name: "Art", icon: "fas fa-paint-brush"},
+        {name: "Services", icon: "fas fa-handshake"},
       ],
     };
   },
@@ -279,8 +279,3 @@ export default {
   },
 };
 </script>
-
-<style lang="css">
-@import "../../styles/main.css";
-@import "../../styles/product.css";
-</style>

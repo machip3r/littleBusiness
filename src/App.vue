@@ -11,6 +11,8 @@
 @import "./styles/main.css";
 @import "./styles/login.css";
 @import "./styles/user.css";
+@import "./styles/product.css";
+@import "./styles/receipt.css";
 </style>
 
 <script>

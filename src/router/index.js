@@ -30,6 +30,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Home"},
   },
   {
     path: "/user",
@@ -39,6 +40,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "User"},
   },
   {
     path: "/addBusiness",
@@ -58,6 +60,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Dashboard"},
   },
   {
     path: "/information",
@@ -67,6 +70,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Information"},
   },
   {
     path: "/review",
@@ -76,6 +80,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Review"},
   },
   {
     path: "/addProduct",
@@ -86,24 +91,25 @@ const routes = [
       next();
     },
   },
-  // {
-  //   path: "/cart",
-  //   name: "Cart",
-  //   component: () => import("../views/products/Cart.vue"),
-  //   beforeEnter: (to, from, next) => {
-  //     if (!store.getters.getAccessToken) router.push("/");
-  //     next();
-  //   },
-  // },
-  // {
-  //   path: "/product",
-  //   name: "Product",
-  //   component: () => import("../views/products/ProductInfo.vue"),
-  //   beforeEnter: (to, from, next) => {
-  //     if (!store.getters.getAccessToken) router.push("/");
-  //     next();
-  //   },
-  // },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: () => import("../components/OrderDetails.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: {title: "Cart"},
+  },
+  {
+    path: "/product",
+    name: "Product",
+    component: () => import("../components/ProductDetails.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
   {
     path: "/products",
     name: "Products",
@@ -112,6 +118,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Products"},
   },
 ];
 

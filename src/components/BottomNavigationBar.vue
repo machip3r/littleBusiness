@@ -1,16 +1,32 @@
 <template>
   <v-bottom-navigation
-    :active.sync="bottomNav"
-    color="accent"
     background-color="primary"
     shift
+    v-model="bottomNav"
     fixed
     grow
     v-if="isClientNavigation || isSellerNavigation"
   >
-    <v-btn v-for="item in items" :key="item.title" link :to="{name: item.to}">
-      <span>{{ item.title }}</span>
-      <v-icon color="secondary">{{ item.icon }}</v-icon>
+    <v-btn
+      v-for="item in items"
+      :key="item.to"
+      link
+      :to="{name: item.to}"
+      @click="keyNav = item.to"
+      :style="{
+        backgroundColor:
+          keyNav == item.to ? 'var(--light-blue)' : 'var(--dark-blue)',
+      }"
+    >
+      <span
+        :style="{
+          color: keyNav == item.to ? 'var(--dark-blue)' : 'var(--bone)',
+        }"
+        >{{ item.title }}</span
+      >
+      <v-icon :color="keyNav == item.to ? 'primary' : 'secondary'">{{
+        item.icon
+      }}</v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>
@@ -19,11 +35,21 @@
 export default {
   data() {
     return {
-      drawer: true,
-      items: [],
+      items: [
+        {title: "Inicio", icon: "fas fa-store", to: "Home"},
+        {title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart"},
+        {title: "Perfil", icon: "fas fa-user", to: "User"},
+      ],
       bottomNav: 0,
-      isSeller: 0,
+      keyNav: "Home",
     };
+  },
+
+  created() {
+    setTimeout(() => {
+      this.keyNav = this.$route.name;
+      console.log(this.keyNav);
+    }, 1000);
   },
 
   methods: {},

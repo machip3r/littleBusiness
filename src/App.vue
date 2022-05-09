@@ -3,6 +3,7 @@
     <v-main>
       <router-view />
     </v-main>
+    <BottomNavigationBar />
   </v-app>
 </template>
 
@@ -13,11 +14,15 @@
 </style>
 
 <script>
+import BottomNavigationBar from "@/components/BottomNavigationBar";
+
 export default {
   name: "App",
 
-  data: () => ({
-    //
-  }),
+  data: () => ({}),
+
+  components: {
+    BottomNavigationBar,
+  },
 };
 </script>

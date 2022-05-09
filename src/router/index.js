@@ -9,7 +9,7 @@ const routes = [
     name: "Login",
     component: () => import("../views/Login.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) router.push("/products");
+      if (store.getters.getAccessToken) router.push("/home");
       next();
     },
   },
@@ -18,7 +18,7 @@ const routes = [
     name: "SignUp",
     component: () => import("../views/SignUp.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) router.push("/products");
+      if (store.getters.getAccessToken) router.push("/home");
       next();
     },
   },
@@ -50,15 +50,6 @@ const routes = [
     },
   },
   /* Agregar restriccion de entrada si no es vendedor */
-  {
-    path: "/business",
-    name: "Business",
-    component: () => import("../views/business/Business.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-  },
   {
     path: "/dashboard",
     name: "Dashboard",

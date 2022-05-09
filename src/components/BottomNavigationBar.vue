@@ -1,39 +1,23 @@
 <template>
-  <nav>
-    <v-navigation-drawer
-      v-model="drawer"
-      width="80"
-      color="primary"
-      permanent
-      app
+  <v-bottom-navigation
+    :active.sync="bottomNav"
+    :color="color"
+    :value="true"
+    absolute
+    shift
+    fixed
+    grow
+  >
+    <v-btn
+      v-for="item in itemsHome"
+      :key="item.title"
+      link
+      :to="{name: item.to}"
     >
-      <v-list-item link :to="{name: 'About'}" class="px-2">
-        <v-spacer></v-spacer>
-        <v-list-item-icon class="list-item-icon-top">
-          <v-icon size="30">fas fa-code </v-icon>
-        </v-list-item-icon>
-        <v-spacer></v-spacer>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <v-list dense>
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
-          link
-          :to="{name: item.to}"
-          class="list-item"
-        >
-          <v-spacer></v-spacer>
-          <v-list-item-icon class="list-item-icon">
-            <v-icon size="30">{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-spacer></v-spacer>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </nav>
+      <span>{{ item.title }}</span>
+      <v-icon>{{ item.icon }}</v-icon>
+    </v-btn>
+  </v-bottom-navigation>
 </template>
 
 <script>
@@ -53,8 +37,27 @@ export default {
         {title: "Reseñas", icon: "fas fa-star", to: "Review"},
         {title: "Información", icon: "fas fa-info-circle", to: "Information"},
       ],
-      mini: true,
+      bottomNav: 0,
     };
+  },
+
+  methods: {},
+
+  computed: {
+    color() {
+      switch (this.bottomNav) {
+        case 0:
+          return "blue-grey";
+        case 1:
+          return "teal";
+        case 2:
+          return "brown";
+        case 3:
+          return "indigo";
+        default:
+          return "blue-grey";
+      }
+    },
   },
 };
 </script>

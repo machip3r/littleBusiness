@@ -136,6 +136,7 @@
 <script>
 import {mapState} from "vuex";
 import {User} from "../../firebaseAPI/controllers/user";
+
 export default {
   name: "Signup",
   computed: {

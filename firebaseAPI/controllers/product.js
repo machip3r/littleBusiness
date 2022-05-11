@@ -42,6 +42,8 @@ const comprimirImagen = (imagenComoArchivo, porcentajeCalidad) => {
   });
 };
 
+const TAM_MAX = 1000000;
+
 //-----------------------------------------------------------
 
 export class Product {
@@ -59,7 +61,14 @@ export class Product {
       body.id_product = await this.#newIDProduct();
       //----Comprimir Imagen-------------------------
       const archivo = body.p_photo;
-      const blob = await comprimirImagen(archivo, 1);
+      if (archivo.size > TAM_MAX)
+      {
+        const reduccion = parseInt(TAM_MAX*100/archivo.size);
+        const blob = await comprimirImagen(archivo, reduccion);
+      }
+      else {
+        const blob = await comprimirImagen(archivo, 100);
+      }
       //---------------------------------------------
       const metadata = {
         contentType: "image/jpeg",

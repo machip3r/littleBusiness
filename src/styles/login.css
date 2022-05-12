@@ -15,14 +15,135 @@
   align-items: center;
 }
 
-.login-container h1 {
-  margin-bottom: 50px;
+.register-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.form-container {
+.form-container,
+.form-container-register {
   background-color: #2d3440;
   color: #f8f0ee;
-  width: 30%;
+  width: 50%;
   padding: 4em;
   border-radius: 70px;
+  box-shadow: 0 10px 60px rgba(0, 0, 0, 0.19), 0 10px 10px rgba(0, 0, 0, 0.23);
+}
+
+.switch-seller {
+  margin-top: 5px !important;
+}
+
+.switch-label {
+  font-size: 1em;
+  color: var(--bone);
+}
+
+.buttons-area {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.button-fab {
+  width: 10%;
+  width: 50px;
+  height: 50px !important;
+}
+
+.login-link-container {
+  margin-top: 10px;
+}
+
+.login-link {
+  font-weight: 900;
+}
+
+@media (min-width: 1000px) {
+  .form-container {
+    width: 50%;
+  }
+  .text-mobile {
+    display: none;
+  }
+  .title-desktop {
+    display: block;
+  }
+  .button-large {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .login-container,
+  .register-container {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .form-container {
+    width: 100%;
+    margin-bottom: 0;
+    border-radius: 0px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    padding: 4em 2em 4em 2em;
+    height: auto;
+  }
+  .form-container-register {
+    width: 100%;
+    margin-bottom: 0;
+    border-radius: 0px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    padding: 4em 2em 4em 2em;
+    height: auto;
+  }
+  .text-mobile {
+    display: block;
+    text-align: left;
+    margin-top: 1em;
+  }
+  .title-mobile {
+    margin: 1em 0 0 0.5em;
+  }
+  .subtitle-mobile {
+    text-align: left;
+    margin: 0 1.8em 0;
+    font-size: 1.05em;
+  }
+  .title-desktop {
+    display: none;
+  }
+  .buttons-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .button {
+    width: 65%;
+  }
+  .button-login,
+  .button-register {
+    width: 100%;
+  }
+  .button-large {
+    display: block;
+    width: 100%;
+    color: var(--dark-blue) !important;
+    margin-bottom: 15px;
+  }
+  .button-fab {
+    width: 10%;
+    margin-top: 2px;
+    width: 45px !important;
+    height: 45px !important;
+    display: none !important;
+  }
 }

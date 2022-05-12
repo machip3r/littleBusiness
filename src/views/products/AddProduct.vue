@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { Product } from "/firebaseAPI/controllers/product.js";
+import {Product} from "/firebaseAPI/controllers/product.js";
 
 export default {
   name: "AddProduct",
@@ -114,8 +114,8 @@ export default {
   },
   methods: {
     async addNewProduct() {
-      const P = new Product();
-      P.addProduct(this.product).then().catch();
+      const product = new Product();
+      product.addProduct(this.product).then().catch();
     },
   },
 };

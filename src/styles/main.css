@@ -30,10 +30,15 @@
 /* GENERAL */
 
 :root {
+  --lighter-blue: #b7e9f3;
   --light-blue: #28bfdb;
-  --bone: #f8f0ee;
-  --light-red: #ef424c;
   --dark-blue: #2d3440;
+
+  --lighter-red: #ffd5d5;
+  --light-red: #ef424c;
+
+  --bone: #f8f0ee;
+  --main-font: "Nunito", sans-serif;
 }
 
 * {
@@ -76,6 +81,16 @@ h6 {
   font-size: 0.8em;
 }
 
+a {
+  color: rgba(111, 212, 231, 1) !important;
+  transition: all 0.3s ease-in-out;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--bone) !important;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
@@ -86,15 +101,8 @@ body {
   background-color: #ffffff !important;
 }
 
-.buttons-area {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 .button {
-  font-family: "Nunito", sans-serif;
+  font-family: "Nunito", sans-serif !important;
   font-weight: 900 !important;
   font-size: 1.2em !important;
   text-transform: none !important;
@@ -102,17 +110,16 @@ body {
   width: 70%;
 }
 
-.button-fab {
-  width: 10%;
-  width: 50px;
-  height: 50px !important;
-}
-
 .gradient-background {
-  background: var(--light-blue);
-  background: linear-gradient(
-    235deg,
-    var(--light-blue) 0%,
+  /* background: linear-gradient(
+    210deg,
+    var(--light-blue) 20%,
     rgb(183, 233, 243) 100%
+  ); */
+  background: linear-gradient(
+    45deg,
+    rgba(183, 233, 243, 1) 0%,
+    rgba(111, 212, 231, 1) 48%,
+    rgba(40, 191, 219, 1) 100%
   );
 }

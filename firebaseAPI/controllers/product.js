@@ -61,14 +61,7 @@ export class Product {
       body.id_product = await this.#newIDProduct();
       //----Comprimir Imagen-------------------------
       const archivo = body.p_photo;
-      if (archivo.size > TAM_MAX)
-      {
-        const reduccion = parseInt(TAM_MAX*100/archivo.size);
-        const blob = await comprimirImagen(archivo, reduccion);
-      }
-      else {
-        const blob = await comprimirImagen(archivo, 100);
-      }
+      const blob = await comprimirImagen(archivo, 80);
       //---------------------------------------------
       const metadata = {
         contentType: "image/jpeg",

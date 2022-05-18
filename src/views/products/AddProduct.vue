@@ -5,14 +5,21 @@
       <v-col class="d-none d-sm-flex" cols="2" md="3"></v-col>
       <v-col cols="12" sm="8" md="6" align-self="center">
         <v-form ref="form" lazy-validation class="mt-5 mb-10" v-model="valid">
-          <v-alert 
-          type="error"
-          :value="alert"
-          v-model="alert"
-          >
-            Error en el llenado del formulario.
-          </v-alert>
+          
+          <AlertDialog 
+            :d_title ="posts.d_title" 
+            :d_value = "posts.d_value"
+            :d_message = "posts.d_message"
+            :d_cancel = "posts.d_cancel"
+            :d_accept = "posts.d_accept"
+            :d_color = "posts.d_color"
+            :d_icon = "posts.d_icon"
+            @dialog-accept="acceptButtonDialog(posts.id)"
+            @dialog-cancel="posts.d_value = false"
+          />
+          
           <v-file-input
+            ref="image"
             v-model="product.p_photo"
             label="Foto del producto"
             color="primary"
@@ -100,12 +107,49 @@
 
 <script>
 import {Product} from "/firebaseAPI/controllers/product.js";
+import AlertDialog from "../../components/Dialog.vue";
 
 export default {
   name: "AddProduct",
+  components: {
+      AlertDialog
+  },
   data() {
+    
     return {
-      alert: false,
+      posts: {
+          id: null,
+          d_value: false,
+          d_title: "",
+          d_message: "",
+          d_cancel: "",
+          d_accept: "",
+          d_color: "",
+          d_icon: ""
+      },
+      dialog: [
+        {
+          //Dialogo: Tamaño de Imagen 
+          id: 0,
+          d_value: true,
+          d_title: "Image Size Exceeded",
+          d_message: "Select an image with a smaller size",
+          d_cancel: "Ok",
+          d_accept: "Ok",
+          d_color: "error",
+          d_icon: "fa fa-times"},
+        {
+          //Dialogo: (Prueba) Modificar Producto
+          id: 1,
+          d_value: true,
+          d_title: "Edit Product",
+          d_message: "Are you sure to edit this product?",
+          d_cancel: "Ok",
+          d_accept: "Yes, update",
+          d_color: "primary",
+          d_icon: "fa fa-edit"
+        },
+      ],
       valid: true,
       rules: [
         value => !value || value.size < 2000000 || 'El archivo debe ser menor a 2MB',
@@ -123,13 +167,7 @@ export default {
       items: ["Comida", "Stickers", "Dulces", "Bebidas", "Ropa", "Panaderia"],
     };
   },
-  watch: {
-    alert(new_val){
-      if(new_val){
-        setTimeout(()=>{this.alert=false},3000)
-      }
-    }  
-  },
+ 
   async created() {
     // Validar que el usuario esté loggeado
   },
@@ -141,10 +179,34 @@ export default {
         product.addProduct(this.product).then().catch();
       }
       else
-      {
-        this.alert = true      
+      {  
+        // 0 -> Dialogo de imagen grande
+        // 1 -> (Prueba) Dialogo editar producto    
+        this.showDialog(0)      
       }
     },
+     showDialog(id) {
+      this.posts.id = this.dialog[id].id;
+      this.posts.d_value = this.dialog[id].d_value;
+      this.posts.d_title = this.dialog[id].d_title;
+      this.posts.d_message = this.dialog[id].d_message;
+      this.posts.d_cancel = this.dialog[id].d_cancel;
+      this.posts.d_accept = this.dialog[id].d_accept;
+      this.posts.d_color = this.dialog[id].d_color;
+      this.posts.d_icon = this.dialog[id].d_icon;
+    },
+    acceptButtonDialog(id) {
+      switch(id)
+      {
+        case 0:
+          this.$refs.image.reset();
+          this.posts.d_value = false;
+          break;
+        default:
+          break;
+      }
+    }
+
   },
 };
 </script>

@@ -109,7 +109,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import User from "../../firebaseAPI/controllers/user";
 
 export default {
   name: "Login",

@@ -1,34 +1,7 @@
 /* FONTS */
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;900&family=Roboto:wght@300;400;900&display=swap");
 
-/*
-    NUNITO
-    font-family: 'Nunito Sans', sans-serif;
-        LIGHT
-        font-weight: 300;
-        BLACK
-        font-weight: 900;
-    ROBOTO
-    font-family: 'Roboto', sans-serif;
-        LIGHT
-        font-weight: 300;
-        REGULAR
-        font-weight: 400;
-        BLACK
-        font-weight: 900;
-*/
-
-/* COLORS */
-/*
-  HEX
-    AZUL CLARO: 28BFDB
-    HUESO: F8F0EE
-    ROJO CLARO: EF424C
-    AZUL OSCURO 2D3440
-*/
-
 /* GENERAL */
-
 :root {
   --lighter-blue: #b7e9f3;
   --light-blue: #28bfdb;
@@ -53,7 +26,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Nunito", sans-serif;
+  font-family: var(--main-font);
   font-weight: 900;
 }
 
@@ -102,7 +75,7 @@ body {
 }
 
 .button {
-  font-family: "Nunito", sans-serif !important;
+  font-family: var(--main-font) !important;
   font-weight: 900 !important;
   font-size: 1.2em !important;
   text-transform: none !important;
@@ -111,11 +84,6 @@ body {
 }
 
 .gradient-background {
-  /* background: linear-gradient(
-    210deg,
-    var(--light-blue) 20%,
-    rgb(183, 233, 243) 100%
-  ); */
   background: linear-gradient(
     45deg,
     rgba(183, 233, 243, 1) 0%,

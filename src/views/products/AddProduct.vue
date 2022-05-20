@@ -5,19 +5,18 @@
       <v-col class="d-none d-sm-flex" cols="2" md="3"></v-col>
       <v-col cols="12" sm="8" md="6" align-self="center">
         <v-form ref="form" lazy-validation class="mt-5 mb-10" v-model="valid">
-          
-          <AlertDialog 
-            :d_title ="posts.d_title" 
-            :d_value = "posts.d_value"
-            :d_message = "posts.d_message"
-            :d_cancel = "posts.d_cancel"
-            :d_accept = "posts.d_accept"
-            :d_color = "posts.d_color"
-            :d_icon = "posts.d_icon"
+          <AlertDialog
+            :d_title="posts.d_title"
+            :d_value="posts.d_value"
+            :d_message="posts.d_message"
+            :d_cancel="posts.d_cancel"
+            :d_accept="posts.d_accept"
+            :d_color="posts.d_color"
+            :d_icon="posts.d_icon"
             @dialog-accept="acceptButtonDialog(posts.id)"
             @dialog-cancel="posts.d_value = false"
           />
-          
+
           <v-file-input
             ref="image"
             v-model="product.p_photo"
@@ -80,7 +79,7 @@
             required
           ></v-select>
         </v-form>
-        
+
         <v-footer absolute color="#fff">
           <v-col class="text-center" cols="12">
             <v-btn
@@ -106,30 +105,29 @@
 </template>
 
 <script>
-import {Product} from "/firebaseAPI/controllers/product.js";
+import Product from "/firebaseAPI/controllers/product.js";
 import AlertDialog from "../../components/Dialog.vue";
 
 export default {
   name: "AddProduct",
   components: {
-      AlertDialog
+    AlertDialog,
   },
   data() {
-    
     return {
       posts: {
-          id: null,
-          d_value: false,
-          d_title: "",
-          d_message: "",
-          d_cancel: "",
-          d_accept: "",
-          d_color: "",
-          d_icon: ""
+        id: null,
+        d_value: false,
+        d_title: "",
+        d_message: "",
+        d_cancel: "",
+        d_accept: "",
+        d_color: "",
+        d_icon: "",
       },
       dialog: [
         {
-          //Dialogo: Tamaño de Imagen 
+          //Dialogo: Tamaño de Imagen
           id: 0,
           d_value: true,
           d_title: "Image Size Exceeded",
@@ -137,7 +135,8 @@ export default {
           d_cancel: "Ok",
           d_accept: "Ok",
           d_color: "error",
-          d_icon: "fa fa-times"},
+          d_icon: "fa fa-times",
+        },
         {
           //Dialogo: (Prueba) Modificar Producto
           id: 1,
@@ -147,12 +146,13 @@ export default {
           d_cancel: "Ok",
           d_accept: "Yes, update",
           d_color: "primary",
-          d_icon: "fa fa-edit"
+          d_icon: "fa fa-edit",
         },
       ],
       valid: true,
       rules: [
-        value => !value || value.size < 2000000 || 'El archivo debe ser menor a 2MB',
+        (value) =>
+          !value || value.size < 2000000 || "El archivo debe ser menor a 2MB",
       ],
       product: {
         id_business: 1,
@@ -167,25 +167,22 @@ export default {
       items: ["Comida", "Stickers", "Dulces", "Bebidas", "Ropa", "Panaderia"],
     };
   },
- 
+
   async created() {
     // Validar que el usuario esté loggeado
   },
   methods: {
     async addNewProduct() {
-      if(this.$refs.form.validate())
-      {
+      if (this.$refs.form.validate()) {
         const product = new Product();
         product.addProduct(this.product).then().catch();
-      }
-      else
-      {  
+      } else {
         // 0 -> Dialogo de imagen grande
-        // 1 -> (Prueba) Dialogo editar producto    
-        this.showDialog(0)      
+        // 1 -> (Prueba) Dialogo editar producto
+        this.showDialog(0);
       }
     },
-     showDialog(id) {
+    showDialog(id) {
       this.posts.id = this.dialog[id].id;
       this.posts.d_value = this.dialog[id].d_value;
       this.posts.d_title = this.dialog[id].d_title;
@@ -196,8 +193,7 @@ export default {
       this.posts.d_icon = this.dialog[id].d_icon;
     },
     acceptButtonDialog(id) {
-      switch(id)
-      {
+      switch (id) {
         case 0:
           this.$refs.image.reset();
           this.posts.d_value = false;
@@ -205,8 +201,7 @@ export default {
         default:
           break;
       }
-    }
-
+    },
   },
 };
 </script>

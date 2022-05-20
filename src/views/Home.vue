@@ -1,6 +1,5 @@
 <template>
   <div class="pa-8">
-    <!-- Header (search bar and nav) -->
     <v-row align="center">
       <v-col>
         <h1>Descubre</h1>
@@ -21,22 +20,22 @@
       <v-col>
         <v-row>
           <v-col>
-            <v-btn class="mx-2" fab dark large color="lightblue" elevation="0">
-              <v-icon color="darkblue">fas fa-store</v-icon>
+            <v-btn class="mx-2" fab dark large color="accent" elevation="0">
+              <v-icon color="primary">fas fa-store</v-icon>
             </v-btn>
           </v-col>
           <v-col v-if="this.cart.o_products.length > 0">
             <v-badge
-              color="lightred"
+              color="error"
               overlap
               :content="this.cart.o_products.length"
             >
               <v-btn
-                class="mx-2"
+                class="mx-2 button-top-right"
                 fab
                 dark
                 large
-                color="darkblue"
+                color="primary"
                 @click="orderDialog = true"
                 elevation="0"
               >
@@ -50,16 +49,16 @@
               fab
               dark
               large
-              color="darkblue"
+              color="primary"
               @click="orderDialog = true"
               elevation="0"
             >
-              <v-icon color="bone">fas fa-shopping-cart</v-icon>
+              <v-icon color="secondary">fas fa-shopping-cart</v-icon>
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn class="mx-2" fab dark large color="darkblue" elevation="0">
-              <v-icon color="bone">fas fa-user</v-icon>
+            <v-btn class="mx-2" fab dark large color="primary" elevation="0">
+              <v-icon color="secondary">fas fa-user</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -70,7 +69,6 @@
       <h2>Categorías</h2>
     </div>
 
-    <!-- Category buttons (they do nothing) -->
     <div class="d-flex justify-space-around">
       <v-icon>fas fa-fork</v-icon>
       <v-btn
@@ -91,7 +89,6 @@
       </v-btn>
     </div>
 
-    <!-- All products -->
     <div class="d-flex flex-wrap my-4">
       <v-card
         width="169"
@@ -107,7 +104,6 @@
       </v-card>
     </div>
 
-    <!-- Product Detail Dialog (change to component) -->
     <v-dialog
       v-model="productDialog"
       fullscreen
@@ -115,29 +111,26 @@
       transition="dialog-bottom-transition"
     >
       <v-card elevation="0">
-        <!-- Dialog toolbar -->
         <div class="d-flex pa-4 align-center">
           <v-btn
             class=""
             @click="productDialog = false"
             fab
             elevation="0"
-            color="darkblue"
+            color="primary"
           >
-            <v-icon color="bone">fas fa-arrow-left</v-icon>
+            <v-icon color="secondary">fas fa-arrow-left</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
-          <v-chip class="pa-4" large text-color="bone" color="darkblue">{{
+          <v-chip class="pa-4" large text-color="secondary" color="primary">{{
             product.p_name
           }}</v-chip>
         </div>
 
-        <!-- Product Details dialog component -->
         <ProductDetails @close-dialog="closeDialog()" :product="product" />
       </v-card>
     </v-dialog>
 
-    <!-- Order Detail Dialog (change to component) -->
     <v-dialog
       v-model="orderDialog"
       fullscreen
@@ -145,16 +138,15 @@
       transition="dialog-bottom-transition"
     >
       <v-card elevation="0">
-        <!-- Header -->
         <v-row class="pa-4 align-center">
           <v-col cols="1" class="ma-0">
             <v-btn
               @click="orderDialog = false"
               fab
               elevation="0"
-              color="darkblue"
+              color="primary"
             >
-              <v-icon color="bone">fas fa-arrow-left</v-icon>
+              <v-icon color="secondary">fas fa-arrow-left</v-icon>
             </v-btn>
           </v-col>
           <v-spacer></v-spacer>
@@ -163,18 +155,17 @@
             <h4 class="font-weight-light">{{ date }}</h4>
           </v-col>
           <v-col cols="1" class="ma-0">
-            <v-chip class="pa-4" large text-color="bone" color="darkblue">
+            <v-chip class="pa-4" large text-color="secondary" color="primary">
               Something
             </v-chip>
           </v-col>
           <v-col cols="1">
-            <v-btn fab elevation="0" color="lighter_red" @click="resetOrder()">
-              <v-icon color="lightred">fas fa-trash</v-icon>
+            <v-btn fab elevation="0" color="lighterred" @click="resetOrder()">
+              <v-icon color="error">fas fa-trash</v-icon>
             </v-btn>
           </v-col>
         </v-row>
 
-        <!-- Ordered Products -->
         <OrderDetails :key="update" />
       </v-card>
     </v-dialog>
@@ -184,7 +175,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
+import Product from "/firebaseAPI/controllers/product.js";
 import ProductDetails from "../components/ProductDetails.vue";
 import OrderDetails from "../components/OrderDetails.vue";
 

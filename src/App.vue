@@ -13,6 +13,7 @@
 @import "./styles/user.css";
 @import "./styles/product.css";
 @import "./styles/receipt.css";
+@import "./styles/home.css";
 </style>
 
 <script>

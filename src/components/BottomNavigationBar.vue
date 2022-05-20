@@ -33,6 +33,7 @@
 
 <script>
 export default {
+  name: "BottomNavigationBar",
   data() {
     return {
       items: [

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import User from "/firebaseAPI/controllers/user.js";
+import { User } from "/firebaseAPI/controllers/user.js";
 
 Vue.use(Vuex);
 

@@ -17,7 +17,7 @@
 </style>
 
 <script>
-import BottomNavigationBar from "@/components/BottomNavigationBar";
+import { BottomNavigationBar } from "@/components/BottomNavigationBar";
 
 export default {
   name: "App",

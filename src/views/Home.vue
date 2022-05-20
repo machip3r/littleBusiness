@@ -176,8 +176,8 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
-import { ProductDetails } from "@/components/ProductDetails.vue";
-import { OrderDetails } from "@/components/OrderDetails.vue";
+import ProductDetails from "@/components/ProductDetails.vue";
+import OrderDetails from "@/components/OrderDetails.vue";
 
 export default {
   name: "Home",

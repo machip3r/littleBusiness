@@ -59,7 +59,6 @@
 
 <script>
 export default {
-  name: "AlertDialog",
   props: {
     d_title: String,
     d_message: String,

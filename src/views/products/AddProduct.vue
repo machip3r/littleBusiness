@@ -106,7 +106,7 @@
 
 <script>
 import { Product } from "/firebaseAPI/controllers/product.js";
-import { AlertDialog } from "@/components/Dialog.vue";
+import AlertDialog from "@/components/Dialog.vue";
 
 export default {
   name: "AddProduct",

@@ -46,10 +46,7 @@ export default {
   },
 
   created() {
-    setTimeout(() => {
-      this.keyNav = this.$route.name;
-      console.log(this.keyNav);
-    }, 1000);
+    setTimeout(() => (this.keyNav = this.$route.name), 1000);
   },
 
   methods: {},

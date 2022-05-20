@@ -2,6 +2,8 @@
   <v-app>
     <v-main>
       <router-view />
+      <br />
+      <br />
     </v-main>
     <BottomNavigationBar />
   </v-app>

@@ -1,27 +1,37 @@
 <template>
-  <div class="pa-8">
-    <v-row align="center">
-      <v-col>
+  <div>
+    <v-row class="pt-6 px-6 row-title-home" align="center" justify="center">
+      <v-col class="col-title-home">
         <h1>Descubre</h1>
       </v-col>
       <v-spacer></v-spacer>
       <v-col>
         <v-text-field
-          label="Buscar producto"
+          label="Buscar"
           color="primary"
           background-color="secondary"
           append-icon="fas fa-search"
+          class="input-search"
           filled
           rounded
           dense
         ></v-text-field>
       </v-col>
-      <v-spacer></v-spacer>
+      <!-- <v-spacer></v-spacer>
       <v-col>
         <v-row>
           <v-col>
-            <v-btn class="mx-2" fab dark large color="accent" elevation="0">
-              <v-icon color="primary">fas fa-store</v-icon>
+            <v-btn
+              class="button-top-right"
+              fab
+              dark
+              color="primary"
+              elevation="0"
+              to="/dashboard"
+            >
+              <v-icon class="button-top-right-icon" color="secondary">
+                fas fa-store
+              </v-icon>
             </v-btn>
           </v-col>
           <v-col v-if="this.cart.o_products.length > 0">
@@ -34,74 +44,120 @@
                 class="mx-2 button-top-right"
                 fab
                 dark
-                large
                 color="primary"
-                @click="orderDialog = true"
                 elevation="0"
+                @click="orderDialog = true"
               >
-                <v-icon>fas fa-shopping-cart</v-icon>
+                <v-icon class="button-top-right-icon" color="secondary"
+                  >fas fa-shopping-cart</v-icon
+                >
               </v-btn>
             </v-badge>
           </v-col>
           <v-col v-else>
             <v-btn
-              class="mx-2"
+              class="button-top-right"
               fab
               dark
-              large
               color="primary"
-              @click="orderDialog = true"
               elevation="0"
+              @click="orderDialog = true"
             >
-              <v-icon color="secondary">fas fa-shopping-cart</v-icon>
+              <v-icon class="button-top-right-icon" color="secondary"
+                >fas fa-shopping-cart</v-icon
+              >
             </v-btn>
           </v-col>
           <v-col>
-            <v-btn class="mx-2" fab dark large color="primary" elevation="0">
-              <v-icon color="secondary">fas fa-user</v-icon>
+            <v-btn
+              class="button-top-right"
+              fab
+              dark
+              color="primary"
+              elevation="0"
+            >
+              <v-icon class="button-top-right-icon" color="secondary"
+                >fas fa-user</v-icon
+              >
             </v-btn>
           </v-col>
         </v-row>
-      </v-col>
+      </v-col> -->
     </v-row>
 
-    <div class="d-flex mb-4">
-      <h2>Categorías</h2>
-    </div>
+    <div v-if="homeView">
+      <div class="d-flex mb-4 px-6">
+        <h3>Categorías</h3>
+      </div>
 
-    <div class="d-flex justify-space-around">
-      <v-icon>fas fa-fork</v-icon>
+      <v-slide-group mandatory class="px-6">
+        <v-slide-item
+          v-for="(category, index) in categories"
+          :key="index"
+          v-slot="{ active, toggle }"
+        >
+          <v-btn
+            class="gradient-background button-filter-home"
+            elevation="0"
+            rounded
+            active-class="button-filter-home--active"
+            :input-value="active"
+            @click="toggle"
+          >
+            <div class="flex-column">
+              <v-icon class="button-filter-icon-home">{{
+                category.icon
+              }}</v-icon>
+              <h5 class="button-filter-text-home">
+                {{ category.name }}
+              </h5>
+            </div>
+          </v-btn>
+        </v-slide-item>
+      </v-slide-group>
+
+      <div class="products-container">
+        <v-card
+          v-for="(product, index) in allProducts"
+          :key="index"
+          class="product-home"
+          @click="seeProduct(product)"
+          elevation="0"
+        >
+          <v-img class="product-home-img" :src="product.p_photo" />
+          <h5>${{ product.p_price }}</h5>
+          <p>{{ product.p_name }}</p>
+        </v-card>
+      </div>
       <v-btn
-        width="120"
-        height="120"
-        class="gradient-background"
-        elevation="0"
-        rounded
-        v-for="(category, index) in categories"
-        :key="index"
+        class="fab-home"
+        dark
+        large
+        color="error"
+        fixed
+        right
+        bottom
+        @click="homeView = !homeView"
       >
-        <div class="flex-column">
-          <v-icon size="55">{{ category.icon }}</v-icon>
-          <h5>
-            {{ category.name }}
-          </h5>
-        </div>
+        <v-icon size="15">fas fa-store</v-icon>
+        <h6>Tiendas</h6>
       </v-btn>
     </div>
-
-    <div class="d-flex flex-wrap my-4">
-      <v-card
-        width="169"
-        height="230"
-        v-for="(product, index) in allProducts"
-        :key="index"
-        class="ml-4 mb-5"
-        @click="seeProduct(product)"
+    <div v-else>
+      <h3>Tiendas</h3>
+      <v-btn
+        class="fab-home"
+        dark
+        large
+        color="error"
+        fixed
+        right
+        bottom
+        @click="homeView = !homeView"
       >
-        <v-img height="169" :src="product.p_photo"></v-img>
-        <h5>${{ product.p_price }}</h5>
-        <p>{{ product.p_name }}</p>
-      </v-card>
+        <v-icon size="15">fas fa-tshirt</v-icon>
+        <h6>Productos</h6>
+      </v-btn>
     </div>
 
     <v-dialog
@@ -169,7 +225,6 @@
         <OrderDetails :key="update" />
       </v-card>
     </v-dialog>
-    <v-btn @click="logOut()" large color="error">Cerrar sesión</v-btn>
   </div>
 </template>
 
@@ -189,6 +244,7 @@ export default {
 
   data() {
     return {
+      homeView: true,
       productDialog: false,
       orderDialog: false,
       date: "",
@@ -257,14 +313,6 @@ export default {
       return `${this.leadingZeros(today.getDate())}/${this.leadingZeros(
         today.getMonth() + 1
       )}/${today.getFullYear()}`;
-    },
-
-    async logOut() {
-      try {
-        await this.$store.commit("logOut");
-      } catch (error) {
-        this.messageError = error;
-      }
     },
   },
 };

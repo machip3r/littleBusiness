@@ -248,7 +248,6 @@ export default {
       this.productDialog = true;
     },
 
-    // Adds zeros to the date so it has a consistant format.
     leadingZeros(number) {
       return number.toString().padStart(2, "0");
     },

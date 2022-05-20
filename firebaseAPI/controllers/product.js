@@ -18,7 +18,6 @@ const productsCollection = collection(db, collectionName);
 
 //------------------- Comprimir Imagen ----------------------
 const comprimirImagen = (imagenComoArchivo, porcentajeCalidad) => {
-  
   return new Promise((resolve, reject) => {
     const $canvas = document.createElement("canvas");
     const imagen = new Image();
@@ -41,10 +40,6 @@ const comprimirImagen = (imagenComoArchivo, porcentajeCalidad) => {
     imagen.src = URL.createObjectURL(imagenComoArchivo);
   });
 };
-
-const TAM_MAX = 1000000;
-
-//-----------------------------------------------------------
 
 export class Product {
   constructor(p_name, p_photo, p_price, p_description, p_category) {

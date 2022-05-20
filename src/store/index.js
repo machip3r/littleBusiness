@@ -1,7 +1,7 @@
 import { getAuth } from "firebase/auth";
 import Vue from "vue";
 import Vuex from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import User from "/firebaseAPI/controllers/user";
 
 Vue.use(Vuex);
 

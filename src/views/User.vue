@@ -1,8 +1,12 @@
 <template>
-  <v-container>
-    <h1>Usuario</h1>
-    <v-btn @click="logOut()" large color="error">Cerrar sesión</v-btn>
-  </v-container>
+  <div class="main-container-user">
+    <div class="username-container">
+      <h1>Braulio Mac</h1>
+      <v-btn dark large color="error" fixed fab right top @click="logOut()">
+        <v-icon size="20">fas fa-sign-out-alt</v-icon>
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <script>

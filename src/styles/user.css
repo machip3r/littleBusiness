@@ -1,0 +1,6 @@
+.username-container {
+  width: 100%;
+  background-color: var(--dark-blue);
+  color: var(--bone);
+  padding: 10px 10px 15px;
+}

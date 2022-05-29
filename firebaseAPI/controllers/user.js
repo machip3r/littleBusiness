@@ -14,12 +14,14 @@ import {
 
 import {
   getAuth,
+  signOut,
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const collectionName = "user";
@@ -143,6 +145,28 @@ export class User {
     }
 
     return result.user;
+  }
+
+  static async getLogedUser() {
+    const auth = getAuth();
+    return new Promise(resolve => onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        resolve(user);
+      } else {
+        // User is signed out
+        resolve(null);
+      }
+    }));
+  }
+
+  static async logout() {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      console.log('Saliendo de la sesión');
+    }).catch((error) => {
+      console.log('Error al salir de la sesión');
+    });
   }
 
   async readUsers() {

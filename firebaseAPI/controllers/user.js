@@ -69,6 +69,23 @@ export class User {
     return user;
   }
 
+  static async updateAccountUser(data) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (data.name === null) data.name = user.displayName;
+    if (data.photo === null) data.photo = user.photoURL;
+    updateProfile(user, {
+      displayName: data.name,
+      photoURL: data.photo,
+    }).then(() => {
+      console.log('Perfil actualizado');
+      return true;
+    }).catch(() => {
+      console.log('Error al actualizar el perfil');
+      return false;
+    })
+  }
+
   async addUser(body) {
     try {
       body[0].id_user = await this.#newIDUser();

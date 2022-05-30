@@ -38,18 +38,21 @@ export default {
   data() {
     return {
       bottomNav: 0,
+      nav: "",
     };
   },
 
-  created() {
-    if (this.seller) this.sellerNavigation();
-    else this.clientNavigation();
-  },
+  created() {},
 
   methods: {},
   computed: {
-    keyNav() {
-      return this.$route.name;
+    keyNav: {
+      get() {
+        return this.$route.name;
+      },
+      set(newValue) {
+        this.nav = newValue;
+      },
     },
     items() {
       if (this.seller) {

@@ -54,7 +54,13 @@ export default new Vuex.Store({
         state.user = null;
         await User.logout();
     },
+    async updateUser(state, payload) {
+      
+      await User.updateAccountUser(payload);
 
+      if (payload.name !== null) state.user.name = payload.name;
+      if (payload.photo !== null) state.user.photo = payload.photo;
+    },
     addOrder(state, payload) {
       state.cart = payload;
     },
@@ -130,6 +136,11 @@ export default new Vuex.Store({
   },
 
   actions: {
+    updateProfile({ commit }, user) {
+      return new Promise(resolve => {
+        resolve(commit("updateUser", user));
+      });
+    },
     loadAccess({ commit }, access) {
       return new Promise(resolve => {
         resolve(commit("setAccess", access));

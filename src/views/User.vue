@@ -1,7 +1,7 @@
 <template>
   <div class="main-container-user">
     <div class="username-container">
-      <h1>Braulio Mac</h1>
+      <h1>{{profile.name}}</h1>
       <v-btn dark large color="error" fixed fab right top @click="logOut()">
         <v-icon size="20">fas fa-sign-out-alt</v-icon>
       </v-btn>
@@ -11,7 +11,7 @@
         <v-col cols="10" sm="7" md="4">
           <div class="rounded-circle pa-2 accent">
             <v-img
-              src="https://picsum.photos/510/300?random"
+              :src="profile.photo"
               aspect-ratio="1"
               class="rounded-circle"
             ></v-img>
@@ -48,13 +48,16 @@
             color="primary"
             background-color="secondary"
             prepend-inner-icon="far fa-user-circle"
-            append-icon="fas fa-pen"
+            :append-icon="modifyName ? 'fas fa-pen' : 'fas fa-check'"
+            :append-outer-icon="!modifyName ? 'fas fa-times-circle' : ''"
             filled
             rounded
             dense
             required
             solo
             :readonly="modifyName"
+            @click:append="updateName"
+            @click:append-outer="resetName"
           ></v-text-field>
           <h5>Mi negocio</h5>
           <v-btn class="px-16" label="Add" color="primary" large block rounded>
@@ -70,27 +73,54 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "User",
   data() {
     return {
-      photo: null,
-      name: "Braulio Mac",
       modified: false,
-      business: "Stickers cool",
       modifyName: true,
+      business: "Stickers cool",
+
+      modifiedName: null,
     };
   },
-
+  computed: {
+    ...mapState(['user']),
+    name: {
+      get() {
+        if (this.modifiedName !== null) return this.modifiedName;
+        else if(this.user !== null) return this.user.name;
+        return '';
+      },
+      set(newValue) {
+        this.modifiedName = newValue;
+      }
+    },
+    profile() {
+      if (this.user !== null) return this.user;
+      return {name: '', photo: ''};
+    }
+  },
   async created() {},
-
   methods: {
-    ...mapActions(["removeAccess"]),
+    ...mapActions(["removeAccess", "updateProfile"]),
     async logOut() {
       this.removeAccess().then(() => {
         this.$router.push({ name: "Login" });
       });
+    },
+    updateName() {
+      if (this.modifyName) this.modifyName = false;
+      else if(this.modifiedName != this.user.name)  {
+        this.updateProfile({name: this.modifiedName, photo: null});
+        this.modifyName = true;
+        this.modifiedName = null;
+      }
+    },
+    resetName() {
+      this.modifyName = true;
+      this.modifiedName = null;
     },
   },
 };

@@ -137,7 +137,7 @@ export default {
         let user = await User.loginFacebook(false);
 
         await this.$store.commit("setSession", user);
-        this.$router.push("Products");
+        this.$router.push("Home");
       } catch (error) {
         this.messageError = error;
         this.messageErrorShow = true;
@@ -148,7 +148,7 @@ export default {
         let user = await User.loginGoolge(false);
 
         await this.$store.commit("setSession", user);
-        this.$router.push("Products");
+        this.$router.push("Home");
       } catch (error) {
         this.messageError = error;
         this.messageErrorShow = true;
@@ -160,7 +160,7 @@ export default {
         let user = await User.login(this.email, this.password);
 
         await this.$store.commit("setSession", user);
-        this.$router.push("Products");
+        this.$router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
         if (error) {

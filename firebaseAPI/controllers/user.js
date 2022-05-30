@@ -162,11 +162,13 @@ export class User {
 
   static async logout() {
     const auth = getAuth();
-    signOut(auth).then(() => {
+    return new Promise(resolve => signOut(auth).then(() => {
       console.log('Saliendo de la sesión');
+      resolve('Ok');
     }).catch((error) => {
       console.log('Error al salir de la sesión');
-    });
+      resolve('Fail');
+    }));
   }
 
   async readUsers() {

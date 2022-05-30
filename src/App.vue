@@ -5,7 +5,7 @@
       <br />
       <br />
     </v-main>
-    <BottomNavigationBar />
+    <BottomNavigationBar :seller=seller />
   </v-app>
 </template>
 
@@ -20,13 +20,19 @@
 
 <script>
 import BottomNavigationBar from "@/components/BottomNavigationBar";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { User } from "/firebaseAPI/controllers/user.js";
 
 export default {
   name: "App",
 
-  data: () => ({}),
+  data: () => ({ }),
+  computed: {
+    ...mapState(['user']),
+    seller() {
+      return (this.user != null) ? this.user.type : null;
+    },
+  },
   async created() {
     User.getLogedUser().then(async (user) => {
       if (user != null) {
@@ -38,7 +44,7 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
-        this.$router.push({ name: "Products" });
+        this.$router.push({ name: "Home" });
       }
     });
   },

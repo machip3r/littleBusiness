@@ -49,10 +49,10 @@ export default new Vuex.Store({
       state.accessToken = payload.accessToken;
       state.user = payload.user;
     },
-    logOut() {
-      User.logout();
-      this.state.user = null;
-      this.accessToken = null;
+    async logOut(state, payload) {
+        state.accessToken = null;
+        state.user = null;
+        await User.logout();
     },
 
     addOrder(state, payload) {
@@ -135,7 +135,11 @@ export default new Vuex.Store({
         resolve(commit("setAccess", access));
       });
     },
-
+    removeAccess({ commit }) {
+      return new Promise(resolve => {
+        resolve(commit("logOut"));
+      });
+    },
     addOrder({ commit }, cart) {
       commit("addOrder", cart);
     },
@@ -160,6 +164,5 @@ export default new Vuex.Store({
       commit("resetOrder");
     },
   },
-
   modules: {},
 });

@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "User",
   data() {
@@ -85,12 +86,11 @@ export default {
   async created() {},
 
   methods: {
+    ...mapActions(["removeAccess"]),
     async logOut() {
-      try {
-        await this.$store.commit("logOut");
-      } catch (error) {
-        this.messageError = error;
-      }
+      this.removeAccess().then(() => {
+        this.$router.push({ name: "Login" });
+      });
     },
   },
 };

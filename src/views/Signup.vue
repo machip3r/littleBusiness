@@ -182,13 +182,39 @@ export default {
         try {
           let response = await user.createAccountUser(type);
           this.$store.commit("setSession", response);
-          if (this.seller) this.$router.push("/addBusiness");
+          if (this.seller) this.$router.push({ name: "AddBusiness" });
           else this.$router.push("/products");
         } catch (error) {
-          this.messageError = error;
-          this.messageErrorShow = true;
+          this.showError(error);
         }
       }
+    },
+    showError(error) {
+      const errorString = error.toString();
+
+      if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/invalid-email)."
+        ) == 0
+      ) {
+        this.messageError = "Error, proporcione un correo valido";
+      } else if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/email-already-in-use)."
+        ) == 0
+      ) {
+        this.messageError = "Error, email en uso";
+      } else if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/popup-closed-by-user)."
+        ) == 0
+      ) {
+        this.messageError = "Se cerró la ventana emergente";
+      } else {
+        console.log(error);
+        this.messageError = "Hubo un error. Contacte con servicio al cliente.";
+      }
+      this.messageErrorShow = true;
     },
   },
 };

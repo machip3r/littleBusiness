@@ -34,7 +34,6 @@ export default new Vuex.Store({
   mutations: {
     async setSession(state, payload) {
       localStorage.setItem("accessToken", JSON.stringify(payload.accessToken));
-
       let doc = await User.getAdditionalDataUser(payload.uid);
 
       let userData = {
@@ -45,12 +44,14 @@ export default new Vuex.Store({
       };
 
       this.state.user = userData;
-      window.location.reload();
+      console.log(".........");
+      console.log(payload);
+      console.log(this.state.user);
+      console.log("..........");
     },
     logOut() {
       localStorage.removeItem("accessToken");
       this.state.user = null;
-      window.location.reload();
     },
 
     addOrder(state, payload) {
@@ -112,8 +113,8 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getName(state) {
-      return state.user.displayName;
+    getDataUser(state) {
+      return state.user;
     },
 
     getAccessToken(state) {

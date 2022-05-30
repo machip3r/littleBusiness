@@ -34,6 +34,7 @@ export default new Vuex.Store({
   mutations: {
     async setSession(state, payload) {
       state.accessToken = payload.accessToken;
+
       let doc = await User.getAdditionalDataUser(payload.uid);
 
       let userData = {
@@ -120,8 +121,8 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getName(state) {
-      return state.user.displayName;
+    getDataUser(state) {
+      return state.user;
     },
 
     getAccessToken(state) {

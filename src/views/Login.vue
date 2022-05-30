@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import { isFulfilled } from "q";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { User } from "/firebaseAPI/controllers/user.js";
 
@@ -139,8 +140,7 @@ export default {
         await this.$store.commit("setSession", user);
         this.$router.push("Home");
       } catch (error) {
-        this.messageError = error;
-        this.messageErrorShow = true;
+        this.showError(error);
       }
     },
     async loginGoogle() {
@@ -150,24 +150,65 @@ export default {
         await this.$store.commit("setSession", user);
         this.$router.push("Home");
       } catch (error) {
-        this.messageError = error;
-        this.messageErrorShow = true;
+        this.showError(error);
       }
     },
 
     async login() {
       try {
+        await this.$refs.form.validate();
+        if (!this.valid) return;
         let user = await User.login(this.email, this.password);
 
         await this.$store.commit("setSession", user);
-        this.$router.push({ name: "Home" });
+
+        const userData = this.$store.getters.getDataUser;
+
+        console.log(userData);
+        if (userData.type) {
+          this.$router.push({ name: "Dashboard" });
+        } else {
+          this.$router.push({ name: "Products" });
+        }
       } catch (error) {
-        console.log(error);
         if (error) {
-          this.messageError = error;
-          this.messageErrorShow = true;
+          this.showError(error);
         }
       }
+    },
+
+    async showError(error) {
+      const errorString = error.toString();
+
+      if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/invalid-email)."
+        ) == 0
+      ) {
+        this.messageError = "Error, proporcione un correo valido";
+      } else if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/wrong-password)."
+        ) == 0
+      ) {
+        this.messageError = "Error, contraseña incorrecta";
+      } else if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/user-not-found)."
+        ) == 0
+      ) {
+        this.messageError = "Error, usuario no registrado";
+      } else if (
+        errorString.localeCompare(
+          "FirebaseError: Firebase: Error (auth/popup-closed-by-user)."
+        ) == 0
+      ) {
+        this.messageError = "Se cerró la ventana emergente";
+      } else {
+        console.log(error);
+        this.messageError = "Hubo un error. Contacte con servicio al cliente.";
+      }
+      this.messageErrorShow = true;
     },
   },
 };

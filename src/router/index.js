@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store/index";
+import { getAuth } from "firebase/auth";
+import { getAdditionalDataUser } from "../../firebaseAPI/controllers/user";
 Vue.use(VueRouter);
 
 const routes = [
@@ -47,7 +49,15 @@ const routes = [
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
+      const user = getAuth().currentUser;
+
+      if (user != null) {
+        const dataAdditional = getAdditionalDataUser(user.uid);
+        if (!dataAdditional.type) router.push("/products");
+      } else {
+        router.push("/");
+      }
+
       next();
     },
   },
@@ -115,7 +125,11 @@ const routes = [
     name: "Products",
     component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
+      const user = getAuth().currentUser;
+
+      const dataAdditional = getAdditionalDataUser(user.uid);
+
+      if (!user && !dataAdditional.type) router.push("/");
       next();
     },
     meta: {title: "Products"},

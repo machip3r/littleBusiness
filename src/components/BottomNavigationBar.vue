@@ -5,7 +5,7 @@
     v-model="bottomNav"
     fixed
     grow
-    v-if="isClientNavigation || isSellerNavigation"
+    v-if="seller != null"
   >
     <v-btn
       v-for="item in items"
@@ -34,51 +34,46 @@
 <script>
 export default {
   name: "BottomNavigationBar",
+  props: ["seller"],
   data() {
     return {
-      items: [
-        { title: "Inicio", icon: "fas fa-store", to: "Home" },
-        { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
-        { title: "Perfil", icon: "fas fa-user", to: "User" },
-      ],
       bottomNav: 0,
-      keyNav: "Home",
+      nav: "",
     };
   },
 
-  created() {
-    setTimeout(() => (this.keyNav = this.$route.name), 1000);
-  },
+  created() {},
 
   methods: {},
-
   computed: {
-    isClientNavigation() {
-      this.items = [
-        { title: "Inicio", icon: "fas fa-store", to: "Home" },
-        { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
-        { title: "Perfil", icon: "fas fa-user", to: "User" },
-      ];
-      return (
-        this.$route.name === "Home" ||
-        this.$route.name === "User" ||
-        this.$route.name === "Cart"
-      );
+    keyNav: {
+      get() {
+        return this.$route.name;
+      },
+      set(newValue) {
+        this.nav = newValue;
+      },
     },
-    isSellerNavigation() {
-      this.items = [
-        { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
-        { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
-        { title: "Productos", icon: "fas fa-tshirt", to: "Products" },
-        { title: "Reseñas", icon: "fas fa-star", to: "Review" },
-        { title: "Información", icon: "fas fa-info-circle", to: "Information" },
-      ];
-      return (
-        this.$route.name === "Dashboard" ||
-        this.$route.name === "Information" ||
-        this.$route.name === "Review" ||
-        this.$route.name === "Products"
-      );
+    items() {
+      if (this.seller) {
+        return [
+          { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Productos", icon: "fas fa-tshirt", to: "Products" },
+          { title: "Reseñas", icon: "fas fa-star", to: "Review" },
+          {
+            title: "Información",
+            icon: "fas fa-info-circle",
+            to: "Information",
+          },
+        ];
+      } else {
+        return [
+          { title: "Inicio", icon: "fas fa-store", to: "Home" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Perfil", icon: "fas fa-user", to: "User" },
+        ];
+      }
     },
   },
 };

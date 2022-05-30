@@ -21,6 +21,7 @@ export default new Vuex.Store({
       ],
     },
     user: null,
+    accessToken: null,
     cart: {
       id_order: "",
       id_user: 0,
@@ -32,8 +33,7 @@ export default new Vuex.Store({
 
   mutations: {
     async setSession(state, payload) {
-      localStorage.setItem("accessToken", JSON.stringify(payload.accessToken));
-
+      state.accessToken = payload.accessToken;
       let doc = await User.getAdditionalDataUser(payload.uid);
 
       let userData = {
@@ -43,15 +43,24 @@ export default new Vuex.Store({
         type: doc.type,
       };
 
-      this.state.user = userData;
-      window.location.reload();
+      state.user = userData;
     },
-    logOut() {
-      localStorage.removeItem("accessToken");
-      this.state.user = null;
-      window.location.reload();
+    async setAccess(state, payload) {
+      state.accessToken = payload.accessToken;
+      state.user = payload.user;
     },
+    async logOut(state, payload) {
+        state.accessToken = null;
+        state.user = null;
+        await User.logout();
+    },
+    async updateUser(state, payload) {
+      
+      await User.updateAccountUser(payload);
 
+      if (payload.name !== null) state.user.name = payload.name;
+      if (payload.photo !== null) state.user.photo = payload.photo;
+    },
     addOrder(state, payload) {
       state.cart = payload;
     },
@@ -116,7 +125,7 @@ export default new Vuex.Store({
     },
 
     getAccessToken(state) {
-      return localStorage.getItem("accessToken");
+      return state.accessToken;
     },
 
     // This is not in chikis' commit
@@ -127,6 +136,21 @@ export default new Vuex.Store({
   },
 
   actions: {
+    updateProfile({ commit }, user) {
+      return new Promise(resolve => {
+        resolve(commit("updateUser", user));
+      });
+    },
+    loadAccess({ commit }, access) {
+      return new Promise(resolve => {
+        resolve(commit("setAccess", access));
+      });
+    },
+    removeAccess({ commit }) {
+      return new Promise(resolve => {
+        resolve(commit("logOut"));
+      });
+    },
     addOrder({ commit }, cart) {
       commit("addOrder", cart);
     },
@@ -151,6 +175,5 @@ export default new Vuex.Store({
       commit("resetOrder");
     },
   },
-
   modules: {},
 });

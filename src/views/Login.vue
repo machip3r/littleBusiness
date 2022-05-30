@@ -108,7 +108,6 @@
 </template>
 
 <script>
-import { isFulfilled } from "q";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { User } from "/firebaseAPI/controllers/user.js";
 

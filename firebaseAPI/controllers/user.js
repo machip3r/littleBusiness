@@ -77,13 +77,15 @@ export class User {
     updateProfile(user, {
       displayName: data.name,
       photoURL: data.photo,
-    }).then(() => {
-      console.log('Perfil actualizado');
-      return true;
-    }).catch(() => {
-      console.log('Error al actualizar el perfil');
-      return false;
     })
+      .then(() => {
+        console.log("Perfil actualizado");
+        return true;
+      })
+      .catch(() => {
+        console.log("Error al actualizar el perfil");
+        return false;
+      });
   }
 
   async addUser(body) {
@@ -166,26 +168,32 @@ export class User {
 
   static async getLogedUser() {
     const auth = getAuth();
-    return new Promise(resolve => onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        resolve(user);
-      } else {
-        // User is signed out
-        resolve(null);
-      }
-    }));
+    return new Promise((resolve) =>
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in
+          resolve(user);
+        } else {
+          // User is signed out
+          resolve(null);
+        }
+      })
+    );
   }
 
   static async logout() {
     const auth = getAuth();
-    return new Promise(resolve => signOut(auth).then(() => {
-      console.log('Saliendo de la sesión');
-      resolve('Ok');
-    }).catch((error) => {
-      console.log('Error al salir de la sesión');
-      resolve('Fail');
-    }));
+    return new Promise((resolve) =>
+      signOut(auth)
+        .then(() => {
+          console.log("Saliendo de la sesión");
+          resolve("Ok");
+        })
+        .catch((error) => {
+          console.log("Error al salir de la sesión");
+          resolve("Fail");
+        })
+    );
   }
 
   async readUsers() {

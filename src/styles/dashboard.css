@@ -1,0 +1,146 @@
+.container-dashboard {
+  margin: 2em 3em;
+}
+
+.container-dashboard h3 {
+  margin: 0 0px 10px 30px;
+}
+
+.quick-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  width: 14%;
+  aspect-ratio: 7 / 4;
+  padding: 25px 30px;
+  border-radius: 50px;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.05),
+    10px 10px 20px rgba(0, 0, 0, 0.05);
+  margin: auto 20px;
+}
+
+.stat-icon {
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 50px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stat-icon i {
+  font-size: 1.5em;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.stat-value {
+  font-size: 2em;
+  font-family: var(--main-font);
+  font-weight: 900;
+}
+
+.stat-text {
+  font-size: 1.3em;
+  font-family: var(--secondary-font);
+  font-weight: 300;
+}
+
+.month-select--active {
+  background-color: var(--dark-blue);
+}
+
+.month-select--active h5 {
+  color: var(--bone);
+}
+
+@media (max-width: 1800px) {
+  .stat-item {
+    width: 20%;
+  }
+}
+
+@media (max-width: 1300px) {
+  .stat-item {
+    width: 20%;
+    padding: 25px 30px;
+    margin: auto 10px;
+  }
+
+  .stat-icon {
+    width: 30px;
+  }
+
+  .stat-icon i {
+    font-size: 1em;
+  }
+
+  .stat-value {
+    font-size: 1.5em;
+  }
+
+  .stat-text {
+    font-size: 1.1em;
+  }
+}
+
+@media (max-width: 1000px) {
+  .container-dashboard {
+    margin: 1.5em;
+  }
+  .container-dashboard h1 {
+    font-size: 2em;
+  }
+  .container-dashboard h3 {
+    font-size: 1.5em;
+  }
+  .quick-stats {
+    justify-content: center;
+  }
+  .stat-item {
+    width: 40%;
+    margin: auto 5px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0;
+  }
+  .stat-item {
+    width: 90%;
+    display: inline-block;
+    border-radius: 30px;
+    padding: 15px 20px;
+    margin: auto 5px 10px;
+  }
+  .stat-value {
+    font-size: 1.1em;
+  }
+
+  .stat-text {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 450px) {
+  .stat-text {
+    font-size: 0.75em;
+  }
+}
+
+@media (min-width: 1300px) {
+  .order-graph-container {
+    max-width: 70%;
+    margin: 0 auto;
+  }
+}

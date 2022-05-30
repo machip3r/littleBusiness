@@ -16,6 +16,7 @@
 @import "./styles/product.css";
 @import "./styles/receipt.css";
 @import "./styles/home.css";
+@import "./styles/dashboard.css";
 </style>
 
 <script>

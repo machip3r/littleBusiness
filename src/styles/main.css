@@ -12,6 +12,14 @@
 
   --bone: #f8f0ee;
   --main-font: "Nunito", sans-serif;
+  --secondary-font: "Roboto", sans-serif;
+
+  --blue-gradient: linear-gradient(
+    45deg,
+    rgba(183, 233, 243, 1) 0%,
+    rgba(111, 212, 231, 1) 48%,
+    rgba(40, 191, 219, 1) 100%
+  );
 }
 
 * {
@@ -65,7 +73,7 @@ a:hover {
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--secondary-font);
   font-weight: 400;
   background-color: #ffffff;
 }

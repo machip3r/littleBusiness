@@ -200,7 +200,7 @@
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
-import html2pdf from "html2pdf.js";
+import { html2pdf } from "html2pdf.js";
 
 export default {
   name: "OrderDetails",
@@ -380,9 +380,3 @@ export default {
   },
 };
 </script>
-
-<style lang="css">
-@import "../styles/main.css";
-@import "../styles/product.css";
-@import "../styles/receipt.css";
-</style>

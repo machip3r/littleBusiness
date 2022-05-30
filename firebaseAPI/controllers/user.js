@@ -14,12 +14,14 @@ import {
 
 import {
   getAuth,
+  signOut,
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const collectionName = "user";
@@ -65,6 +67,23 @@ export class User {
       user = await User.loginFacebook(this.u_type);
     }
     return user;
+  }
+
+  static async updateAccountUser(data) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (data.name === null) data.name = user.displayName;
+    if (data.photo === null) data.photo = user.photoURL;
+    updateProfile(user, {
+      displayName: data.name,
+      photoURL: data.photo,
+    }).then(() => {
+      console.log('Perfil actualizado');
+      return true;
+    }).catch(() => {
+      console.log('Error al actualizar el perfil');
+      return false;
+    })
   }
 
   async addUser(body) {
@@ -143,6 +162,30 @@ export class User {
     }
 
     return result.user;
+  }
+
+  static async getLogedUser() {
+    const auth = getAuth();
+    return new Promise(resolve => onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        resolve(user);
+      } else {
+        // User is signed out
+        resolve(null);
+      }
+    }));
+  }
+
+  static async logout() {
+    const auth = getAuth();
+    return new Promise(resolve => signOut(auth).then(() => {
+      console.log('Saliendo de la sesión');
+      resolve('Ok');
+    }).catch((error) => {
+      console.log('Error al salir de la sesión');
+      resolve('Fail');
+    }));
   }
 
   async readUsers() {

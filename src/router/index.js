@@ -11,7 +11,7 @@ const routes = [
     name: "Login",
     component: () => import("../views/Login.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) router.push("/products");
+      if (store.getters.getAccessToken) router.push("/home");
       next();
     },
   },
@@ -20,7 +20,7 @@ const routes = [
     name: "SignUp",
     component: () => import("../views/Signup.vue"),
     beforeEnter: (to, from, next) => {
-      if (store.getters.getAccessToken) router.push("/products");
+      if (store.getters.getAccessToken) router.push("/home");
       next();
     },
   },
@@ -32,6 +32,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Home"},
   },
   {
     path: "/user",
@@ -41,6 +42,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "User"},
   },
   {
     path: "/addBusiness",
@@ -61,15 +63,6 @@ const routes = [
   },
   /* Agregar restriccion de entrada si no es vendedor */
   {
-    path: "/business",
-    name: "Business",
-    component: () => import("../views/business/Business.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-  },
-  {
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
@@ -77,6 +70,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Dashboard"},
   },
   {
     path: "/information",
@@ -86,6 +80,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Information"},
   },
   {
     path: "/review",
@@ -95,6 +90,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
+    meta: {title: "Review"},
   },
   {
     path: "/addProduct",
@@ -105,24 +101,25 @@ const routes = [
       next();
     },
   },
-  // {
-  //   path: "/cart",
-  //   name: "Cart",
-  //   component: () => import("../views/products/Cart.vue"),
-  //   beforeEnter: (to, from, next) => {
-  //     if (!store.getters.getAccessToken) router.push("/");
-  //     next();
-  //   },
-  // },
-  // {
-  //   path: "/product",
-  //   name: "Product",
-  //   component: () => import("../views/products/ProductInfo.vue"),
-  //   beforeEnter: (to, from, next) => {
-  //     if (!store.getters.getAccessToken) router.push("/");
-  //     next();
-  //   },
-  // },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: () => import("../components/OrderDetails.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: {title: "Cart"},
+  },
+  {
+    path: "/product",
+    name: "Product",
+    component: () => import("../components/ProductDetails.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
   {
     path: "/products",
     name: "Products",
@@ -135,6 +132,7 @@ const routes = [
       if (!user && !dataAdditional.type) router.push("/");
       next();
     },
+    meta: {title: "Products"},
   },
 ];
 

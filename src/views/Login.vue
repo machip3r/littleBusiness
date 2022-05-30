@@ -110,7 +110,7 @@
 <script>
 import { isFulfilled } from "q";
 import { mapState, mapMutations, mapActions } from "vuex";
-import { User } from "../../firebaseAPI/controllers/user";
+import { User } from "/firebaseAPI/controllers/user.js";
 
 export default {
   name: "Login",
@@ -138,7 +138,7 @@ export default {
         let user = await User.loginFacebook(false);
 
         await this.$store.commit("setSession", user);
-        this.$router.push("Products");
+        this.$router.push("Home");
       } catch (error) {
         this.showError(error);
       }
@@ -148,7 +148,7 @@ export default {
         let user = await User.loginGoolge(false);
 
         await this.$store.commit("setSession", user);
-        this.$router.push("Products");
+        this.$router.push("Home");
       } catch (error) {
         this.showError(error);
       }

@@ -1,8 +1,12 @@
-<template>
-  <h1>Dash</h1>
-</template>
+<template></template>
+
 <script>
 export default {
-  setup() {},
+  name: "Dashboard",
+  data() {
+    return {};
+  },
+
+  methods: {},
 };
 </script>

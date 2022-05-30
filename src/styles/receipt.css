@@ -1,6 +1,5 @@
 @import url("http://fonts.cdnfonts.com/css/fake-receipt");
 
-/* Utils */
 .mar-0 {
   margin: 0;
 }
@@ -17,7 +16,6 @@
   visibility: hidden;
 }
 
-/* My Styles */
 .container {
   width: 500px;
   padding: 20px;

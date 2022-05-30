@@ -1,61 +1,78 @@
 <template>
   <v-bottom-navigation
-    :active.sync="bottomNav"
-    :color="color"
-    :value="true"
-    absolute
+    background-color="primary"
     shift
+    v-model="bottomNav"
     fixed
     grow
+    v-if="seller != null"
   >
     <v-btn
-      v-for="item in itemsHome"
-      :key="item.title"
+      v-for="item in items"
+      :key="item.to"
       link
-      :to="{name: item.to}"
+      :to="{ name: item.to }"
+      @click="keyNav = item.to"
+      :style="{
+        backgroundColor:
+          keyNav == item.to ? 'var(--light-blue)' : 'var(--dark-blue)',
+      }"
     >
-      <span>{{ item.title }}</span>
-      <v-icon>{{ item.icon }}</v-icon>
+      <span
+        :style="{
+          color: keyNav == item.to ? 'var(--dark-blue)' : 'var(--bone)',
+        }"
+        ><b>{{ item.title }}</b></span
+      >
+      <v-icon :color="keyNav == item.to ? 'primary' : 'secondary'">{{
+        item.icon
+      }}</v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>
 
 <script>
 export default {
+  name: "BottomNavigationBar",
+  props: ["seller"],
   data() {
     return {
-      drawer: true,
-      itemsHome: [
-        {title: "Tienda", icon: "fas fa-store", to: "Business"},
-        {title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart"},
-        {title: "Perfil", icon: "fas fa-user", to: "User"},
-      ],
-      itemsStore: [
-        {title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard"},
-        {title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart"},
-        {title: "Productos", icon: "fas fa-tshirt", to: "Products"},
-        {title: "Reseñas", icon: "fas fa-star", to: "Review"},
-        {title: "Información", icon: "fas fa-info-circle", to: "Information"},
-      ],
       bottomNav: 0,
+      nav: "",
     };
   },
 
-  methods: {},
+  created() {},
 
+  methods: {},
   computed: {
-    color() {
-      switch (this.bottomNav) {
-        case 0:
-          return "blue-grey";
-        case 1:
-          return "teal";
-        case 2:
-          return "brown";
-        case 3:
-          return "indigo";
-        default:
-          return "blue-grey";
+    keyNav: {
+      get() {
+        return this.$route.name;
+      },
+      set(newValue) {
+        this.nav = newValue;
+      },
+    },
+    items() {
+      if (this.seller) {
+        return [
+          { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Productos", icon: "fas fa-tshirt", to: "Products" },
+          { title: "Reseñas", icon: "fas fa-star", to: "Review" },
+          {
+            title: "Información",
+            icon: "fas fa-info-circle",
+            to: "Information",
+          },
+        ];
+      } else {
+        return [
+          { title: "Inicio", icon: "fas fa-store", to: "Home" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Perfil", icon: "fas fa-user", to: "User" },
+        ];
       }
     },
   },

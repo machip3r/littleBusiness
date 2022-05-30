@@ -1,174 +1,126 @@
 <template>
-  <v-app>
-    <v-main>
-      <div class="pa-8 mx-8">
-        <v-card>
-          <h2>All Users</h2>
-          <v-data-table
-            dense
-            :headers="headers"
-            :items="allUsersArray"
-            item-key="user"
-          ></v-data-table
-        ></v-card>
-      </div>
-      <div class="pa-8 mx-8">
-        <v-card>
-          <div class="header">
-            <h2>Searched User</h2>
-            <v-spacer></v-spacer>
-            <div class="d-flex pa-4 align-center">
-              <v-text-field v-model="txtFieldID" label="User ID">
-              </v-text-field>
-              <v-btn @click="searchUserWithID(txtFieldID)">
-                <v-icon>fas fa-search</v-icon></v-btn
-              >
-            </div>
+  <div class="main-container-user">
+    <div class="username-container">
+      <h1>{{profile.name}}</h1>
+      <v-btn dark large color="error" fixed fab right top @click="logOut()">
+        <v-icon size="20">fas fa-sign-out-alt</v-icon>
+      </v-btn>
+    </div>
+    <v-container fluid class="secondary py-5">
+      <v-row justify="center">
+        <v-col cols="10" sm="7" md="4">
+          <div class="rounded-circle pa-2 accent">
+            <v-img
+              :src="profile.photo"
+              aspect-ratio="1"
+              class="rounded-circle"
+            ></v-img>
           </div>
-          <v-data-table
+          <v-row justify="center">
+            <v-col cols="3">
+              <div align="center">
+                <v-icon class="mr-2 pb-2">far fa-star</v-icon>
+                <h5 class="d-inline">10</h5>
+                <h5>Reseñas</h5>
+              </div>
+            </v-col>
+            <v-col cols="2">
+              <h2 align="center">|</h2>
+            </v-col>
+            <v-col cols="3">
+              <div align="center">
+                <v-icon class="mr-2 pb-2">fas fa-shopping-bag</v-icon>
+                <h5 class="d-inline">5</h5>
+                <h5>Compras</h5>
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container fluid class="py-5">
+      <v-row justify="center">
+        <v-col cols="10" sm="7" md="4">
+          <h5>Mi información</h5>
+          <v-text-field
+            v-model="name"
+            label="Nombre de usuario"
+            color="primary"
+            background-color="secondary"
+            prepend-inner-icon="far fa-user-circle"
+            :append-icon="modifyName ? 'fas fa-pen' : 'fas fa-check'"
+            :append-outer-icon="!modifyName ? 'fas fa-times-circle' : ''"
+            filled
+            rounded
             dense
-            :headers="headers"
-            :items="user"
-            item-key="user"
-            class="elevation-1"
-          >
-          </v-data-table
-        ></v-card>
-      </div>
-
-      <div class="d-flex pa-8 mx-8 justify-space-around">
-        <v-card class="pa-8" width="40%">
-          <h2>Add an User</h2>
-          <form @submit.prevent="addNewDocument">
-            <v-text-field
-              v-model="user[0].u_name"
-              label="Nombre"
-            ></v-text-field>
-            <v-text-field
-              v-model="user[0].u_type"
-              label="Tipo de usuario"
-            ></v-text-field>
-            <v-text-field
-              v-model="user[0].u_status"
-              label="Estado"
-            ></v-text-field>
-            <v-btn type="submit">Agregar usuario</v-btn>
-          </form></v-card
-        >
-        <v-card class="pa-8" width="40%">
-          <h2>Edit an User</h2>
-          <form @submit.prevent="updateDocument(queryRes)">
-            <v-text-field
-              v-model="queryRes[0].u_name"
-              label="Nombre"
-            ></v-text-field>
-            <v-text-field
-              v-model="queryRes[0].u_type"
-              label="Tipo de usuario"
-            ></v-text-field>
-            <v-text-field
-              v-model="queryRes[0].u_status"
-              label="Estado"
-            ></v-text-field>
-            <v-btn type="submit">Editar usuario</v-btn>
-          </form>
-        </v-card>
-      </div>
-      <div class="form"></div>
-    </v-main>
-  </v-app>
+            required
+            solo
+            :readonly="modifyName"
+            @click:append="updateName"
+            @click:append-outer="resetName"
+          ></v-text-field>
+          <h5>Mi negocio</h5>
+          <v-btn class="px-16" label="Add" color="primary" large block rounded>
+            <div class="mx-10">
+              <v-icon left> fas fa-store </v-icon>
+              {{ business }}
+            </div>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
-// Import the functions you need from the SDKs you need
-import { User } from "/firebaseAPI/controllers/user.js";
-
-const UserClass = new User();
-
+import { mapActions, mapState } from "vuex";
 export default {
   name: "User",
   data() {
     return {
-      headers: [
-        { text: "Firebase Key", value: "firebaseID" },
-        { text: "User ID", value: "id_user" },
-        { text: "Name", value: "u_name" },
-        { text: "Status", value: "u_status" },
-        { text: "Type", value: "u_type" },
-      ],
-      txtFieldID: 0,
-      allUsers: {},
-      allUsersArray: [],
-      keys: [],
-      user: [
-        {
-          firebaseID: "",
-          id_user: 0,
-          u_name: "",
-          u_type: "",
-          u_status: "",
-        },
-      ],
-      queryRes: [
-        {
-          id_user: 0,
-          u_name: "",
-          u_type: "",
-          u_status: "",
-        },
-      ],
+      modified: false,
+      modifyName: true,
+      business: "Stickers cool",
+
+      modifiedName: null,
     };
   },
-
-  async created() {
-    await UserClass.readUsers().then((res) =>
-      Object.assign(this.allUsers, res)
-    );
-
-    this.allUsersArray = UserClass.docsObjectToArray(this.allUsers);
-    this.keys = Object.keys(this.allUsers);
+  computed: {
+    ...mapState(['user']),
+    name: {
+      get() {
+        if (this.modifiedName !== null) return this.modifiedName;
+        else if(this.user !== null) return this.user.name;
+        return '';
+      },
+      set(newValue) {
+        this.modifiedName = newValue;
+      }
+    },
+    profile() {
+      if (this.user !== null) return this.user;
+      return {name: '', photo: ''};
+    }
   },
-
+  async created() {},
   methods: {
-    async readDocuments() {
-      await UserClass.readUsers()
-        .then((res) => {
-          this.allUsers = res;
-        })
-        .catch((err) => console.error(err));
+    ...mapActions(["removeAccess", "updateProfile"]),
+    async logOut() {
+      this.removeAccess().then(() => {
+        this.$router.push({ name: "Login" });
+      });
     },
-
-    async addNewDocument() {
-      console.log(this.user);
-      UserClass.addUser(this.user)
-        .then((res) => console.log("Created succesfully"))
-        .catch((err) => console.log("Error", err));
-      await this.readDocuments();
+    updateName() {
+      if (this.modifyName) this.modifyName = false;
+      else if(this.modifiedName != this.user.name)  {
+        this.updateProfile({name: this.modifiedName, photo: null});
+        this.modifyName = true;
+        this.modifiedName = null;
+      }
     },
-
-    async searchUserWithID(id) {
-      await UserClass.readUserWithID(+id)
-        .then((res) => {
-          this.queryRes = UserClass.docsObjectToArray(res);
-          this.user = this.queryRes;
-        })
-        .catch();
-
-      console.log("queryRes: ", this.queryRes);
-      console.log("user: ", this.user);
-    },
-
-    async updateDocument(body) {
-      const firebaseID = body[0].firebaseID;
-      delete body[0].firebaseID;
-
-      UserClass.updateUser(firebaseID, body[0])
-        .then((res) => {
-          console.log("Updated Successfully");
-        })
-        .catch((err) => {
-          console.log("Error while updating: ", err);
-        });
+    resetName() {
+      this.modifyName = true;
+      this.modifiedName = null;
     },
   },
 };

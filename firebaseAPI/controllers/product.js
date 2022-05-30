@@ -29,6 +29,10 @@ export class Product {
   async addProduct(body) {
     try {
       body.id_product = await this.#newIDProduct();
+      //----Comprimir Imagen-------------------------
+      const archivo = body.p_photo;
+      const blob = await comprimirImagen(archivo, 80);
+      //---------------------------------------------
       const metadata = {
         contentType: "image/jpeg",
       };
@@ -38,7 +42,8 @@ export class Product {
       );
       const uploadTask = uploadBytesResumable(
         storageRef,
-        body.p_photo,
+        //body.p_photo,
+        blob,
         metadata
       );
       body.p_saved = true;
@@ -80,12 +85,13 @@ export class Product {
             async function save() {
               const docRef = await addDoc(productsCollection, {
                 id_product: body.id_product,
-                id_user: body.id_user,
+                id_business: body.id_business,
                 p_name: body.p_name,
                 p_price: body.p_price,
                 p_photo: downloadURL,
                 p_description: body.p_description,
                 p_category: body.p_category,
+                p_status: true,
               });
               body.p_saved = false;
               return docRef.id;
@@ -170,3 +176,28 @@ export class Product {
     return arr;
   }
 }
+
+//------------------- Comprimir Imagen ----------------------
+const comprimirImagen = (imagenComoArchivo, porcentajeCalidad) => {
+  return new Promise((resolve, reject) => {
+    const $canvas = document.createElement("canvas");
+    const imagen = new Image();
+    imagen.onload = () => {
+      $canvas.width = imagen.width;
+      $canvas.height = imagen.height;
+      $canvas.getContext("2d").drawImage(imagen, 0, 0);
+      $canvas.toBlob(
+        (blob) => {
+          if (blob === null) {
+            return reject(blob);
+          } else {
+            resolve(blob);
+          }
+        },
+        "image/jpeg",
+        porcentajeCalidad / 100
+      );
+    };
+    imagen.src = URL.createObjectURL(imagenComoArchivo);
+  });
+};

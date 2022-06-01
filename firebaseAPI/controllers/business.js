@@ -55,7 +55,7 @@ export class Business {
     return this.#getObjectFromDocuments(await getDocs(businessCollection));
   }
 
-  async readOrderWithID(id_business) {
+  async readBusinessWithID(id_business) {
     const queryRes = query(
       businessCollection,
       where("id_business", "==", id_business)

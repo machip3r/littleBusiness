@@ -8,6 +8,7 @@
       :src="product.p_photo"
     ></v-img>
     <div class="text-justify ml-4 pa-2" max-width="60%">
+      <span>{{ product.p_category }}</span>
       <h1>{{ product.p_name }}</h1>
       <h4>Descripción</h4>
       <p>
@@ -15,9 +16,7 @@
       </p>
       <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
       <div class="d-flex ma-4 align-center">
-        <!-- Incrementador y botón de ordenar -->
         <div>
-          <!-- Incrementador -->
           <button
             style="background-color: var(--bone); width: 80px"
             @click="decrement"
@@ -37,7 +36,6 @@
           </button>
         </div>
 
-        <!-- Order Button -->
         <v-btn class="ml-4" @click="addToCart(product.id_product)">
           <v-icon>fas fa-rocket</v-icon>
           <span>Order</span>
@@ -100,7 +98,6 @@ export default {
           }
         }
 
-        // If it gets to this part, it means the product is new.
         this.addProducts(product);
 
         this.quantity = 1;

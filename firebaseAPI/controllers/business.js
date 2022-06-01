@@ -10,33 +10,52 @@ import {
   where,
   getDoc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const collectionName = "business";
 const businessCollection = collection(db, collectionName);
 
 export class Business {
   constructor(
-    id_business,
     id_user,
     id_category,
     b_name,
     b_descrption,
     b_status,
-    b_location,
     b_schedule
   ) {
-    this.id_business = id_business;
     this.id_user = id_user;
     this.id_category = id_category;
     this.b_name = b_name;
     this.b_descrption = b_descrption;
     this.b_status = b_status;
-    this.b_location = b_location;
     this.b_schedule = b_schedule;
   }
 
-  //  -  -  -  -  -  Document Manipulation  - - - - -
+  //  -  -  -  -  -  Document Manipulation  - -
+
+  async create() {
+    try {
+      let id_business = await this.#randID();
+      const docRef = await addDoc(businessCollection, {
+        id_business: id_business,
+        id_user: this.id_user,
+        id_category: this.id_category,
+        b_name: this.b_name,
+        b_description: this.b_descrption,
+        b_schedule: this.b_schedule,
+        b_status: true,
+      });
+
+      return docRef.id;
+    } catch (err) {
+      console.log("Error adding document: ", err);
+      return undefined;
+    }
+  }
+
   async addBusiness(body) {
     try {
       body.id_business = await this.#newBusinessID();

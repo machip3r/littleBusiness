@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store/index";
+import { getAuth } from "firebase/auth";
+import { User } from "../../firebaseAPI/controllers/user.js";
 Vue.use(VueRouter);
 
 const routes = [
@@ -30,7 +32,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "Home"},
+    meta: { title: "Home" },
   },
   {
     path: "/user",
@@ -40,18 +42,25 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "User"},
+    meta: { title: "User" },
   },
   {
     path: "/addBusiness",
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
+      const user = getAuth().currentUser;
+
+      if (user != null) {
+        const dataAdditional = User.getAdditionalDataUser(user.uid);
+        if (!dataAdditional.type) router.push("/products");
+      } else {
+        router.push("/");
+      }
+
       next();
     },
   },
-  /* Agregar restriccion de entrada si no es vendedor */
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -60,7 +69,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "Dashboard"},
+    meta: { title: "Dashboard" },
   },
   {
     path: "/information",
@@ -70,7 +79,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "Information"},
+    meta: { title: "Information" },
   },
   {
     path: "/review",
@@ -80,7 +89,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "Review"},
+    meta: { title: "Review" },
   },
   {
     path: "/addProduct",
@@ -99,7 +108,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: {title: "Cart"},
+    meta: { title: "Cart" },
   },
   {
     path: "/product",
@@ -115,10 +124,14 @@ const routes = [
     name: "Products",
     component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
+      const user = getAuth().currentUser;
+
+      const dataAdditional = getAdditionalDataUser(user.uid);
+
+      if (!user && !dataAdditional.type) router.push("/");
       next();
     },
-    meta: {title: "Products"},
+    meta: { title: "Products" },
   },
 ];
 

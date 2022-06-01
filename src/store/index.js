@@ -22,6 +22,7 @@ export default new Vuex.Store({
     },
     user: null,
     accessToken: null,
+    sellerView: null,
     cart: {
       id_order: "",
       id_user: 0,
@@ -45,22 +46,32 @@ export default new Vuex.Store({
       };
 
       state.user = userData;
+      state.sellerView = false;
+      localStorage.setItem('logged', true);
     },
     async setAccess(state, payload) {
       state.accessToken = payload.accessToken;
       state.user = payload.user;
+      state.sellerView = false;
     },
     async logOut(state, payload) {
         state.accessToken = null;
         state.user = null;
+        state.sellerView = null;
+        localStorage.removeItem('logged');
         await User.logout();
     },
-    async updateUser(state, payload) {
-      
-      await User.updateAccountUser(payload);
-
-      if (payload.name !== null) state.user.name = payload.name;
-      if (payload.photo !== null) state.user.photo = payload.photo;
+    async updateName(state, payload) {
+      await User.updateUserName(payload);
+      if (payload !== null) state.user.name = payload;
+    },
+    async updatePhoto(state, payload) {
+      User.updateUserPhoto(payload).then((url) => {
+        state.user.photo = url;
+      });
+    },
+    updateSellerView(state, payload) {
+      state.sellerView = payload;
     },
     addOrder(state, payload) {
       state.cart = payload;
@@ -126,7 +137,9 @@ export default new Vuex.Store({
     },
 
     getAccessToken(state) {
-      return state.accessToken;
+      //return state.accessToken;
+      if (state.accessToken === null) return localStorage.getItem('logged');
+      else return state.accessToken
     },
 
     // This is not in chikis' commit
@@ -137,10 +150,15 @@ export default new Vuex.Store({
   },
 
   actions: {
-    updateProfile({ commit }, user) {
+    updateUserName({ commit }, name) {
       return new Promise(resolve => {
-        resolve(commit("updateUser", user));
+        resolve(commit("updateName", name));
       });
+    },
+    updateUserPhoto({ commit }, photo) {
+      return new Promise(resolve => {
+        resolve(commit("updatePhoto", photo));
+      })
     },
     loadAccess({ commit }, access) {
       return new Promise(resolve => {
@@ -151,6 +169,9 @@ export default new Vuex.Store({
       return new Promise(resolve => {
         resolve(commit("logOut"));
       });
+    },
+    modifyView({ commit }, data) {
+      commit("updateSellerView", data);
     },
     addOrder({ commit }, cart) {
       commit("addOrder", cart);

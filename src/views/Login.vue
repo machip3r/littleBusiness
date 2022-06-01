@@ -158,17 +158,8 @@ export default {
         await this.$refs.form.validate();
         if (!this.valid) return;
         let user = await User.login(this.email, this.password);
-
         await this.$store.commit("setSession", user);
-
-        const userData = this.$store.getters.getDataUser;
-
-        console.log(userData);
-        if (userData.type) {
-          this.$router.push({ name: "Dashboard" });
-        } else {
-          this.$router.push({ name: "Products" });
-        }
+        this.$router.push("Home");
       } catch (error) {
         if (error) {
           this.showError(error);

@@ -5,7 +5,7 @@
       <br />
       <br />
     </v-main>
-    <BottomNavigationBar :seller=seller />
+    <BottomNavigationBar :seller="sellerView" />
   </v-app>
 </template>
 
@@ -27,12 +27,9 @@ import { User } from "/firebaseAPI/controllers/user.js";
 export default {
   name: "App",
 
-  data: () => ({ }),
+  data: () => ({}),
   computed: {
-    ...mapState(['user']),
-    seller() {
-      return (this.user != null) ? this.user.type : null;
-    },
+    ...mapState(["user", "sellerView"]),
   },
   async created() {
     User.getLogedUser().then(async (user) => {
@@ -45,7 +42,7 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
-        this.$router.push({ name: "Home" });
+        //this.$router.push({ name: "Home" });
       }
     });
   },

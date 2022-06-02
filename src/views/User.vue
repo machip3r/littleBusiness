@@ -1,7 +1,7 @@
 <template>
   <div class="main-container-user">
     <div class="username-container">
-      <h1>{{profile.name}}</h1>
+      <h1>{{ profile.name }}</h1>
       <v-btn dark large color="error" fixed fab right top @click="logOut()">
         <v-icon size="20">fas fa-sign-out-alt</v-icon>
       </v-btn>
@@ -10,12 +10,45 @@
       <v-row justify="center">
         <v-col cols="10" sm="7" md="4">
           <div class="rounded-circle pa-2 accent">
-            <v-img
-              :src="profile.photo"
-              aspect-ratio="1"
-              class="rounded-circle"
-            ></v-img>
+            <v-img :src="photo" aspect-ratio="1" class="rounded-circle"></v-img>
           </div>
+          <v-row justify="end" class="mt-n16">
+            <v-col cols="2">
+              <v-btn
+                elevation="2"
+                fab
+                x-large
+                class="mt-n5 mr-10"
+                color="error"
+                @click="cancelPhotoChange"
+                v-if="modifyPhoto"
+              >
+                <v-icon>fas fa-times-circle</v-icon></v-btn
+              >
+            </v-col>
+            <v-col cols="4">
+              <input
+                v-show="false"
+                ref="fiPhoto"
+                type="file"
+                accept="image/png, image/jpeg"
+                @change="loadPhoto"
+              />
+
+              <v-btn
+                elevation="2"
+                fab
+                x-large
+                class="mt-n5"
+                :color="modifyPhoto ? 'success' : 'error'"
+                @click="uploadPhoto"
+              >
+                <v-icon>{{
+                  modifyPhoto ? "fas fa-check" : "fas fa-camera"
+                }}</v-icon></v-btn
+              >
+            </v-col>
+          </v-row>
           <v-row justify="center">
             <v-col cols="3">
               <div align="center">
@@ -59,13 +92,23 @@
             @click:append="updateName"
             @click:append-outer="resetName"
           ></v-text-field>
-          <h5>Mi negocio</h5>
-          <v-btn class="px-16" label="Add" color="primary" large block rounded>
-            <div class="mx-10">
-              <v-icon left> fas fa-store </v-icon>
-              {{ business }}
-            </div>
-          </v-btn>
+          <div v-if="profile.type">
+            <h5>Mi negocio</h5>
+            <v-btn
+              class="px-16"
+              label="Add"
+              color="primary"
+              large
+              block
+              rounded
+              @click="enterSellerView"
+            >
+              <div class="mx-10">
+                <v-icon left> fas fa-store </v-icon>
+                {{ business }}
+              </div>
+            </v-btn>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -78,33 +121,45 @@ export default {
   name: "User",
   data() {
     return {
-      modified: false,
       modifyName: true,
+      modifyPhoto: false,
       business: "Stickers cool",
 
       modifiedName: null,
+      modifiedPhoto: null,
     };
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(["user"]),
     name: {
       get() {
         if (this.modifiedName !== null) return this.modifiedName;
-        else if(this.user !== null) return this.user.name;
-        return '';
+        else if (this.user !== null) return this.user.name;
+        return "";
       },
       set(newValue) {
         this.modifiedName = newValue;
-      }
+      },
+    },
+    photo: {
+      get() {
+        if (this.modifiedPhoto !== null)
+          return URL.createObjectURL(this.modifiedPhoto);
+        else if (this.user !== null) return this.user.photo;
+        return "";
+      },
+      set(newValue) {
+        this.modifiedPhoto = newValue;
+      },
     },
     profile() {
       if (this.user !== null) return this.user;
-      return {name: '', photo: ''};
-    }
+      return { name: "", type: false };
+    },
   },
   async created() {},
   methods: {
-    ...mapActions(["removeAccess", "updateProfile"]),
+    ...mapActions(["removeAccess", "updateUserName", "updateUserPhoto", "modifyView"]),
     async logOut() {
       this.removeAccess().then(() => {
         this.$router.push({ name: "Login" });
@@ -112,8 +167,8 @@ export default {
     },
     updateName() {
       if (this.modifyName) this.modifyName = false;
-      else if(this.modifiedName != this.user.name)  {
-        this.updateProfile({name: this.modifiedName, photo: null});
+      else if (this.modifiedName != this.user.name) {
+        this.updateUserName(this.modifiedName);
         this.modifyName = true;
         this.modifiedName = null;
       }
@@ -122,6 +177,25 @@ export default {
       this.modifyName = true;
       this.modifiedName = null;
     },
+    loadPhoto(e) {
+      this.modifyPhoto = true;
+      this.modifiedPhoto = e.target.files[0];
+    },
+    cancelPhotoChange() {
+      this.modifiedPhoto = null;
+      this.modifyPhoto = false;
+    },
+    async uploadPhoto() {
+      if (this.modifyPhoto) {
+        await this.updateUserPhoto(this.modifiedPhoto);
+        this.modifyPhoto = null;
+        this.modifiedPhoto = null;
+      } else this.$refs.fiPhoto.click();
+    },
+    enterSellerView() {
+      this.modifyView(true);
+      this.$router.push("Dashboard");
+    }
   },
 };
 </script>

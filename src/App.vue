@@ -42,7 +42,7 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
-        //this.$router.push({ name: "Home" });
+        this.$router.push({ name: "Home" });
       }
     });
   },

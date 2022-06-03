@@ -113,8 +113,3 @@ body {
     font-size: 20px !important;
   }
 }
-
-input[type="number"] {
-  background-color: transparent !important;
-  text-align: left !important;
-}

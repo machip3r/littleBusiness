@@ -75,6 +75,7 @@
             color="primary"
             background-color="secondary"
             prepend-inner-icon="fas fa-dollar-sign"
+            class="input-price"
             filled
             rounded
             dense

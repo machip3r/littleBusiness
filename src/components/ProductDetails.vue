@@ -1,47 +1,43 @@
 <template>
-  <div class="d-flex pa-10">
-    <v-img
-      max-width="30%"
-      max-height="30%"
-      contain
+  <div class="container-product-details">
+    <img
+      class="product-img"
       lazy-src="https://www.purina-latam.com/sites/g/files/auxxlc391/files/styles/large/public/2021-10/los-mejores-juegos-de-perritos-cachorros-por-mes-de-edad.png?itok=UNEbd6Xh"
       :src="product.p_photo"
-    ></v-img>
-    <div class="text-justify ml-4 pa-2" max-width="60%">
-      <span>{{ product.p_category }}</span>
+    />
+    <div class="container-product-info text-justify">
+      <div class="category-text-container">
+        <v-icon class="icon-category">fas fa-plus</v-icon>
+        <h6 class="category-text">{{ product.p_category }}</h6>
+      </div>
       <h1>{{ product.p_name }}</h1>
       <h4>Descripción</h4>
       <p>
         {{ product.p_description }}
       </p>
       <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
-      <div class="d-flex ma-4 align-center">
-        <div>
-          <button
-            style="background-color: var(--bone); width: 80px"
-            @click="decrement"
-          >
-            -
+    </div>
+    <v-footer absolute color="#fff">
+      <div class="product-button-area">
+        <div class="container-add-cart-inputs">
+          <button @click="decrement" class="button-decrement">
+            <v-icon class="icon-decrement">fas fa-minus</v-icon>
           </button>
-          <input
-            style="background-color: var(--bone)"
-            type="number"
-            v-model="quantity"
-          />
-          <button
-            style="background-color: var(--bone); width: 80px"
-            @click="increment"
-          >
-            +
+          <input type="number" v-model="quantity" class="input-add-cart" />
+          <button @click="increment" class="button-increment">
+            <v-icon class="icon-increment">fas fa-plus</v-icon>
           </button>
         </div>
 
-        <v-btn class="ml-4" @click="addToCart(product.id_product)">
-          <v-icon>fas fa-rocket</v-icon>
-          <span>Order</span>
+        <v-btn
+          class="button btn-add-cart"
+          @click="addToCart(product.id_product)"
+        >
+          <v-icon class="icon-add-cart">fas fa-rocket</v-icon>
+          <h5>Comprar</h5>
         </v-btn>
       </div>
-    </div>
+    </v-footer>
   </div>
 </template>
 

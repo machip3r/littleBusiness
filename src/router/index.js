@@ -72,16 +72,6 @@ const routes = [
     meta: { title: "Dashboard" },
   },
   {
-    path: "/information",
-    name: "Information",
-    component: () => import("../views/business/Information.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-    meta: { title: "Information" },
-  },
-  {
     path: "/review",
     name: "Review",
     component: () => import("../views/business/Review.vue"),
@@ -90,6 +80,16 @@ const routes = [
       next();
     },
     meta: { title: "Review" },
+  },
+  {
+    path: "/information",
+    name: "Information",
+    component: () => import("../views/business/Information.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Information" },
   },
   {
     path: "/addProduct",
@@ -126,7 +126,7 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const user = getAuth().currentUser;
 
-      const dataAdditional = getAdditionalDataUser(user.uid);
+      const dataAdditional = User.getAdditionalDataUser(user.uid);
 
       if (!user && !dataAdditional.type) router.push("/");
       next();

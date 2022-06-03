@@ -1,23 +1,34 @@
 <template>
-  <v-container>
-    <h1>Products</h1>
-  </v-container>
+  <div class="container-dashboard">
+    <v-row class="mt-1 ml-1">
+      <v-btn
+        class="fab-back-business"
+        dark
+        color="primary"
+        fab
+        small
+        left
+        top
+        @click="goBackToProfile()"
+      >
+        <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
+      </v-btn>
+      <h1 class="ml-5">Productos</h1>
+    </v-row>
+  </div>
 </template>
 
 <script>
 export default {
   name: "Products",
-
-  components: {},
-
   data() {
     return {};
   },
 
-  computed: {},
-
-  async created() {},
-
-  methods: {},
+  methods: {
+    async goBackToProfile() {
+      this.$router.push({ name: "User" });
+    },
+  },
 };
 </script>

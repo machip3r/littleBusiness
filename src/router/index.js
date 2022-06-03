@@ -49,15 +49,6 @@ const routes = [
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
-      const user = getAuth().currentUser;
-
-      if (user != null) {
-        const dataAdditional = User.getAdditionalDataUser(user.uid);
-        if (!dataAdditional.type) router.push("/products");
-      } else {
-        router.push("/");
-      }
-
       next();
     },
   },

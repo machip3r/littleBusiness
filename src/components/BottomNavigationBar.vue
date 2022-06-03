@@ -5,7 +5,7 @@
     v-model="bottomNav"
     fixed
     grow
-    v-if="seller != null"
+    v-if="seller != null && isRouteValid()"
   >
     <v-btn
       v-for="item in items"
@@ -45,7 +45,14 @@ export default {
 
   created() {},
 
-  methods: {},
+  methods: {
+    isRouteValid() {
+      return this.$route.name == "AddBusiness" ||
+        this.$route.name == "AddProduct"
+        ? false
+        : true;
+    },
+  },
   computed: {
     keyNav: {
       get() {

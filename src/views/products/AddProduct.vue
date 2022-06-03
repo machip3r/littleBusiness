@@ -1,7 +1,21 @@
 <template>
   <v-container fluid class="my-3 px-5">
-    <h2 class="font-weight-bold font-nunito">Nuevo Producto</h2>
-    <v-row no-gutters>
+    <v-row class="mt-1 ml-1">
+      <v-btn
+        class="fab-back-business"
+        dark
+        color="primary"
+        fab
+        small
+        left
+        top
+        @click="goBackToProducts()"
+      >
+        <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
+      </v-btn>
+      <h1 class="ml-5">Agregar producto</h1>
+    </v-row>
+    <v-row class="mt-10" no-gutters>
       <v-col class="d-none d-sm-flex" cols="2" md="3"></v-col>
       <v-col cols="12" sm="8" md="6" align-self="center">
         <v-form ref="form" lazy-validation class="mt-5 mb-10" v-model="valid">
@@ -55,10 +69,10 @@
             dense
           ></v-textarea>
           <v-text-field
-            v-model="product.p_price"
+            v-model.number="product.p_price"
             label="Precio"
-            color="primary"
             type="number"
+            color="primary"
             background-color="secondary"
             prepend-inner-icon="fas fa-dollar-sign"
             filled
@@ -83,7 +97,7 @@
         <v-footer absolute color="#fff">
           <v-col class="text-center" cols="12">
             <v-btn
-              class="px-16"
+              class="px-16 mb-15"
               label="Add"
               color="primary"
               large
@@ -159,7 +173,7 @@ export default {
         id_product: 0,
         p_photo: null,
         p_name: "",
-        p_price: 0,
+        p_price: "",
         p_description: "",
         p_category: "",
         p_saved: false,
@@ -172,10 +186,14 @@ export default {
     // Validar que el usuario esté loggeado
   },
   methods: {
+    async goBackToProducts() {
+      this.$router.push({ name: "Products" });
+    },
     async addNewProduct() {
       if (this.$refs.form.validate()) {
         const product = new Product();
         product.addProduct(this.product).then().catch();
+        this.$router.push({ name: "Products" });
       } else {
         // 0 -> Dialogo de imagen grande
         // 1 -> (Prueba) Dialogo editar producto

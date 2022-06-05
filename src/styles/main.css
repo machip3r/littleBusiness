@@ -99,3 +99,7 @@ body {
     rgba(40, 191, 219, 1) 100%
   );
 }
+
+.v-dialog {
+  border-radius: 24px !important;
+}

@@ -5,7 +5,7 @@
       <br />
       <br />
     </v-main>
-    <BottomNavigationBar :seller=seller />
+    <BottomNavigationBar :seller="seller" />
   </v-app>
 </template>
 
@@ -27,11 +27,11 @@ import { User } from "/firebaseAPI/controllers/user.js";
 export default {
   name: "App",
 
-  data: () => ({ }),
+  data: () => ({}),
   computed: {
-    ...mapState(['user']),
+    ...mapState(["user"]),
     seller() {
-      return (this.user != null) ? this.user.type : null;
+      return this.user != null ? this.user.type : null;
     },
   },
   async created() {

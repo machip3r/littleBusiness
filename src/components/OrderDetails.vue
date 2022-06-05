@@ -1,33 +1,56 @@
+<!-- [DONE] TODO-1: Calcular total dinámicamente -->
+<!-- [DONE] TODO-2: Hacer que el botón de Editado se haga false cuando se cierre el diálogo -->
+<!-- [DONE] TODO-3: Hacer que siempre que la orden esté pendiente, se muestre el botón de editar, el botón de Editar está deshabilitado hasta que se modifique
+Este botón subirá la orden modificada. -->
+<!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
 <template>
-  <v-card
-    class="d-flex justify-center align-center"
-    elevation="0"
-    v-if="cart.o_products.length < 1"
-  >
-    <v-card
-      class="d-flex flex-column justify-center align-center rounded-xl"
-      width="40%"
-      height="500px"
-      color="bone"
-      elevation="0"
+  <v-card elevation="0">
+    <DeleteProductDialog
+      :d_value="deleteProductDialog"
+      :d_title="d_data.d_title"
+      :d_message="d_data.d_message"
+      :d_cancel="d_data.d_cancel"
+      :d_accept="d_data.d_accept"
+      :d_color="d_data.d_color"
+      :d_icon="d_data.d_icon"
+      @dialog-accept="deleteFromOrder(selectedProductId)"
+      @dialog-cancel="deleteProductDialog = false"
+      class="v-dialog"
+    />
+
+    <v-dialog v-model="editingDialog" hide-overlay persistent width="300">
+      <v-card color="lightred" class="pt-4">
+        <v-card-text>
+          Guardando los cambios
+          <v-progress-linear indeterminate color="green"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      class="font-weight-bold"
+      :color="snackbarProps.color"
+      rounded="pill"
+      v-model="snackbarProps.status"
+      :timeout="snackbarProps.timeout"
     >
-      <v-icon class="my-4" size="100">fas fa-receipt</v-icon>
-      <h1>Sin pedidos</h1>
-      <p>Revisa los productos y agrega unos cuantos ;)</p>
-    </v-card>
-  </v-card>
-  <v-card v-else elevation="0">
+      <v-icon class="mr-6">{{ snackbarProps.icon }}</v-icon>
+      <strong>
+        {{ snackbarProps.text }}
+      </strong>
+    </v-snackbar>
+
     <v-row>
       <v-col
-        v-for="(product, index) in orderedProducts"
+        v-for="(product, index) in order.o_products"
         :key="index"
-        v-model="orderedProducts"
+        v-model="order.o_products"
       >
         <v-card
           width="400"
           class="ml-4 pa-5 mb-5 rounded-xl fill-height"
           elevation="4"
-          color="bone"
+          color="secondary"
         >
           <v-row>
             <v-col>
@@ -50,7 +73,9 @@
               </v-row>
               <v-row>
                 <v-col class="pa-0">
-                  <span class="ma-0 font-weight-light">Business Name</span>
+                  <span class="ma-0 font-weight-light">{{
+                    product.b_name
+                  }}</span>
                 </v-col>
               </v-row>
               <v-row>
@@ -61,17 +86,19 @@
                 </v-col>
               </v-row>
             </v-col>
-            <v-col align-self="center" v-if="editable">
+
+            <!-- Editable product -->
+            <v-col align-self="center" v-if="order.o_status == 'p'">
               <v-row>
                 <v-col>
                   <div class="d-flex quantityContainer">
-                    <button @click="decrement(product.id_product)">-</button>
+                    <button @click="decrement(product)">-</button>
                     <input
                       type="number"
                       v-model="product.op_quantity"
                       min="1"
                     />
-                    <button @click="increment(product.id_product)">+</button>
+                    <button @click="increment(product)">+</button>
                   </div>
                 </v-col>
               </v-row>
@@ -79,18 +106,20 @@
                 <v-col>
                   <v-btn
                     large
-                    color="lighter_red"
+                    color="lighterred"
                     width="99px"
                     height="33px"
                     rounded
                     elevation="0"
-                    @click="deleteFromCart(product.id_product)"
+                    @click="openDeleteDialog(product.id_product)"
                   >
-                    <v-icon color="lightred">fas fa-trash</v-icon>
+                    <v-icon color="error">fas fa-trash</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
             </v-col>
+
+            <!-- Default product -->
             <v-col class="d-flex justify-center align-center" v-else>
               <v-row>
                 <div class="quantityContainer centered">
@@ -106,121 +135,128 @@
     <div style="background-color: var(--bone); margin-top: 50px">
       <v-row color="bone">
         <v-col>
+          <v-badge :color="statusProps[order.o_status].badge_color"></v-badge>
+        </v-col>
+        <v-col>
           <p>Total</p>
-          <h1>${{ calcTotal() }} MXN</h1>
+          <!-- TODO-1: Calcular total dinámicamente -->
+          <h1>${{ parseFloat(order.o_total).toFixed(2) }} MXN</h1>
         </v-col>
         <v-spacer></v-spacer>
         <v-col class="my-auto">
-          <v-row class="mb-2">
-            <v-switch
-              inset
-              color="lightblue"
+          <!-- TODO-2: Hacer que el botón de Editado se haga false cuando se cierre el diálogo -->
+          <v-row class="mb-2" v-if="order.o_status == 'p'">
+            <v-chip
               large
-              @click="editable = !editable"
-              label="Editar orden"
+              class="mr-2 pa-6"
+              :disabled="editDisable"
+              @click="updateOrder()"
+              :text-color="statusProps[order.o_status].text_color"
+              :color="statusProps[order.o_status].color"
             >
-            </v-switch>
+              <v-icon left> {{ statusProps[order.o_status].icon }}</v-icon>
+              {{ statusProps[order.o_status].button_text }}
+            </v-chip>
+          </v-row>
+          <v-row v-else class="mb-2">
+            <v-chip
+              large
+              class="mr-2 pa-6"
+              :text-color="statusProps[order.o_status].text_color"
+              :color="statusProps[order.o_status].color"
+            >
+              <v-icon left> {{ statusProps[order.o_status].icon }}</v-icon>
+              {{ statusProps[order.o_status].button_text }}
+            </v-chip>
           </v-row>
           <v-row class="mt-2">
             <v-btn color="success" large @click="uploadOrder()">
               <v-icon left>fas fa-check</v-icon>
-              Generar recibo
+              Obtener ticket
             </v-btn>
           </v-row>
         </v-col>
       </v-row>
-    </div>
-
-    <!-- Receipt -->
-    <div class="container hidden" id="receipt">
-      <div class="receipt-header">
-        <div class="header__info">
-          <h1>LittleBusiness</h1>
-          <h4>Recibo de entrega</h4>
-        </div>
-
-        <div class="header__order-info">
-          <p class="mar-0 receipt-font">
-            Orden #{{ cart.id_order }} para User's Name
-          </p>
-          <p class="mar-0 receipt-font">{{ this.getDate() }}</p>
-        </div>
-      </div>
-
-      <hr />
-
-      <table class="products-table">
-        <tr>
-          <th class="receipt-font">Cant.</th>
-          <th class="receipt-font">Item</th>
-          <th class="receipt-font">Precio</th>
-        </tr>
-        <tr v-for="(prod, index) in orderedProducts" :key="index">
-          <td class="receipt-font">{{ prod.op_quantity }}</td>
-          <td class="receipt-font">{{ prod.p_name }}</td>
-          <td class="receipt-font">
-            ${{ parseFloat(prod.p_price).toFixed(2) }}
-          </td>
-        </tr>
-      </table>
-
-      <hr />
-
-      <div class="receipt-resume">
-        <div class="receipt__row">
-          <p class="receipt-font">Total de Items:</p>
-          <p class="receipt-font">{{ orderedProducts.length }}</p>
-        </div>
-        <div class="receipt__row">
-          <p class="receipt-font">Precio total:</p>
-          <p class="receipt-font">${{ calcTotal() }}</p>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="receipt__row mar-top-10">
-        <p class="receipt-font">Atendido por: Business Owner</p>
-      </div>
-
-      <div class="receipt-footer">
-        <p class="receipt-font">
-          Gracias por apoyar mi <b class="receipt-font">Pequeño negocio</b>
-        </p>
-
-        <div id="qr"></div>
-
-        <p class="receipt-font">littlebusiness.com</p>
-      </div>
     </div>
   </v-card>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
-import { html2pdf } from "html2pdf.js";
+import DeleteProductDialog from "@/components/Dialog.vue";
 
 export default {
   name: "OrderDetails",
 
-  props: ["products"],
+  props: ["originalOrder", "order"],
 
-  components: {},
+  components: {
+    DeleteProductDialog,
+  },
 
   data: () => {
     return {
-      allProducts: [],
+      editingDialog: false,
+
+      deleteProductDialog: false,
+      d_data: {
+        d_title: "Eliminar producto",
+        d_message:
+          "¿Estás seguro que eliminar el producto de esta orden? Esta acción no se puede deshacer.",
+        d_cancel: "No, regresar",
+        d_accept: "Sí, eliminar",
+        d_color: "red",
+        d_icon: "fas fa-trash",
+      },
+
+      snackbarProps: {
+        status: false,
+        text: "",
+        timeout: 3000,
+        icon: "",
+      },
+
       orderedProducts: [],
-      editable: false,
+      selectedProductId: null,
+
+      editDisable: true,
+
+      statusProps: {
+        d: {
+          text_color: "secondary",
+          button_text: "Entregada",
+          badge_color: "#2D3440",
+          color: "rgba(45, 52, 64, 0.5)",
+          icon: "fas fa-check",
+        },
+        p: {
+          text_color: "primary",
+          button_text: "Editar orden",
+          badge_color: "green",
+          color: "accent",
+          icon: "fas fa-pencil-alt",
+        },
+        c: {
+          text_color: "secondary",
+          button_text: "Cancelada",
+          badge_color: "red",
+          color: "rgba(239, 66, 76, 0.5)",
+          icon: "fas fa-times",
+        },
+      },
     };
   },
 
-  async created() {
-    await this.readDocuments();
-    this.getOrderedProducts();
+  created() {
+    // this.originalOrder = JSON.parse(JSON.stringify(this.order));
+    // this.originalOrder.o_products = JSON.parse(
+    //   JSON.stringify(this.order.o_products)
+    // );
+    this.calcTotal();
   },
+
+  mounted() {},
 
   computed: {
     ...mapState(["cart"]),
@@ -234,148 +270,152 @@ export default {
       "resetOrder",
     ]),
 
-    async readDocuments() {
-      const P = new Product();
-      await P.readProducts().then(
-        (res) => (this.allProducts = P.docsObjectToArray(res))
-      );
-    },
-
-    getOrderedProducts() {
-      const PRODUCTS_SIZE = this.allProducts.length;
-
-      this.cart.o_products.forEach((prod) => {
-        for (let i = 0; i < PRODUCTS_SIZE; i++) {
-          if (prod.id_product == this.allProducts[i].id_product) {
-            this.orderedProducts.push(
-              Object.assign(this.allProducts[i], {
-                op_quantity: prod.op_quantity,
-              })
-            );
-            break;
+    // Modify
+    increment(product) {
+      product.op_quantity++;
+      if (
+        this.originalOrder.o_products.length === this.order.o_products.length
+      ) {
+        for (let i = 0; i < this.originalOrder.o_products.length; i++) {
+          if (
+            this.originalOrder.o_products[i].op_quantity ===
+            this.order.o_products[i].op_quantity
+          ) {
+            this.editDisable = true;
+          } else {
+            this.editDisable = false;
+            return;
           }
         }
-      });
+      } else {
+        this.editDisable = false;
+        return;
+      }
+
+      this.order.o_total = this.calcTotal();
+      this.editDisable = true;
     },
 
-    increment(id_product) {
-      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
+    // Modify
+    decrement(product) {
+      product.op_quantity =
+        product.op_quantity - 1 < 1 ? 1 : product.op_quantity - 1;
 
-      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
-        if (id_product == this.orderedProducts[i].id_product)
-          this.orderedProducts[i].op_quantity++;
+      if (
+        this.originalOrder.o_products.length === this.order.o_products.length
+      ) {
+        for (let i = 0; i < this.originalOrder.o_products.length; i++) {
+          if (
+            this.originalOrder.o_products[i].op_quantity ===
+            this.order.o_products[i].op_quantity
+          ) {
+            this.editDisable = true;
+          } else {
+            this.editDisable = false;
+            return;
+          }
+        }
+      } else {
+        this.editDisable = false;
+        return;
+      }
 
-      this.incrementQuantity({ id_product: id_product, op_quantity: 1 });
-      this.$forceUpdate();
+      this.order.o_total = this.calcTotal();
+      this.editDisable = true;
     },
 
-    decrement(id_product) {
-      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
+    // Maybe delete
+    deleteFromOrder(id_product) {
+      const ORDER_PRODUCTS_SIZE = this.order.o_products.length;
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
-        if (id_product == this.orderedProducts[i].id_product)
-          this.orderedProducts[i].op_quantity =
-            this.orderedProducts[i].op_quantity > 1
-              ? this.orderedProducts[i].op_quantity - 1
-              : 1;
-
-      this.decrementQuantity({ id_product: id_product, op_quantity: 1 });
-      this.$forceUpdate();
-    },
-
-    deleteFromCart(id_product) {
-      const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
-
-      for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
-        if (id_product == this.orderedProducts[i].id_product) {
-          this.orderedProducts.splice(i, 1);
+        if (id_product == this.order.o_products[i].id_product) {
+          this.order.o_products.splice(i, 1);
           break;
         }
 
-      this.deleteProduct(id_product);
+      this.deleteProductDialog = false;
+      this.order.o_total = this.calcTotal();
+      this.editDisable = false;
+    },
+
+    openDeleteDialog(id_product) {
+      this.selectedProductId = id_product;
+      this.deleteProductDialog = true;
     },
 
     calcTotal() {
       let sum = 0;
-      this.orderedProducts.forEach((prod) => {
+      this.order.o_products.forEach((prod) => {
         sum += prod.op_quantity * prod.p_price;
       });
 
-      return sum;
+      this.order.o_total = sum;
     },
 
-    async uploadOrder() {
+    // TODO-N: Hacer que se modifique el arreglo original con una referencia
+    // TODO-(N+1): Hacer que se cierre todo el diálgo para no tener que lidiar con actualizar o así
+    async updateOrder() {
       const O = new Order();
 
-      this.getDate();
+      this.editingDialog = true;
 
-      O.addOrder(this.cart)
+      let tempOrder = JSON.parse(JSON.stringify(this.order)),
+        completeProducts = JSON.parse(JSON.stringify(this.order.o_products));
+
+      tempOrder.o_products = JSON.parse(JSON.stringify(this.order.o_products));
+
+      delete tempOrder.firebaseID;
+      delete tempOrder.f_datetime;
+      delete tempOrder.o_total;
+
+      tempOrder.o_products.forEach((product) => {
+        delete product.firebaseID;
+        delete product.id_business;
+        delete product.p_category;
+        delete product.p_description;
+        delete product.p_name;
+        delete product.p_photo;
+        delete product.p_price;
+        delete product.b_name;
+      });
+
+      O.updateOrder(this.order.firebaseID, tempOrder)
         .then((res) => {
-          this.generateReceipt();
+          this.editingDialog = true;
+
+          this.originalOrder.o_products = [];
+          completeProducts.forEach((product) => {
+            for (let i = 0; i < tempOrder.o_products.length; i++)
+              if (product.id_product === tempOrder.o_products[i].id_product) {
+                product.op_quantity = tempOrder.o_products[i].op_quantity;
+                this.originalOrder.o_products.push(product);
+              }
+          });
+
+          let sum = 0;
+          this.originalOrder.o_products.forEach((prod) => {
+            sum += prod.op_quantity * prod.p_price;
+          });
+
+          this.originalOrder.o_total = sum;
+
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = `Orden modificada correctamente`;
+          this.snackbarProps.color = this.order.o_status;
+          this.snackbarProps.icon = "fas fa-check-circle";
+
+          this.editingDialog = false;
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = `¡Hubo un error al modificar la orden!`;
+          this.snackbarProps.color = "red";
+          this.snackbarProps.icon = "exclamation-circle";
+
+          console.log(err);
+          this.editingDialog = false;
         });
-    },
-
-    generateQR(data) {
-      const QR = require("qrcode");
-
-      QR.toCanvas(data, (err, canvas) => {
-        if (err) throw err;
-
-        const QRContainer = document.getElementById("qr");
-
-        QRContainer.innerHTML = "";
-        QRContainer.appendChild(canvas);
-      });
-    },
-
-    generateReceipt() {
-      this.generateQR(this.cart.id_order);
-
-      const receipt = document.getElementById("receipt");
-
-      receipt.classList.remove("hidden");
-      html2pdf(receipt, {
-        filename: "order_" + this.cart.id_order,
-      });
-
-      this.$nextTick(() => {
-        receipt.classList.add("hidden");
-      });
-    },
-
-    getDate() {
-      const today = new Date();
-      const months = [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
-      ];
-
-      const daysOfWeek = [
-        "Domingo",
-        "Lunes",
-        "Martes",
-        "Miércoles",
-        "Jueves",
-        "Viernes",
-        "Sábado",
-      ];
-
-      return `${daysOfWeek[today.getDay()]}, ${
-        months[today.getMonth()]
-      } ${today.getDate()}, ${today.getFullYear()}`;
     },
   },
 };

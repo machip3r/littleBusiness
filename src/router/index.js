@@ -84,7 +84,7 @@ const routes = [
   {
     path: "/review",
     name: "Review",
-    component: () => import("../views/business/Review.vue"),
+    component: () => import("../views/review/Review.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();
@@ -132,6 +132,15 @@ const routes = [
       next();
     },
     meta: { title: "Products" },
+  },
+  {
+    path: "/addReview",
+    name: "AddReview",
+    component: () => import("../views/review/AddReview.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
   },
 ];
 

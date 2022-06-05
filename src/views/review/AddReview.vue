@@ -1,76 +1,68 @@
 <template>
   <v-container fluid class="my-3 px-5">
     <v-row fluid>
-    <v-btn
-      class=""
-      @click="goBack()"
-      fab
-      elevation="0"
-      color="primary"
-    >
-      <v-icon color="secondary">fas fa-arrow-left</v-icon>
-    </v-btn>
-    <h2 class="font-weight-bold font-nunito"> &nbsp; Add Review</h2>
+      <v-btn class="" @click="goBack()" fab elevation="0" color="primary">
+        <v-icon color="secondary">fas fa-arrow-left</v-icon>
+      </v-btn>
+      <h2 class="font-weight-bold font-nunito">&nbsp; Add Review</h2>
     </v-row>
-    <v-row >  
-    <v-rating
-      v-model="rating"
-      color="accent" 
-      size="3vw"
-      length="5"       
-    ></v-rating>   
+    <v-row>
+      <v-col class="d-none d-sm-flex" cols="2" md="3"></v-col>
+      <v-col cols="7" sm="5" md="4" class="pr-0 ml-2 ml-sm-0 pr-sm-2 pr-md-9 pr-lg-13" align-self="center">
+        <v-rating
+          v-model="rating"
+          color="accent"
+          size="70"
+          length="5"
+        ></v-rating>
+      </v-col>
     </v-row>
 
-    <v-row  >
-      
+    <v-row>
       <v-col class="d-none d-sm-flex" cols="2" md="3"></v-col>
       <v-col cols="12" sm="8" md="6" align-self="center">
-        
         <v-form ref="form" lazy-validation class="mt-5 mb-10" v-model="valid">
-            <AlertDialog
-                :d_title="posts.d_title"
-                :d_value="posts.d_value"
-                :d_message="posts.d_message"
-                :d_cancel="posts.d_cancel"
-                :d_accept="posts.d_accept"
-                :d_color="posts.d_color"
-                :d_icon="posts.d_icon"
-                @dialog-accept="acceptButtonDialog(posts.id)"
-                @dialog-cancel="posts.d_value = false"
-            />
-            
-            
-            
-            <v-textarea
-                v-model="review.r_description"
-                label="Descripción"
-                no-resize
-                rows="7"
-                color="primary"
-                background-color="secondary"
-                prepend-inner-icon="fas fa-comment-dots"
-                filled
-                rounded
-                dense
-            ></v-textarea>
-            <v-col class="text-center" cols="12">
-                <v-btn
-                    class="px-16"
-                    label="Add"
-                    color="primary"
-                    rows="12"
-                    x-large 
-                    block
-                    rounded
-                    v-on:click="addNewReview"
-                   
-                >
-                    <div class="mx-10">
-                    <v-icon left> fas fa-check </v-icon>
-                    Agregar
-                    </div>
-                </v-btn>
-            </v-col>
+          <AlertDialog
+            :d_title="posts.d_title"
+            :d_value="posts.d_value"
+            :d_message="posts.d_message"
+            :d_cancel="posts.d_cancel"
+            :d_accept="posts.d_accept"
+            :d_color="posts.d_color"
+            :d_icon="posts.d_icon"
+            @dialog-accept="acceptButtonDialog(posts.id)"
+            @dialog-cancel="posts.d_value = false"
+          />
+
+          <v-textarea
+            v-model="review.r_description"
+            label="Descripción"
+            no-resize
+            rows="7"
+            color="primary"
+            background-color="secondary"
+            prepend-inner-icon="fas fa-comment-dots"
+            filled
+            rounded
+            dense
+          ></v-textarea>
+          <v-col class="text-center" cols="12">
+            <v-btn
+              class="px-16"
+              label="Add"
+              color="primary"
+              rows="12"
+              x-large
+              block
+              rounded
+              v-on:click="addNewReview"
+            >
+              <div class="mx-10">
+                <v-icon left> fas fa-check </v-icon>
+                Agregar
+              </div>
+            </v-btn>
+          </v-col>
         </v-form>
       </v-col>
     </v-row>
@@ -86,10 +78,8 @@ export default {
   name: "AddProduct",
   components: {
     AlertDialog,
-    
   },
   data() {
-
     return {
       rating: 1,
       props: {
@@ -97,8 +87,8 @@ export default {
         hasresults: true,
         starsize: "lg",
         maxstars: 5,
-        disabled: false
-      },  
+        disabled: false,
+      },
       posts: {
         id: null,
         d_value: false,
@@ -145,7 +135,6 @@ export default {
         r_description: "",
         r_datetime: "",
         r_status: false,
-      
       },
       items: ["Comida", "Stickers", "Dulces", "Bebidas", "Ropa", "Panaderia"],
     };
@@ -156,7 +145,7 @@ export default {
   },
   methods: {
     getStars(stars) {
-        this.star = stars;
+      this.star = stars;
     },
     async addNewReview() {
       if (this.$refs.form.validate()) {
@@ -165,7 +154,7 @@ export default {
         this.review.id_business = 1;
         this.review.r_rate = this.rating;
         this.review.r_datetime = this.getDate();
-        review.addReview(this.review).then().catch();        
+        review.addReview(this.review).then().catch();
         this.$router.back();
       } else {
         // 0 -> Dialogo de imagen grande
@@ -200,7 +189,9 @@ export default {
         "Sábado",
       ];
 
-      return `${today.getDate()}/${months[today.getMonth()]}/${today.getFullYear()}`;
+      return `${today.getDate()}/${
+        months[today.getMonth()]
+      }/${today.getFullYear()}`;
     },
 
     showDialog(id) {
@@ -225,8 +216,7 @@ export default {
     },
     goBack() {
       this.$router.back();
-    }
-
+    },
   },
 };
 </script>

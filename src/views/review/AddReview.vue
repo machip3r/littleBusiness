@@ -155,7 +155,7 @@ export default {
         this.review.r_rate = this.rating;
         this.review.r_datetime = this.getDate();
         review.addReview(this.review).then().catch();
-        this.$router.back();
+        this.$router.push("Review");
       } else {
         // 0 -> Dialogo de imagen grande
         // 1 -> (Prueba) Dialogo editar producto

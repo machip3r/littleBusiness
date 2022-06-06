@@ -1,6 +1,8 @@
 <template>
   <v-container fluid class="my-3 px-5">
     <h2 class="font-weight-bold font-nunito">Reviews</h2>
+    
+
     <v-card
       class="d-flex justify-center align-center"
       elevation="0"
@@ -19,6 +21,18 @@
       </v-card>
     </v-card>
     <v-card v-else elevation="0">
+      <v-row justify="center">
+        <v-chip-group
+        
+        active-class="accent--text text--accent"
+        mandatory
+      >
+        <v-chip @click="setMinMax(0,5)">All</v-chip>
+        <v-chip @click="setMinMax(4,5)">Good</v-chip>
+        <v-chip @click="setMinMax(0,2)">Bad</v-chip>
+        <v-chip @click="setMinMax(3,3)">Normal</v-chip>
+      </v-chip-group>
+      </v-row>
       <v-row>
         <v-col>
           <v-card
@@ -35,7 +49,7 @@
                     <v-list-item-title
                       class="font-weight-bold font-nunito primary--text"
                     >
-                      <h3>{{ averageRate }}/5</h3>
+                      <h3>{{ averageRate.toFixed(1) }}/5</h3>
                     </v-list-item-title>
                     <v-list-item-subtitle
                       class="font-weight-light font-nunito primary--text"
@@ -78,12 +92,14 @@
           v-for="(review, index) in businessReviews"
           :key="index"
           v-model="businessReviews"
+          
         >
           <v-card
             width="400"
             class="rounded-xl fill-height"
             elevation="4"
             color="secondary"
+            v-if="review.r_rate >= min && review.r_rate <= max "
           >
             <v-card-actions class="pa-4 pb-0">
               <span class="font-weight-bold font-nunito primary--text ma-0">
@@ -133,6 +149,8 @@ export default {
 
   data: () => {
     return {
+      min: 0,
+      max: 5,
       already: false,
       averageRate: 0,
       stars: [1, 2, 3, 4, 5],
@@ -143,6 +161,7 @@ export default {
   },
 
   async created() {
+    this.already = false;
     await this.readDocuments();
     this.getBusinessReviews();
   },
@@ -201,6 +220,10 @@ export default {
     addReview() {
       this.$router.push("AddReview");
     },
+    setMinMax(mi, ma) {
+      this.min = mi;
+      this.max = ma;
+    }
   },
 };
 </script>

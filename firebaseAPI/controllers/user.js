@@ -1,4 +1,4 @@
-import { db } from "/firebaseAPI/connection.js";
+import { db, storage } from "/firebaseAPI/connection.js";
 import {
   collection,
   doc,
@@ -23,6 +23,8 @@ import {
   FacebookAuthProvider,
   onAuthStateChanged,
 } from "firebase/auth";
+
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const collectionName = "user";
 const usersCollection = collection(db, collectionName);
@@ -69,23 +71,81 @@ export class User {
     return user;
   }
 
-  static async updateAccountUser(data) {
+  static async updateUserName(name) {
     const auth = getAuth();
     const user = auth.currentUser;
-    if (data.name === null) data.name = user.displayName;
-    if (data.photo === null) data.photo = user.photoURL;
-    updateProfile(user, {
-      displayName: data.name,
-      photoURL: data.photo,
-    })
+    if (name === null) name = user.displayName;
+
+    updateProfile(user, { displayName: name })
       .then(() => {
-        console.log("Perfil actualizado");
         return true;
       })
-      .catch(() => {
-        console.log("Error al actualizar el perfil");
+      .catch((e) => {
         return false;
       });
+  }
+
+  static async updateUserPhoto(photo) {
+    return new Promise(async resolve => {
+      if (photo !== null && photo !== undefined) {
+        try {
+          //----Compress Image-------------------------
+          const compressedPhoto = await compressImage(photo, 80);
+          //---------------------------------------------
+          const metadata = {
+            contentType: "image/jpeg",
+          };
+          const storageRef = ref(
+            storage,
+            `users/${Date.now()}_${photo.name}`
+          );
+          const uploadTask = uploadBytesResumable(
+            storageRef,
+            compressedPhoto,
+            metadata
+          );
+
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => { },
+            (error) => {
+              switch (error.code) {
+                case "storage/unauthorized":
+                  // User doesn't have permission to access the object
+                  console.log("No tienes permiso de subir archivos padrino");
+                  break;
+                case "storage/canceled":
+                  // User canceled the upload
+                  console.log("Cancelaste la subida mi hermano");
+                  break;
+                case "storage/unknown":
+                  // Unknown error occurred, inspect error.serverResponse
+                  console.log("¿Qué pasó?");
+                  break;
+              }
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                const auth = getAuth();
+                const user = auth.currentUser;
+                updateProfile(user, { photoURL: downloadURL })
+                  .then(() => {
+                    resolve(downloadURL);
+                  })
+                  .catch((e) => {
+                    console.log("Error al actualizar el perfil");
+                    console.log(e)
+                    return false;
+                  });
+              });
+            }
+          );
+        } catch (error) {
+          console.error("Error adding product: ", error);
+          return error;
+        }
+      }
+    });
   }
 
   async addUser(body) {
@@ -262,4 +322,28 @@ export class User {
 
     return arr;
   }
+}
+
+function compressImage(imageFile, quality) {
+  return new Promise((resolve, reject) => {
+    const $canvas = document.createElement("canvas");
+    const imagen = new Image();
+    imagen.onload = () => {
+      $canvas.width = imagen.width;
+      $canvas.height = imagen.height;
+      $canvas.getContext("2d").drawImage(imagen, 0, 0);
+      $canvas.toBlob(
+        (blob) => {
+          if (blob === null) {
+            return reject(blob);
+          } else {
+            resolve(blob);
+          }
+        },
+        "image/jpeg",
+        quality / 100
+      );
+    };
+    imagen.src = URL.createObjectURL(imageFile);
+  });
 }

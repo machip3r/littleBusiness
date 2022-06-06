@@ -1,0 +1,64 @@
+.flex-col1 {
+  flex-basis: 70%;
+}
+
+.align-center-flex {
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.container-schedule {
+  background-color: E4E4E4 !important;
+}
+
+.container-hours {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.chips-hour {
+  color: white !important;
+  margin: 0 0.1rem 0.4rem 0.2rem;
+}
+
+.button-continue {
+  width: 100%;
+  height: 60px !important;
+  background-color: #2d3440 !important;
+  color: white !important;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .container-addBusiness {
+    margin: 0 5rem 0 5rem;
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  .container-addBusiness {
+    margin: 0 10rem 0 10rem;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .container-addBusiness {
+    margin: 0 16rem 0 16rem;
+  }
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1224px) {
+  .container-addBusiness {
+    margin: 0 16rem 0 16rem;
+  }
+}
+
+@media only screen and (min-width: 1224px) {
+  .container-addBusiness {
+    margin: 0 25rem 0 25rem;
+  }
+}
+
+@media only screen and (min-width: 1824px) {
+}

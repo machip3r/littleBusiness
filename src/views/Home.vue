@@ -178,9 +178,9 @@
             <v-icon color="secondary">fas fa-arrow-left</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
-          <v-chip class="pa-4" large text-color="secondary" color="primary">{{
-            product.p_name
-          }}</v-chip>
+          <v-chip class="pa-4" large text-color="secondary" color="primary">
+            {{ business.b_name }}
+          </v-chip>
         </div>
 
         <ProductDetails @close-dialog="closeDialog()" :product="product" />
@@ -231,6 +231,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
+import { Business } from "/firebaseAPI/controllers/business.js";
 import ProductDetails from "@/components/ProductDetails.vue";
 import OrderDetails from "@/components/OrderDetails.vue";
 
@@ -250,7 +251,7 @@ export default {
       date: "",
       update: 0,
       product: {
-        id_user: 1,
+        id_business: 0,
         id_product: 0,
         p_photo: null,
         p_name: "",
@@ -258,6 +259,10 @@ export default {
         p_description: "",
         p_category: "",
         p_saved: false,
+      },
+      business: {
+        id_business: "",
+        b_name: "",
       },
       allProducts: [],
       categories: [
@@ -280,17 +285,24 @@ export default {
   },
 
   async created() {
-    await this.readDocuments();
+    await this.readProductDocuments();
     this.date = this.getDate();
   },
 
   methods: {
     ...mapActions(["resetOrder"]),
 
-    async readDocuments() {
+    async readProductDocuments() {
       const P = new Product();
       await P.readProducts().then(
         (res) => (this.allProducts = P.docsObjectToArray(res))
+      );
+    },
+
+    async readBusiness(id_business) {
+      const B = new Business();
+      await B.readBusinessWithID(id_business).then(
+        (res) => (this.business = B.docsObjectToArray(res))
       );
     },
 
@@ -302,6 +314,7 @@ export default {
     seeProduct(item) {
       this.product = item;
       this.productDialog = true;
+      this.readBusiness(item.id_business);
     },
 
     leadingZeros(number) {

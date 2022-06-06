@@ -73,9 +73,11 @@ a:hover {
 }
 
 body {
+  width: 100%;
   font-family: var(--secondary-font);
   font-weight: 400;
   background-color: #ffffff;
+  overflow-x: hidden;
 }
 
 .container {
@@ -100,6 +102,14 @@ body {
   );
 }
 
-.v-dialog {
-  border-radius: 24px !important;
+@media (min-width: 1000px) {
+  .fab-back-business {
+    width: 60px !important;
+    height: 60px !important;
+    margin-top: 5px;
+  }
+
+  .icon-back-business {
+    font-size: 20px !important;
+  }
 }

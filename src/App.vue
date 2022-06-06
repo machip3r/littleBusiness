@@ -5,7 +5,11 @@
       <br />
       <br />
     </v-main>
+    <<<<<<< HEAD
     <BottomNavigationBar :seller="seller" />
+    =======
+    <BottomNavigationBar :seller="sellerView" />
+    >>>>>>> 52bf09967dffc2ac2e5f1b3fbcb0547e595cf495
   </v-app>
 </template>
 
@@ -17,6 +21,7 @@
 @import "./styles/receipt.css";
 @import "./styles/home.css";
 @import "./styles/dashboard.css";
+@import "./styles/business.css";
 </style>
 
 <script>
@@ -29,10 +34,10 @@ export default {
 
   data: () => ({}),
   computed: {
-    ...mapState(["user"]),
     seller() {
       return this.user != null ? this.user.type : null;
     },
+    ...mapState(["user", "sellerView"]),
   },
   async created() {
     User.getLogedUser().then(async (user) => {
@@ -45,7 +50,8 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
-        this.$router.push({ name: "Home" });
+
+        // this.$router.push({ name: "Home" });
       }
     });
   },

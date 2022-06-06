@@ -1,13 +1,22 @@
 <template>
   <div class="container-addBusiness">
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-row class="mt-1 ml-1">
+      <v-btn
+        class="fab-back-business"
+        dark
+        color="primary"
+        fab
+        small
+        left
+        top
+        @click="goBackToProfile()"
+      >
+        <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
+      </v-btn>
+      <h1 class="ml-5">Habla sobre tu negocio</h1>
+    </v-row>
+    <v-form class="mt-10" ref="form" v-model="valid" lazy-validation>
       <div>
-        <h1>Cuéntanos de tu negocio</h1>
-        <p>
-          ¿Cómo llamarías a tu negocio?, ¿Qué nos puedes decir de él?, ¿Cuál es
-          el horario de disponibilidad?
-        </p>
-
         <v-text-field
           filled
           label="Nombre de tu negocio"
@@ -35,7 +44,7 @@
           :rules="this.rules.required"
           filled
         ></v-combobox>
-        <p class="font-weight-bold">¿Cuándo está abierto tu negocio?</p>
+        <h4>Horario</h4>
         <div>
           <v-alert
             color="red"
@@ -87,95 +96,21 @@
             </div>
           </div>
         </div>
-        <div>
-          <v-btn
-            class="button-continue button button-register"
-            rounded
-            dense
-            large
-            @click="addBusiness()"
-          >
-            <v-icon color="white">fas fa-check</v-icon>
-            Continuar
-          </v-btn>
-        </div>
+        <v-btn
+          class="mt-15 button-continue button button-register"
+          rounded
+          dense
+          large
+          @click="addBusiness()"
+        >
+          <v-icon class="mr-3" color="white">fas fa-check</v-icon>
+          Continuar
+        </v-btn>
       </div>
     </v-form>
   </div>
 </template>
 
-<style>
-.flex-col1 {
-  flex-basis: 70%;
-}
-.align-center-flex {
-  align-items: center !important;
-  justify-content: center !important;
-}
-.container-schedule {
-  background-color: E4E4E4 !important;
-}
-
-.container-hours {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.chips-hour {
-  color: white !important;
-  margin: 0 0.1rem 0.4rem 0.2rem;
-}
-.button-continue {
-  margin-bottom: 1rem;
-  background-color: #2d3440 !important;
-  color: white !important;
-}
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  /* Styles */
-
-  .container-addBusiness {
-    margin: 0 5rem 0 5rem;
-  }
-}
-
-/* Smartphones (landscape) ----------- */
-@media only screen and (min-width: 480px) {
-  /* Styles */
-  .container-addBusiness {
-    margin: 0 10rem 0 10rem;
-  }
-}
-
-/* iPads (portrait and landscape) ----------- */
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-  /* Styles */
-  .container-addBusiness {
-    margin: 0 16rem 0 16rem;
-  }
-}
-
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1224px) {
-  /* Styles */
-  .container-addBusiness {
-    margin: 0 16rem 0 16rem;
-  }
-}
-
-/* Desktops and laptops ----------- */
-@media only screen and (min-width: 1224px) {
-  /* Styles */
-  .container-addBusiness {
-    margin: 0 25rem 0 25rem;
-  }
-}
-
-/* Large screens ----------- */
-@media only screen and (min-width: 1824px) {
-  /* Styles */
-}
-</style>
 <script>
 import { mapState } from "vuex";
 import { getCategories } from "../../../firebaseAPI/controllers/cateogory";
@@ -219,6 +154,9 @@ export default {
   },
 
   methods: {
+    async goBackToProfile() {
+      this.$router.push({ name: "User" });
+    },
     async getCategoriesCbx() {
       this.categories = await getCategories();
     },

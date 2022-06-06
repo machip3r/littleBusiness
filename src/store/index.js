@@ -47,27 +47,29 @@ export default new Vuex.Store({
 
       state.user = userData;
       state.sellerView = false;
-      localStorage.setItem('logged', true);
+      localStorage.setItem("logged", true);
     },
     async setAccess(state, payload) {
       state.accessToken = payload.accessToken;
       state.user = payload.user;
-      state.sellerView = false;
+      //state.sellerView = false;
     },
     async logOut(state, payload) {
-        state.accessToken = null;
-        state.user = null;
-        state.sellerView = null;
-        localStorage.removeItem('logged');
-        await User.logout();
+      state.accessToken = null;
+      state.user = null;
+      state.sellerView = null;
+      localStorage.removeItem("logged");
+      await User.logout();
     },
     async updateName(state, payload) {
       await User.updateUserName(payload);
       if (payload !== null) state.user.name = payload;
     },
     async updatePhoto(state, payload) {
-      User.updateUserPhoto(payload).then((url) => {
-        state.user.photo = url;
+      return new Promise((resolve) => {
+        User.updateUserPhoto(payload).then((url) => {
+          resolve((state.user.photo = url));
+        });
       });
     },
     updateSellerView(state, payload) {
@@ -138,8 +140,8 @@ export default new Vuex.Store({
 
     getAccessToken(state) {
       //return state.accessToken;
-      if (state.accessToken === null) return localStorage.getItem('logged');
-      else return state.accessToken
+      if (state.accessToken === null) return localStorage.getItem("logged");
+      else return state.accessToken;
     },
 
     // This is not in chikis' commit
@@ -151,22 +153,20 @@ export default new Vuex.Store({
 
   actions: {
     updateUserName({ commit }, name) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         resolve(commit("updateName", name));
       });
     },
     updateUserPhoto({ commit }, photo) {
-      return new Promise(resolve => {
-        resolve(commit("updatePhoto", photo));
-      })
+      commit("updatePhoto", photo);
     },
     loadAccess({ commit }, access) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         resolve(commit("setAccess", access));
       });
     },
     removeAccess({ commit }) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         resolve(commit("logOut"));
       });
     },

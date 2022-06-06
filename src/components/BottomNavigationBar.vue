@@ -5,7 +5,7 @@
     v-model="bottomNav"
     fixed
     grow
-    v-if="seller != null"
+    v-if="seller != null && isRouteValid()"
   >
     <v-btn
       v-for="item in items"
@@ -22,11 +22,12 @@
         :style="{
           color: keyNav == item.to ? 'var(--dark-blue)' : 'var(--bone)',
         }"
-        ><b>{{ item.title }}</b></span
       >
-      <v-icon :color="keyNav == item.to ? 'primary' : 'secondary'">{{
-        item.icon
-      }}</v-icon>
+        <b>{{ item.title }}</b>
+      </span>
+      <v-icon :color="keyNav == item.to ? 'primary' : 'secondary'">
+        {{ item.icon }}
+      </v-icon>
     </v-btn>
   </v-bottom-navigation>
 </template>
@@ -44,7 +45,14 @@ export default {
 
   created() {},
 
-  methods: {},
+  methods: {
+    isRouteValid() {
+      return this.$route.name == "AddBusiness" ||
+        this.$route.name == "AddProduct"
+        ? false
+        : true;
+    },
+  },
   computed: {
     keyNav: {
       get() {
@@ -55,7 +63,14 @@ export default {
       },
     },
     items() {
-      if (this.seller) {
+      if (
+        this.seller &&
+        (this.$route.name == "Dashboard" ||
+          this.$route.name == "Cart" ||
+          this.$route.name == "Products" ||
+          this.$route.name == "Review" ||
+          this.$route.name == "Information")
+      ) {
         return [
           { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
           { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },

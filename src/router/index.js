@@ -11,6 +11,7 @@ const routes = [
     name: "Login",
     component: () => import("../views/Login.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", null);
       if (store.getters.getAccessToken) router.push("/home");
       next();
     },
@@ -20,6 +21,7 @@ const routes = [
     name: "SignUp",
     component: () => import("../views/Signup.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", null);
       if (store.getters.getAccessToken) router.push("/home");
       next();
     },
@@ -29,6 +31,7 @@ const routes = [
     name: "Home",
     component: () => import("../views/Home.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", false);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -39,6 +42,7 @@ const routes = [
     name: "User",
     component: () => import("../views/User.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", false);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -49,15 +53,6 @@ const routes = [
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
-      const user = getAuth().currentUser;
-
-      if (user != null) {
-        const dataAdditional = User.getAdditionalDataUser(user.uid);
-        if (!dataAdditional.type) router.push("/products");
-      } else {
-        router.push("/");
-      }
-
       next();
     },
   },
@@ -66,16 +61,29 @@ const routes = [
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
     meta: { title: "Dashboard" },
   },
   {
+    path: "/review",
+    name: "Review",
+    component: () => import("../views/business/Review.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Review" },
+  },
+  {
     path: "/information",
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -85,17 +93,23 @@ const routes = [
     path: "/review",
     name: "Review",
     component: () => import("../views/review/Review.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-    meta: { title: "Review" },
   },
   {
     path: "/addProduct",
     name: "AddProduct",
     component: () => import("../views/products/AddProduct.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", null);
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
+  {
+    path: "/editProduct/:id",
+    name: "EditProduct",
+    component: () => import("../views/products/EditProduct.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", null);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -105,6 +119,7 @@ const routes = [
     name: "Cart",
     component: () => import("../components/OrderDetails.vue"),
     beforeEnter: (to, from, next) => {
+      if (store.state.sellerView === null) store.dispatch("modifyView", false);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -115,6 +130,7 @@ const routes = [
     name: "Product",
     component: () => import("../components/ProductDetails.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", null);
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
@@ -124,9 +140,10 @@ const routes = [
     name: "Products",
     component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
       const user = getAuth().currentUser;
 
-      const dataAdditional = getAdditionalDataUser(user.uid);
+      const dataAdditional = User.getAdditionalDataUser(user.uid);
 
       if (!user && !dataAdditional.type) router.push("/");
       next();

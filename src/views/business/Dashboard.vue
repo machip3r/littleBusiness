@@ -1,7 +1,21 @@
 <template>
   <div class="container-dashboard">
-    <h1>Tablero</h1>
-    <h3>Hoy</h3>
+    <v-row class="mt-1 ml-1">
+      <v-btn
+        class="fab-back-business"
+        dark
+        color="primary"
+        fab
+        small
+        left
+        top
+        @click="goBackToProfile()"
+      >
+        <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
+      </v-btn>
+      <h1 class="ml-5">Tablero</h1>
+    </v-row>
+    <h3 class="mt-8">Hoy</h3>
     <div class="quick-stats">
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
@@ -125,6 +139,10 @@ export default {
     };
   },
 
-  methods: {},
+  methods: {
+    async goBackToProfile() {
+      this.$router.push({ name: "User" });
+    },
+  },
 };
 </script>

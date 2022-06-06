@@ -112,6 +112,19 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-btn
+      class="fab-back-business mb-15"
+      dark
+      color="primary"
+      fab
+      fixed
+      small
+      right
+      bottom
+      @click="openAddBusiness()"
+    >
+      <v-icon class="icon-back-business" size="15">fas fa-plus</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -159,7 +172,16 @@ export default {
   },
   async created() {},
   methods: {
-    ...mapActions(["removeAccess", "updateUserName", "updateUserPhoto", "modifyView"]),
+    ...mapActions([
+      "removeAccess",
+      "updateUserName",
+      "updateUserPhoto",
+      "modifyView",
+    ]),
+
+    async openAddBusiness() {
+      this.$router.push({ name: "AddBusiness" });
+    },
     async logOut() {
       this.removeAccess().then(() => {
         this.$router.push({ name: "Login" });
@@ -195,7 +217,7 @@ export default {
     enterSellerView() {
       this.modifyView(true);
       this.$router.push("Dashboard");
-    }
+    },
   },
 };
 </script>

@@ -53,15 +53,6 @@ const routes = [
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
     beforeEnter: (to, from, next) => {
-      const user = getAuth().currentUser;
-
-      if (user != null) {
-        const dataAdditional = User.getAdditionalDataUser(user.uid);
-        if (!dataAdditional.type) router.push("/products");
-      } else {
-        router.push("/");
-      }
-
       next();
     },
   },
@@ -77,17 +68,6 @@ const routes = [
     meta: { title: "Dashboard" },
   },
   {
-    path: "/information",
-    name: "Information",
-    component: () => import("../views/business/Information.vue"),
-    beforeEnter: (to, from, next) => {
-      store.dispatch("modifyView", true);
-      if (!store.getters.getAccessToken) router.push("/");
-      next();
-    },
-    meta: { title: "Information" },
-  },
-  {
     path: "/review",
     name: "Review",
     component: () => import("../views/business/Review.vue"),
@@ -97,6 +77,17 @@ const routes = [
       next();
     },
     meta: { title: "Review" },
+  },
+  {
+    path: "/information",
+    name: "Information",
+    component: () => import("../views/business/Information.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Information" },
   },
   {
     path: "/addProduct",
@@ -147,7 +138,7 @@ const routes = [
       store.dispatch("modifyView", true);
       const user = getAuth().currentUser;
 
-      const dataAdditional = getAdditionalDataUser(user.uid);
+      const dataAdditional = User.getAdditionalDataUser(user.uid);
 
       if (!user && !dataAdditional.type) router.push("/");
       next();

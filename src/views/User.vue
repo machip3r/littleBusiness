@@ -94,6 +94,7 @@
           ></v-text-field>
           <div v-if="profile.type">
             <h5>Mi negocio</h5>
+
             <v-btn
               class="px-16"
               label="Add"
@@ -101,11 +102,13 @@
               large
               block
               rounded
-              @click="enterSellerView"
+              v-for="item in business"
+              :key="item.id_business"
+              @click="enterSellerView(item.id_business)"
             >
               <div class="mx-10">
                 <v-icon left> fas fa-store </v-icon>
-                {{ business }}
+                {{ item.b_name }}
               </div>
             </v-btn>
           </div>
@@ -130,13 +133,15 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import { getAuth } from "firebase/auth";
+import { Business } from "../../firebaseAPI/controllers/business";
 export default {
   name: "User",
   data() {
     return {
       modifyName: true,
       modifyPhoto: false,
-      business: "Stickers cool",
+      business: [],
 
       modifiedName: null,
       modifiedPhoto: null,
@@ -170,7 +175,15 @@ export default {
       return { name: "", type: false };
     },
   },
-  async created() {},
+  created() {
+    Business.getBussinesByUId()
+      .then((rows) => {
+        this.business = rows;
+      })
+      .catch((err) => {
+        //console.error(err);
+      });
+  },
   methods: {
     ...mapActions([
       "removeAccess",
@@ -179,6 +192,7 @@ export default {
       "modifyView",
     ]),
 
+    async getBussines() {},
     async openAddBusiness() {
       this.$router.push({ name: "AddBusiness" });
     },
@@ -214,9 +228,9 @@ export default {
         this.modifiedPhoto = null;
       } else this.$refs.fiPhoto.click();
     },
-    enterSellerView() {
+    enterSellerView(id) {
       this.modifyView(true);
-      this.$router.push("Dashboard");
+      this.$router.push({ name: "Dashboard", params: { id: id } });
     },
   },
 };

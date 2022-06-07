@@ -5,11 +5,7 @@
       <br />
       <br />
     </v-main>
-    <<<<<<< HEAD
     <BottomNavigationBar :seller="seller" />
-    =======
-    <BottomNavigationBar :seller="sellerView" />
-    >>>>>>> 52bf09967dffc2ac2e5f1b3fbcb0547e595cf495
   </v-app>
 </template>
 

@@ -3,6 +3,8 @@
 <!-- [DONE] TODO-3: Hacer que siempre que la orden esté pendiente, se muestre el botón de editar, el botón de Editar está deshabilitado hasta que se modifique
 Este botón subirá la orden modificada. -->
 <!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
+<!-- [DONE] TODO-5: Editar NaN de o_total -->
+<!-- TODO-5: Hacer que la orden se elimine cuando no tenga elementos -->
 <template>
   <v-card elevation="0">
     <DeleteProductDialog
@@ -134,17 +136,18 @@ Este botón subirá la orden modificada. -->
 
     <div style="background-color: var(--bone); margin-top: 50px">
       <v-row color="bone">
-        <v-col>
-          <v-badge :color="statusProps[order.o_status].badge_color"></v-badge>
+        <v-col cols="1">
+          <v-badge
+            :color="statusProps[order.o_status].badge_color"
+            align="center"
+          ></v-badge>
         </v-col>
-        <v-col>
+        <v-col cols="8">
           <p>Total</p>
-          <!-- TODO-1: Calcular total dinámicamente -->
           <h1>${{ parseFloat(order.o_total).toFixed(2) }} MXN</h1>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col class="my-auto">
-          <!-- TODO-2: Hacer que el botón de Editado se haga false cuando se cierre el diálogo -->
+        <v-col class="my-auto" cols="2">
           <v-row class="mb-2" v-if="order.o_status == 'p'">
             <v-chip
               large
@@ -168,12 +171,6 @@ Este botón subirá la orden modificada. -->
               <v-icon left> {{ statusProps[order.o_status].icon }}</v-icon>
               {{ statusProps[order.o_status].button_text }}
             </v-chip>
-          </v-row>
-          <v-row class="mt-2">
-            <v-btn color="success" large @click="uploadOrder()">
-              <v-icon left>fas fa-check</v-icon>
-              Obtener ticket
-            </v-btn>
           </v-row>
         </v-col>
       </v-row>
@@ -249,10 +246,6 @@ export default {
   },
 
   created() {
-    // this.originalOrder = JSON.parse(JSON.stringify(this.order));
-    // this.originalOrder.o_products = JSON.parse(
-    //   JSON.stringify(this.order.o_products)
-    // );
     this.calcTotal();
   },
 
@@ -273,6 +266,8 @@ export default {
     // Modify
     increment(product) {
       product.op_quantity++;
+      this.calcTotal();
+
       if (
         this.originalOrder.o_products.length === this.order.o_products.length
       ) {
@@ -292,7 +287,7 @@ export default {
         return;
       }
 
-      this.order.o_total = this.calcTotal();
+      this.calcTotal();
       this.editDisable = true;
     },
 
@@ -300,6 +295,7 @@ export default {
     decrement(product) {
       product.op_quantity =
         product.op_quantity - 1 < 1 ? 1 : product.op_quantity - 1;
+      this.calcTotal();
 
       if (
         this.originalOrder.o_products.length === this.order.o_products.length
@@ -319,8 +315,6 @@ export default {
         this.editDisable = false;
         return;
       }
-
-      this.order.o_total = this.calcTotal();
       this.editDisable = true;
     },
 
@@ -331,11 +325,12 @@ export default {
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
         if (id_product == this.order.o_products[i].id_product) {
           this.order.o_products.splice(i, 1);
+          this.calcTotal();
           break;
         }
 
       this.deleteProductDialog = false;
-      this.order.o_total = this.calcTotal();
+      this.calcTotal();
       this.editDisable = false;
     },
 

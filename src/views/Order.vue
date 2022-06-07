@@ -154,6 +154,13 @@
           dense
         ></v-text-field>
       </v-col>
+
+      <!-- TODO: Visible para el vendedor solamente -->
+      <v-col>
+        <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+          Lorem ipsum dolor sit amet
+        </v-chip>
+      </v-col>
     </v-row>
 
     <v-chip-group mandatory active-class="month-select--active" class="ml-6">
@@ -199,6 +206,12 @@
               >#{{ order.id_order.toUpperCase() }}</v-toolbar-title
             >
             <v-spacer></v-spacer>
+
+            <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
+            <v-toolbar-title>
+              <strong>Fulanito's name</strong>
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
             <v-toolbar-title>
               <v-icon>far fa-calendar</v-icon>
               {{ order.f_datetime }}
@@ -206,11 +219,11 @@
           </v-toolbar>
 
           <v-row class="my-3 px-8">
-            <v-col cols="7">Total</v-col>
+            <v-col cols="6"><strong>Total</strong></v-col>
             <v-spacer></v-spacer>
-            <v-col cols="3"
-              >${{ parseFloat(order.o_total).toFixed(2) }} MXN</v-col
-            >
+            <v-col cols="4">
+              <strong>${{ parseFloat(order.o_total).toFixed(2) }} MXN</strong>
+            </v-col>
           </v-row>
           <v-card
             class="ma-1"
@@ -220,11 +233,17 @@
             :key="product.id"
           >
             <v-row class="px-8">
-              <v-col cols="2">{{ product.op_quantity }}x</v-col>
-              <v-col cols="7">{{ product.p_name }}</v-col>
-              <v-col cols="3"
-                >${{ parseFloat(product.p_price).toFixed(2) }} MXN</v-col
-              >
+              <v-col cols="2">
+                <strong>{{ product.op_quantity }}x</strong>
+              </v-col>
+              <v-col cols="6">
+                <strong>{{ product.p_name }} </strong>
+              </v-col>
+              <v-col cols="4">
+                <strong>
+                  ${{ parseFloat(product.p_price).toFixed(2) }} MXN
+                </strong>
+              </v-col>
             </v-row>
           </v-card>
         </v-card>

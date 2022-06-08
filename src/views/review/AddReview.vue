@@ -11,6 +11,8 @@
       <v-col cols="7" sm="5" md="4" class="pr-0 ml-2 ml-sm-0 pr-sm-2 pr-md-9 pr-lg-13" align-self="center">
         <v-rating
           v-model="rating"
+          half-increments
+          half-icon="fas fa-star-half-alt"
           color="accent"
           size="70"
           length="5"

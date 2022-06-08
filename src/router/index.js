@@ -90,11 +90,6 @@ const routes = [
     meta: { title: "Information" },
   },
   {
-    path: "/review",
-    name: "Review",
-    component: () => import("../views/review/Review.vue"),
-  },
-  {
     path: "/addProduct",
     name: "AddProduct",
     component: () => import("../views/products/AddProduct.vue"),

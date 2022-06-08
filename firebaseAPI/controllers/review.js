@@ -19,8 +19,9 @@ const reviewCollection = collection(db, collectionName);
 
 
 export class Review {
-  constructor(id_user, id_business, r_rate, r_description, r_datetime, r_status) {
+  constructor(id_user, u_name, id_business, r_rate, r_description, r_datetime, r_status) {
     this.id_user = id_user;
+    this.u_name = u_name;
     this.id_business = id_business;
     this.r_rate = r_rate;
     this.r_description = r_description;
@@ -36,6 +37,7 @@ export class Review {
       const docRef = await addDoc(reviewCollection, {
         id_review: id_review,
         id_user: this.id_user,
+        u_name: this.u_name,
         id_business: this.id_business,
         r_rate: this.r_rate,
         r_description: this.r_descrption,
@@ -94,8 +96,6 @@ export class Review {
 
     return obj;
   }
-
-  
 
   // - - - - -  Utility Functions  - - - - -
   async #newReviewID() {

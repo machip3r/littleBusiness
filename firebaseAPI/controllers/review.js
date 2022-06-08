@@ -55,9 +55,8 @@ export class Review {
   async addReview(body) {
     try {
       body.id_review = await this.#newReviewID();
-    
       const docRef = await addDoc(reviewCollection, body);
-      console.log("todo bien papu");
+      
       return docRef.id;
 
     } catch (error) {

@@ -308,7 +308,7 @@
                   <v-img
                     max-width="300"
                     height="200"
-                    :src="setBusinessImage(business.id_business)"
+                    :src="business.photo"
                     class="rounded-xl"
                   ></v-img>
                 </v-col>
@@ -336,7 +336,7 @@
                       class="mr-16 ml-n5 mt-0"
                     >
                       <v-rating
-                        :value="5"
+                        :value="business.rating"
                         color="primary"
                         dense
                         half-increments
@@ -348,12 +348,26 @@
 
                   <v-card-text>
                     <v-row class="mt-0 mx-0">
-                      <v-chip color="primary" class="font-weight-bold">
+                      <v-chip
+                        color="primary"
+                        class="font-weight-bold"
+                        v-if="business.minPrice != null"
+                      >
                         <v-icon left size="16" class="ml-0">
                           fas fa-dollar-sign</v-icon
                         >
-                        Prices: $5 - $10</v-chip
-                      >
+                        <span>
+                          Prices: ${{ business.minPrice }} - ${{
+                            business.maxPrice
+                          }}</span
+                        >
+                      </v-chip>
+                      <v-chip color="primary" class="font-weight-bold" v-else>
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-sad-tear</v-icon
+                        >
+                        <span>No products</span>
+                      </v-chip>
                       <v-spacer></v-spacer>
                       <v-chip color="primary" class="font-weight-bold">
                         <v-icon left size="16" class="ml-0">
@@ -392,6 +406,7 @@ import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business.js";
 import { Category } from "/firebaseAPI/controllers/category.js";
+import { Review } from "/firebaseAPI/controllers/review.js";
 import ProductDetails from "@/components/ProductDetails.vue";
 import Cart from "@/components/Cart.vue";
 import Dialog from "@/components/Dialog.vue";
@@ -453,7 +468,9 @@ export default {
       filteredProducts: [],
 
       allBusiness: [],
+      allReviews: [],
       businessPhotos: new Map(),
+      businessReviews: new Map(),
       business: {
         id_business: "",
         b_name: "",
@@ -474,7 +491,6 @@ export default {
     this.date = this.getDate();
 
     this.filteredProducts = [...this.allProducts];
-    this.readBusinessDocuments();
   },
 
   methods: {
@@ -525,10 +541,18 @@ export default {
       this.homeView = !this.homeView;
       if (this.allBusiness.length === 0) {
         const B = new Business();
+        const R = new Review();
         await B.readBusiness().then((res) => {
           this.allBusiness = B.docsObjectToArray(res);
         });
+        await R.readReviews().then((res) => {
+          this.allReviews = R.docsObjectToArray(res);
+        });
         this.getBusinessProducts();
+        this.setBusinessImage();
+
+        this.getBusinessReviews();
+        this.setBusinessReview();
       }
     },
 
@@ -537,15 +561,28 @@ export default {
       this.allProducts.forEach((product) => {
         if (productsInBusiness.has(+product.id_business)) {
           let tmp = productsInBusiness.get(+product.id_business);
-          tmp.push(product.p_photo);
+          tmp.photos.push(product.p_photo);
+
+          if (+product.p_price < tmp.minPrice) tmp.minPrice = +product.p_price;
+          else if (+product.p_price > tmp.maxPrice)
+            tmp.maxPrice = +product.p_price;
+
           productsInBusiness.set(+product.id_business, tmp);
         } else {
-          productsInBusiness.set(+product.id_business, [product.p_photo]);
+          productsInBusiness.set(+product.id_business, {
+            photos: [product.p_photo],
+            minPrice: product.p_price,
+            maxPrice: product.p_price,
+          });
         }
       });
 
       productsInBusiness.forEach((business, key) => {
-        this.businessPhotos.set(key, this.getRandomProductImage(business));
+        this.businessPhotos.set(key, {
+          photo: this.getRandomProductImage(business.photos),
+          minPrice: business.minPrice,
+          maxPrice: business.maxPrice,
+        });
       });
     },
 
@@ -555,10 +592,63 @@ export default {
       ];
     },
 
-    setBusinessImage(businessID) {
-      this.businessPhotos.has(businessID)
-        ? this.businessPhotos.get(businessID)
-        : "https://cdn.vuetifyjs.com/images/cards/cooking.png";
+    setBusinessImage() {
+      for (let i = 0; i < this.allBusiness.length; i++) {
+        let idBusiness = this.allBusiness[i].id_business;
+        if (this.businessPhotos.has(idBusiness)) {
+          this.$set(
+            this.allBusiness[i],
+            "photo",
+            this.businessPhotos.get(idBusiness).photo
+          );
+          this.$set(
+            this.allBusiness[i],
+            "minPrice",
+            this.businessPhotos.get(idBusiness).minPrice
+          );
+          this.$set(
+            this.allBusiness[i],
+            "maxPrice",
+            this.businessPhotos.get(idBusiness).maxPrice
+          );
+        } else {
+          this.$set(
+            this.allBusiness[i],
+            "photo",
+            "https://cdn.vuetifyjs.com/images/cards/cooking.png"
+          );
+        }
+      }
+    },
+
+    getBusinessReviews() {
+      this.allReviews.forEach((review) => {
+        if (this.businessReviews.has(+review.id_business)) {
+          let tmp = this.businessReviews.get(+review.id_business);
+          tmp.rating += review.r_rate;
+          tmp.reviews++;
+          this.businessReviews.set(+review.id_business, tmp);
+        } else {
+          this.businessReviews.set(+review.id_business, {
+            rating: +review.r_rate,
+            reviews: 1,
+          });
+        }
+      });
+    },
+
+    setBusinessReview() {
+      for (let i = 0; i < this.allBusiness.length; i++) {
+        let idBusiness = this.allBusiness[i].id_business;
+        if (this.businessReviews.has(idBusiness)) {
+          const reviews = this.businessReviews.get(idBusiness);
+          const rating = reviews.rating / reviews.reviews;
+
+          this.$set(this.allBusiness[i], "rating", rating);
+        } else {
+          this.$set(this.allBusiness[i], "rating", null);
+        }
+      }
     },
 
     closeDialog() {
@@ -574,8 +664,7 @@ export default {
     },
 
     seeBusiness(id) {
-      // this.$router.push({ path: "/information/:id", params: { id } });
-      console.log(`Entra a la vista de info tienda con id ${id}`);
+      this.$router.push({ name: "Information", params: { id } });
     },
 
     leadingZeros(number) {

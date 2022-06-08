@@ -46,15 +46,18 @@
         ></v-combobox>
         <h4>Horario</h4>
         <div>
-          <v-alert
-            color="red"
-            dismissible
-            type="error"
-            style="margin-top: 1rem"
-            v-model="messageErrorShow"
+          <v-snackbar
+            class="font-weight-bold"
+            :color="snackbarProps.color"
+            rounded="pill"
+            v-model="snackbarProps.status"
+            :timeout="snackbarProps.timeout"
           >
-            {{ messageError }}
-          </v-alert>
+            <v-icon class="mr-6">{{ snackbarProps.icon }}</v-icon>
+            <strong>
+              {{ snackbarProps.text }}
+            </strong>
+          </v-snackbar>
           <div v-for="(day, index) in daysOfWeek" :key="index">
             <div class="d-flex align-center-flex">
               <label class="flex-col1">{{ day }}</label>
@@ -144,12 +147,16 @@ export default {
         { start: "", end: "" },
       ],
       valid: true,
-      messageErrorShow: false,
-      messageError: "",
       categories: [],
       categorySelected: "",
       b_name: "",
       b_description: "",
+      snackbarProps: {
+        status: false,
+        text: "",
+        timeout: 3000,
+        icon: "",
+      },
     };
   },
 
@@ -166,8 +173,10 @@ export default {
         end: this.textDays[index].end,
       };
 
-      if (this.validateHour(hourToAdd, index))
+      if (this.validateHour(hourToAdd, index)) {
         this.dataDay[index].push(hourToAdd);
+        this.clearText(index);
+      }
     },
     deleteHour(index, indexD) {
       this.dataDay[index].splice(indexD, 1);
@@ -181,28 +190,28 @@ export default {
         : null;
 
       if (!end || !start) {
-        this.messageErrorShow = true;
-        this.messageError = "Escriba valores correctos";
+        this.snackbarProps.status = true;
+        this.snackbarProps.text = "Escriba valores correctos";
         return false;
       } else if (end == "" || start == "") {
-        this.messageErrorShow = true;
-        this.messageError = "Horario vacio";
+        this.snackbarProps.status = true;
+        this.snackbarProps.text = "Horario vacio";
         return false;
       } else if (end <= 0 || end > 24 || start <= 0 || start > 24) {
-        this.messageErrorShow = true;
-        this.messageError = "Escriba un horario correcto";
+        this.snackbarProps.status = true;
+        this.snackbarProps.text = "Escriba un horario correcto";
         return false;
       } else if (end - start <= 0) {
-        this.messageErrorShow = true;
-        this.messageError = "Escriba un horario congruente";
+        this.snackbarProps.status = true;
+        this.snackbarProps.text = "Escriba un horario congruente";
       } else if (this.dataDay[index].length > 0) {
         const finded = this.dataDay[index].some(
           (hour) => end <= hour.end && start >= hour.start
         );
 
         if (finded) {
-          this.messageErrorShow = true;
-          this.messageError = "Horas repetidas";
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = "Horas repetidas";
           return false;
         } else {
           return true;
@@ -210,6 +219,10 @@ export default {
       } else {
         return true;
       }
+    },
+    clearText(index) {
+      this.textDays[index].end = "";
+      this.textDays[index].start = "";
     },
     async addBusiness() {
       const value = this.$refs.form.validate();
@@ -233,12 +246,12 @@ export default {
           if (result) {
             this.$router.push({ name: "Dashboard" });
           } else {
-            this.messageErrorShow = true;
-            this.messageError = "No se puedo crear el negocio";
+            this.snackbarProps.status = true;
+            this.snackbarProps.text = "No se pudo agregar el negocio";
           }
         } else {
-          this.messageErrorShow = true;
-          this.messageError = "No se introdujeron horarios";
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = "No se introdujeron horarios";
         }
       }
     },

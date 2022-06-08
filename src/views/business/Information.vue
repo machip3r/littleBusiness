@@ -235,7 +235,6 @@ export default {
   mounted() {
     const id = this.$route.params.id;
     const uid = getAuth().currentUser.uid;
-    console.log(uid);
     Business.getBussinesByUId(uid).then((value) => {
       this.isYourBusiness = value.some((item) => (item.id_business = id));
     });
@@ -247,9 +246,8 @@ export default {
       .catch((err) => {
         console.error(err);
       });
-    Business.getstatistics(this.$route.params.id.toString())
-      .then((value) => {
-        this.rateMean = value.mean;
+    Business.getstatistics(this.$route.params.id).then(value=>{
+       this.rateMean =  value.mean;
         this.minPrice = value.minPrice;
         this.maxPrice = value.maxPrice;
       })

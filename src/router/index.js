@@ -195,6 +195,15 @@ const routes = [
     },
     meta: { title: "Products" },
   },
+  {
+    path: "/addReview",
+    name: "AddReview",
+    component: () => import("../views/review/AddReview.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+  },
 ];
 
 const router = new VueRouter({

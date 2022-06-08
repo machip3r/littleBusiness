@@ -1,3 +1,6 @@
+<!-- [DONE] TODO-1: Agregar un loader que se cierre cuando la orden se actualice en Firebase -->
+<!-- [DONE] TODO-2: Hacer una función que filtre las órdenes -->
+<!-- TODO-3: Hacer función/método para descargar solamente las órdenes del usuario actual -->
 <!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
 <template>
   <div>
@@ -75,7 +78,7 @@
                 <v-icon color="secondary">fas fa-arrow-left</v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="9">
+            <v-col cols="8">
               <v-row>
                 <v-col><h1>Mi pedido</h1></v-col>
               </v-row>
@@ -86,6 +89,11 @@
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
+            <v-col cols="1">
+              <v-chip class="pa-4" large text-color="secondary" color="primary">
+                amip ixula
+              </v-chip>
+            </v-col>
             <v-col cols="1">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -149,6 +157,13 @@
           rounded
           dense
         ></v-text-field>
+      </v-col>
+
+      <!-- TODO: Visible para el vendedor solamente -->
+      <v-col>
+        <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+          Lorem ipsum dolor sit amet
+        </v-chip>
       </v-col>
     </v-row>
 
@@ -622,12 +637,9 @@ export default {
       this.closeConfirmDialog();
     },
 
-    async closeConfirmDialog() {
+    closeConfirmDialog() {
       this.confirmChangesDialog = false;
       this.orderDialog = false;
-
-      await this.getOrders();
-      this.filterOrders("a");
 
       this.editableOrder = JSON.parse(JSON.stringify(this.selectedOrder));
       this.editableOrder.o_products = JSON.parse(

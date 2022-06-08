@@ -234,7 +234,6 @@
 </template>
 
 <script>
-import { getAuth } from "firebase/auth";
 import { mapState, mapActions } from "vuex";
 import { User } from "/firebaseAPI/controllers/user.js";
 import { Order } from "/firebaseAPI/controllers/order.js";

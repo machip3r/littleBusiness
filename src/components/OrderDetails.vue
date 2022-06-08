@@ -1,12 +1,6 @@
-<!-- [DONE] TODO-1: Calcular total dinámicamente -->
-<!-- [DONE] TODO-2: Hacer que el botón de Editado se haga false cuando se cierre el diálogo -->
-<!-- [DONE] TODO-3: Hacer que siempre que la orden esté pendiente, se muestre el botón de editar, el botón de Editar está deshabilitado hasta que se modifique
-Este botón subirá la orden modificada. -->
 <!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
-<!-- [DONE] TODO-5: Editar NaN de o_total -->
-<!-- TODO-5: Hacer que la orden se elimine cuando no tenga elementos -->
 <template>
-  <v-card elevation="0">
+  <v-card elevation="0" :disabled="disableInteraction">
     <DeleteProductDialog
       :d_value="deleteProductDialog"
       :d_title="d_data.d_title"
@@ -17,6 +11,19 @@ Este botón subirá la orden modificada. -->
       :d_icon="d_data.d_icon"
       @dialog-accept="deleteFromOrder(selectedProductId)"
       @dialog-cancel="deleteProductDialog = false"
+      class="v-dialog"
+    />
+
+    <DeleteOrderDialog
+      :d_value="deleteOrderDialog"
+      :d_title="d_data.d_title"
+      :d_message="d_data.d_message"
+      :d_cancel="d_data.d_cancel"
+      :d_accept="d_data.d_accept"
+      :d_color="d_data.d_color"
+      :d_icon="d_data.d_icon"
+      @dialog-accept="deleteOrder(order.id_order)"
+      @dialog-cancel="cancelDeleteOrder()"
       class="v-dialog"
     />
 
@@ -182,6 +189,7 @@ Este botón subirá la orden modificada. -->
 import { mapState, mapActions } from "vuex";
 import { Order } from "/firebaseAPI/controllers/order.js";
 import DeleteProductDialog from "@/components/Dialog.vue";
+import DeleteOrderDialog from "@/components/Dialog.vue";
 
 export default {
   name: "OrderDetails",
@@ -190,11 +198,16 @@ export default {
 
   components: {
     DeleteProductDialog,
+    DeleteOrderDialog,
   },
 
   data: () => {
     return {
+      disableInteraction: false,
+
       editingDialog: false,
+
+      deleteOrderDialog: false,
 
       deleteProductDialog: false,
       d_data: {
@@ -215,6 +228,7 @@ export default {
       },
 
       orderedProducts: [],
+      lastProduct: {},
       selectedProductId: null,
 
       editDisable: true,
@@ -259,7 +273,6 @@ export default {
       "resetOrder",
     ]),
 
-    // Modify
     increment(product) {
       product.op_quantity++;
       this.calcTotal();
@@ -287,7 +300,6 @@ export default {
       this.editDisable = true;
     },
 
-    // Modify
     decrement(product) {
       product.op_quantity =
         product.op_quantity - 1 < 1 ? 1 : product.op_quantity - 1;
@@ -314,34 +326,65 @@ export default {
       this.editDisable = true;
     },
 
-    // Maybe delete
     deleteFromOrder(id_product) {
       const ORDER_PRODUCTS_SIZE = this.order.o_products.length;
 
       for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++)
         if (id_product == this.order.o_products[i].id_product) {
-          this.order.o_products.splice(i, 1);
+          this.lastProduct = this.order.o_products.splice(i, 1)[0];
           this.calcTotal();
           break;
         }
 
       this.deleteProductDialog = false;
-      this.calcTotal();
       this.editDisable = false;
+      this.calcTotal();
+
+      if (this.order.o_products.length < 1) {
+        this.confirmChangesDialog = false;
+        this.d_data.d_title = "Eliminar orden";
+        this.d_data.d_message =
+          "Parece que ha eliminado todos los productos de esta orden. Como consecuencia, ésta se eliminará del registro, ¿está seguro que desea continuar?";
+        this.d_data.d_cancel = "Continuar editando";
+        this.d_data.d_accept = "Eliminar orden";
+        this.d_data.d_color = "red";
+        this.d_data.d_icon = "fas fa-trash";
+        this.deleteOrderDialog = true;
+      }
     },
 
-    openDeleteDialog(id_product) {
-      this.selectedProductId = id_product;
-      this.deleteProductDialog = true;
+    async deleteOrder(id_order) {
+      const O = new Order();
+
+      this.disableInteraction = true;
+      this.editingDialog = true;
+
+      O.deleteOrder(this.order.firebaseID)
+        .then((res) => {
+          this.snackbarProps.text = `Orden eliminada correctamente`;
+          this.snackbarProps.color = "green";
+          this.snackbarProps.icon = "fas fa-check-circle";
+          this.snackbarProps.status = true;
+
+          this.editingDialog = false;
+          this.deleteOrderDialog = false;
+          setTimeout(() => {
+            this.$emit("close-dialog");
+          }, 1000);
+        })
+        .catch((err) => {
+          this.snackbarProps.text = `Hubo un error al eliminar la orden`;
+          this.snackbarProps.color = "red";
+          this.snackbarProps.icon = "fas fa-exclamation-circle";
+          this.snackbarProps.status = true;
+        });
     },
 
-    calcTotal() {
-      let sum = 0;
-      this.order.o_products.forEach((prod) => {
-        sum += prod.op_quantity * prod.p_price;
-      });
+    cancelDeleteOrder() {
+      this.order.o_products.push(this.lastProduct);
+      this.calcTotal();
 
-      this.order.o_total = sum;
+      this.deleteOrderDialog = false;
     },
 
     // TODO-N: Hacer que se modifique el arreglo original con una referencia
@@ -349,6 +392,7 @@ export default {
     async updateOrder() {
       const O = new Order();
 
+      this.disableInteraction = true;
       this.editingDialog = true;
 
       let tempOrder = JSON.parse(JSON.stringify(this.order)),
@@ -389,13 +433,15 @@ export default {
 
           this.originalOrder.o_total = sum;
 
-          this.snackbarProps.status = true;
           this.snackbarProps.text = `Orden modificada correctamente`;
           this.snackbarProps.color = this.order.o_status;
           this.snackbarProps.icon = "fas fa-check-circle";
+          this.snackbarProps.status = true;
 
           this.editingDialog = false;
-          // TODO: Close this dialog
+          setTimeout(() => {
+            this.$emit("close-dialog");
+          }, 1000);
         })
         .catch((err) => {
           this.snackbarProps.status = true;
@@ -406,6 +452,20 @@ export default {
           console.log(err);
           this.editingDialog = false;
         });
+    },
+
+    openDeleteDialog(id_product) {
+      this.selectedProductId = id_product;
+      this.deleteProductDialog = true;
+    },
+
+    calcTotal() {
+      let sum = 0;
+      this.order.o_products.forEach((prod) => {
+        sum += prod.op_quantity * prod.p_price;
+      });
+
+      this.order.o_total = sum;
     },
   },
 };

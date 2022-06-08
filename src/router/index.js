@@ -63,22 +63,9 @@ const routes = [
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
-      if (!to.params.id) router.push("/user");
-
       store.dispatch("modifyView", true);
-
       if (!store.getters.getAccessToken) router.push("/");
-      let id = to.params.id;
-      const uid = getAuth().currentUser.uid;
-      console.log(uid);
-      Business.getBussinesByUId(uid).then((value) => {
-        let validate = value.some((item) => (item.id_business = id));
-        if (validate) {
-          next();
-        } else {
-          router.push("/");
-        }
-      });
+      next();
     },
     meta: { title: "Dashboard" },
   },
@@ -119,7 +106,6 @@ const routes = [
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {
-
       if (!to.params.id) router.push("/");
 
       store.dispatch("modifyView", true);

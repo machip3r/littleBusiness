@@ -37,6 +37,7 @@ export default {
     ...mapState(["user", "sellerView"]),
   },
   async created() {
+    this.activeBusiness(+localStorage.getItem("activeBusinessID"));
     User.getLogedUser().then(async (user) => {
       if (user != null) {
         let doc = await User.getAdditionalDataUser(user.uid);
@@ -47,7 +48,6 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
-        this.activeBusiness(+localStorage.getItem("activeBusinessID"));
       }
     });
   },

@@ -269,14 +269,107 @@
         fixed
         right
         bottom
-        @click="homeView = !homeView"
+        @click="readBusinessDocuments"
       >
         <v-icon size="15">fas fa-store</v-icon>
         <h6>Tiendas</h6>
       </v-btn>
     </div>
     <div v-else>
-      <h3>hover</h3>
+      <div class="d-flex mb-4 mx-6">
+        <h3>Tiendas</h3>
+      </div>
+
+      <v-container fluid>
+        <v-row class="mx-md-16 px-md-16">
+          <v-col
+            cols="12"
+            lg="6"
+            v-for="(business, index) in allBusiness"
+            :key="index"
+          >
+            <v-card
+              color="secondary"
+              elevation="0"
+              rounded="xl"
+              class="pa-2"
+              @click="seeBusiness(business.id_business)"
+            >
+              <template slot="progress">
+                <v-progress-linear
+                  color="deep-purple"
+                  height="10"
+                  indeterminate
+                ></v-progress-linear>
+              </template>
+
+              <v-row>
+                <v-col cols="4">
+                  <v-img
+                    max-width="300"
+                    height="200"
+                    :src="setBusinessImage(business.id_business)"
+                    class="rounded-xl"
+                  ></v-img>
+                </v-col>
+                <v-col cols="8">
+                  <v-card-title>
+                    {{ truncateText(business.b_name, 15) }}
+                    <v-spacer></v-spacer>
+                    <v-chip color="primary" class="font-weight-bold">
+                      <v-icon left size="16" class="ml-0">
+                        fas fa-check-circle</v-icon
+                      >
+                      Open</v-chip
+                    >
+                  </v-card-title>
+
+                  <v-card-text>
+                    <div>
+                      <p>
+                        {{ truncateText(business.b_description, 70) }}
+                      </p>
+                    </div>
+                    <v-row
+                      align="center"
+                      justify="center"
+                      class="mr-16 ml-n5 mt-0"
+                    >
+                      <v-rating
+                        :value="5"
+                        color="primary"
+                        dense
+                        half-increments
+                        readonly
+                        size="23"
+                      ></v-rating>
+                    </v-row>
+                  </v-card-text>
+
+                  <v-card-text>
+                    <v-row class="mt-0 mx-0">
+                      <v-chip color="primary" class="font-weight-bold">
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-dollar-sign</v-icon
+                        >
+                        Prices: $5 - $10</v-chip
+                      >
+                      <v-spacer></v-spacer>
+                      <v-chip color="primary" class="font-weight-bold">
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-map-marker-alt</v-icon
+                        >
+                        DICIS</v-chip
+                      >
+                    </v-row>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+
       <v-btn
         class="fab-home"
         dark
@@ -359,7 +452,8 @@ export default {
       activeFilter: 0,
       filteredProducts: [],
 
-      allBusinesses: [],
+      allBusiness: [],
+      businessPhotos: new Map(),
       business: {
         id_business: "",
         b_name: "",
@@ -380,6 +474,7 @@ export default {
     this.date = this.getDate();
 
     this.filteredProducts = [...this.allProducts];
+    this.readBusinessDocuments();
   },
 
   methods: {
@@ -426,6 +521,46 @@ export default {
       });
     },
 
+    async readBusinessDocuments() {
+      this.homeView = !this.homeView;
+      if (this.allBusiness.length === 0) {
+        const B = new Business();
+        await B.readBusiness().then((res) => {
+          this.allBusiness = B.docsObjectToArray(res);
+        });
+        this.getBusinessProducts();
+      }
+    },
+
+    getBusinessProducts() {
+      let productsInBusiness = new Map();
+      this.allProducts.forEach((product) => {
+        if (productsInBusiness.has(+product.id_business)) {
+          let tmp = productsInBusiness.get(+product.id_business);
+          tmp.push(product.p_photo);
+          productsInBusiness.set(+product.id_business, tmp);
+        } else {
+          productsInBusiness.set(+product.id_business, [product.p_photo]);
+        }
+      });
+
+      productsInBusiness.forEach((business, key) => {
+        this.businessPhotos.set(key, this.getRandomProductImage(business));
+      });
+    },
+
+    getRandomProductImage(businessProducts) {
+      return businessProducts[
+        Math.floor(Math.random() * businessProducts.length)
+      ];
+    },
+
+    setBusinessImage(businessID) {
+      this.businessPhotos.has(businessID)
+        ? this.businessPhotos.get(businessID)
+        : "https://cdn.vuetifyjs.com/images/cards/cooking.png";
+    },
+
     closeDialog() {
       this.productDialog = false;
       this.cartDialog = false;
@@ -436,6 +571,11 @@ export default {
       this.product = item;
       this.productDialog = true;
       this.updateProductDialog++;
+    },
+
+    seeBusiness(id) {
+      // this.$router.push({ path: "/information/:id", params: { id } });
+      console.log(`Entra a la vista de info tienda con id ${id}`);
     },
 
     leadingZeros(number) {
@@ -482,6 +622,12 @@ export default {
           }
         });
       }
+    },
+    truncateText(text, length) {
+      if (text.length <= length) {
+        return text;
+      }
+      return text.slice(0, length) + "...";
     },
   },
 };

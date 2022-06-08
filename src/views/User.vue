@@ -176,7 +176,9 @@ export default {
     },
   },
   created() {
-    Business.getBussinesByUId()
+    const uid = getAuth().currentUser.uid;
+
+    Business.getBussinesByUId(uid)
       .then((rows) => {
         this.business = rows;
       })

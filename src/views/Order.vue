@@ -75,7 +75,7 @@
                 elevation="0"
                 color="primary"
               >
-                <v-icon color="scondary">fas fa-arrow-left</v-icon>
+                <v-icon color="secondary">fas fa-arrow-left</v-icon>
               </v-btn>
             </v-col>
             <v-col cols="8">
@@ -260,7 +260,7 @@
 
         <div class="header__order-info">
           <p class="mar-0 receipt-font">
-            Orden #{{ selectedOrder.id_order }} para User's Name
+            Orden #{{ selectedOrder.id_order }} para {{ userName }}
           </p>
           <p class="mar-0 receipt-font">{{ this.getDate() }}</p>
         </div>
@@ -316,6 +316,7 @@
 </template>
 
 <script>
+import { User } from "/firebaseAPI/controllers/user.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business.js";
@@ -335,6 +336,8 @@ export default {
 
   data: () => {
     return {
+      userName: "",
+
       updateDetails: 0,
 
       snackbarProps: {
@@ -430,6 +433,7 @@ export default {
 
   async created() {
     // TODO: Filter orders by user, maybe create another method for it.
+    await this.getUsername();
     await this.getBusinesses();
     await this.getProducts();
     await this.getOrders();
@@ -439,6 +443,14 @@ export default {
   },
 
   methods: {
+    async getUsername() {
+      const user = await User.getLogedUser().then(async (user) => {
+        if (user != null) {
+          this.userName = user.displayName;
+        }
+      });
+    },
+
     async getBusinesses() {
       const B = new Business();
       await B.readBusiness().then(
@@ -651,7 +663,6 @@ export default {
     },
 
     generateQR(data) {
-      console.log("generateQR");
       const QR = require("qrcode");
 
       QR.toCanvas(data, (err, canvas) => {
@@ -662,27 +673,21 @@ export default {
         QRContainer.innerHTML = "";
         QRContainer.appendChild(canvas);
       });
-
-      console.log("QR generated");
     },
 
     generateReceipt() {
-      console.log("generateReceipt");
       this.generateQR(this.selectedOrder.id_order);
 
       const receipt = document.getElementById("receipt");
 
       receipt.classList.remove("hidden");
-      console.log("classlist.remove");
       html2pdf(receipt, {
         filename: "order_" + this.selectedOrder.id_order,
       });
-      console.log("");
 
       this.$nextTick(() => {
         receipt.classList.add("hidden");
       });
-      console.log("Receipt generated");
     },
 
     getDate() {

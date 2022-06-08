@@ -113,7 +113,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { getCategories } from "../../../firebaseAPI/controllers/cateogory";
+import { Category } from "../../../firebaseAPI/controllers/cateogory";
 import { getAuth } from "firebase/auth";
 import { Business } from "../../../firebaseAPI/controllers/business";
 export default {
@@ -158,7 +158,10 @@ export default {
       this.$router.push({ name: "User" });
     },
     async getCategoriesCbx() {
-      this.categories = await getCategories();
+      const C = new Category();
+      await C.readCategories().then((res) => {
+        this.categories = C.docsObjectToArray(res);
+      });
     },
     addHour(index) {
       const hourToAdd = {

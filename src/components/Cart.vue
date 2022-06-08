@@ -1,22 +1,63 @@
 <template>
+  <!-- * If cart is empty -->
   <v-card
-    class="d-flex justify-center align-center"
-    elevation="0"
     v-if="cart.o_products.length < 1"
+    class="my-4 rounded-xl"
+    align="center"
+    elevation="0"
   >
-    <v-card
-      class="d-flex flex-column justify-center align-center rounded-xl"
-      width="40%"
-      height="500px"
-      color="bone"
-      elevation="0"
-    >
-      <v-icon class="my-4" size="100">fas fa-receipt</v-icon>
-      <h1>Sin pedidos</h1>
-      <p>Revisa los productos y agrega unos cuantos ;)</p>
+    <v-card width="40%" height="350px" color="secondary" elevation="0">
+      <v-icon class="my-8" size="150">fas fa-receipt</v-icon>
+      <div class="mx-4">
+        <h1>Carrito vacío</h1>
+        <p>¿Qué esperas para agregar productos? ;)</p>
+      </div>
     </v-card>
   </v-card>
+
+  <!-- * Products in cart -->
   <v-card v-else elevation="0">
+    <Dialog
+      :d_value="deleteProductDialog"
+      :d_title="d_data.d_title"
+      :d_message="d_data.d_message"
+      :d_cancel="d_data.d_cancel"
+      :d_accept="d_data.d_accept"
+      :d_color="d_data.d_color"
+      :d_icon="d_data.d_icon"
+      @dialog-accept="deleteFromCart(selectedProductId)"
+      @dialog-cancel="deleteProductDialog = false"
+      class="v-dialog"
+    />
+
+    <v-dialog
+      v-model="uploadingDialog"
+      hide-overlay
+      persistent
+      width="300"
+      class="v-dialog"
+    >
+      <v-card color="lightred" class="pt-4">
+        <v-card-text>
+          Creando orden
+          <v-progress-linear indeterminate color="green"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      class="font-weight-bold"
+      :color="snackbarProps.color"
+      rounded="pill"
+      v-model="snackbarProps.status"
+      :timeout="snackbarProps.timeout"
+    >
+      <v-icon class="mr-6">{{ snackbarProps.icon }}</v-icon>
+      <strong>
+        {{ snackbarProps.text }}
+      </strong>
+    </v-snackbar>
+
     <v-row>
       <v-col
         v-for="(product, index) in orderedProducts"
@@ -27,7 +68,7 @@
           width="400"
           class="ml-4 pa-5 mb-5 rounded-xl fill-height"
           elevation="4"
-          color="bone"
+          color="secondary"
         >
           <v-row>
             <v-col>
@@ -40,28 +81,34 @@
                 :src="product.p_photo"
               ></v-img>
             </v-col>
+
             <v-col class="text-left">
               <v-row>
                 <v-col justify-content="start" class="pa-0">
-                  <span class="ma-0 font-weight-bold">{{
-                    product.p_name
-                  }}</span>
+                  <span class="ma-0 font-weight-bold">
+                    {{ product.p_name }}
+                  </span>
                 </v-col>
               </v-row>
+
               <v-row>
                 <v-col class="pa-0">
-                  <span class="ma-0 font-weight-light">Business Name</span>
+                  <span class="ma-0 font-weigth-light">
+                    {{ product.b_name }}
+                  </span>
                 </v-col>
               </v-row>
+
               <v-row>
                 <v-col class="pa-0">
-                  <span class="ma-0 font-weight-bold"
-                    >${{ parseFloat(product.p_price).toFixed(2) }} MXN</span
-                  >
+                  <span class="ma-0 font-weight-bold">
+                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
+                  </span>
                 </v-col>
               </v-row>
             </v-col>
-            <v-col align-self="center" v-if="editable">
+
+            <v-col align-self="center">
               <v-row>
                 <v-col>
                   <div class="d-flex quantityContainer">
@@ -75,27 +122,21 @@
                   </div>
                 </v-col>
               </v-row>
+
               <v-row>
                 <v-col>
                   <v-btn
                     large
-                    color="lighter_red"
+                    color="lighterred"
                     width="99px"
                     height="33px"
                     rounded
                     elevation="0"
-                    @click="deleteFromCart(product.id_product)"
+                    @click="openDeleteDialog(product.id_product)"
                   >
-                    <v-icon color="lightred">fas fa-trash</v-icon>
+                    <v-icon color="error">fas fa-trash</v-icon>
                   </v-btn>
                 </v-col>
-              </v-row>
-            </v-col>
-            <v-col class="d-flex justify-center align-center" v-else>
-              <v-row>
-                <div class="quantityContainer centered">
-                  <span class="quantity">X{{ product.op_quantity }}</span>
-                </div>
               </v-row>
             </v-col>
           </v-row>
@@ -105,27 +146,23 @@
 
     <div style="background-color: var(--bone); margin-top: 50px">
       <v-row color="bone">
-        <v-col>
+        <v-col cols="9">
           <p>Total</p>
           <h1>${{ calcTotal() }} MXN</h1>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col class="my-auto">
+        <v-col class="my-auto" cols="3">
           <v-row class="mb-2">
-            <v-switch
-              inset
-              color="lightblue"
+            <v-chip
               large
-              @click="editable = !editable"
-              label="Editar orden"
+              class="mr-2 pa-6"
+              @click="uploadOrder()"
+              text-color="secondary"
+              color="green"
             >
-            </v-switch>
-          </v-row>
-          <v-row class="mt-2">
-            <v-btn color="success" large @click="uploadOrder()">
-              <v-icon left>fas fa-check</v-icon>
-              Generar recibo
-            </v-btn>
+              <v-icon left>fas fa-cart-plus</v-icon>
+              Realizar pedido
+            </v-chip>
           </v-row>
         </v-col>
       </v-row>
@@ -141,7 +178,7 @@
 
         <div class="header__order-info">
           <p class="mar-0 receipt-font">
-            Orden #{{ cart.id_order }} para User's Name
+            Orden #{{ cart.id_order }} para {{ userName }}
           </p>
           <p class="mar-0 receipt-font">{{ this.getDate() }}</p>
         </div>
@@ -197,28 +234,62 @@
 </template>
 
 <script>
+import { getAuth } from "firebase/auth";
 import { mapState, mapActions } from "vuex";
-import { Product } from "/firebaseAPI/controllers/product.js";
+import { User } from "/firebaseAPI/controllers/user.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
-import { html2pdf } from "html2pdf.js";
+import { Product } from "/firebaseAPI/controllers/product.js";
+import { Business } from "/firebaseAPI/controllers/business";
+import html2pdf from "html2pdf.js";
+import Dialog from "@/components/Dialog.vue";
 
 export default {
   name: "OrderDetails",
 
   props: ["products"],
 
-  components: {},
+  components: {
+    Dialog,
+  },
 
   data: () => {
     return {
+      uploadingDialog: false,
+
+      deleteProductDialog: false,
+      d_data: {
+        d_title: "Eliminar producto",
+        d_message:
+          "¿Estás seguro que eliminar el producto de esta orden? Esta acción no se puede deshacer.",
+        d_cancel: "No, regresar",
+        d_accept: "Sí, eliminar",
+        d_color: "red",
+        d_icon: "fas fa-trash",
+      },
+
+      snackbarProps: {
+        status: false,
+        text: "",
+        timeout: 3000,
+        icon: "",
+      },
+
+      allBusinesses: [],
+
       allProducts: [],
       orderedProducts: [],
+      selectedProductId: "",
+
+      userName: "",
+
       editable: false,
     };
   },
 
   async created() {
-    await this.readDocuments();
+    await this.getUsername();
+    await this.getBusinesses();
+    await this.getProducts();
     this.getOrderedProducts();
   },
 
@@ -234,11 +305,34 @@ export default {
       "resetOrder",
     ]),
 
-    async readDocuments() {
+    async getUsername() {
+      const user = await User.getLogedUser().then(async (user) => {
+        if (user != null) {
+          this.userName = user.displayName;
+        }
+      });
+    },
+
+    async getBusinesses() {
+      const B = new Business();
+      await B.readBusiness().then(
+        (res) => (this.allBusinesses = B.docsObjectToArray(res))
+      );
+    },
+
+    async getProducts() {
       const P = new Product();
       await P.readProducts().then(
         (res) => (this.allProducts = P.docsObjectToArray(res))
       );
+
+      this.allProducts.forEach((product) => {
+        for (let i = 0; i < this.allBusinesses.length; i++)
+          if (product.id_business == this.allBusinesses[i].id_business) {
+            Object.assign(product, { b_name: this.allBusinesses[i].b_name });
+            break;
+          }
+      });
     },
 
     getOrderedProducts() {
@@ -283,6 +377,11 @@ export default {
       this.$forceUpdate();
     },
 
+    openDeleteDialog(id_product) {
+      this.selectedProductId = id_product;
+      this.deleteProductDialog = true;
+    },
+
     deleteFromCart(id_product) {
       const ORDER_PRODUCTS_SIZE = this.orderedProducts.length;
 
@@ -293,6 +392,22 @@ export default {
         }
 
       this.deleteProduct(id_product);
+      this.deleteProductDialog = false;
+
+      if (this.cart.o_products.length < 1) {
+        this.resetOrder();
+
+        this.snackbarProps.status = false;
+
+        this.snackbarProps.text = "Carrito vaciado";
+        this.snackbarProps.timeout = 3000;
+        this.snackbarProps.icon = "fas fa-check";
+        this.snackbarProps.color = "green";
+
+        this.snackbarProps.status = true;
+
+        this.$emit("close-dialog");
+      }
     },
 
     calcTotal() {
@@ -307,14 +422,33 @@ export default {
     async uploadOrder() {
       const O = new Order();
 
+      this.uploadingDialog = true;
+
       this.getDate();
 
       O.addOrder(this.cart)
         .then((res) => {
           this.generateReceipt();
+
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = "Orden creada correctamente";
+          this.snackbarProps.color = "green";
+          this.snackbarProps.icon = "fas fa-check-circle";
+
+          this.uploadingDialog = false;
+
+          this.$emit("close-dialog");
+          this.resetOrder();
         })
         .catch((error) => {
           console.log(error);
+
+          this.snackbarProps.status = true;
+          this.snackbarProps.text = "Ha habido un error almacenando la orden";
+          this.snackbarProps.color = "error";
+          this.snackbarProps.icon = "fas fa-exclamation-circle";
+
+          this.uploadingDialog = false;
         });
     },
 
@@ -332,7 +466,7 @@ export default {
     },
 
     generateReceipt() {
-      this.generateQR(this.cart.id_order);
+      if (this.cart.id_order) this.generateQR(this.cart.id_order);
 
       const receipt = document.getElementById("receipt");
 

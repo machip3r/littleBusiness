@@ -251,10 +251,6 @@ export default {
 
   mounted() {},
 
-  computed: {
-    ...mapState(["cart"]),
-  },
-
   methods: {
     ...mapActions([
       "incrementQuantity",
@@ -377,8 +373,6 @@ export default {
 
       O.updateOrder(this.order.firebaseID, tempOrder)
         .then((res) => {
-          this.editingDialog = true;
-
           this.originalOrder.o_products = [];
           completeProducts.forEach((product) => {
             for (let i = 0; i < tempOrder.o_products.length; i++)
@@ -401,12 +395,13 @@ export default {
           this.snackbarProps.icon = "fas fa-check-circle";
 
           this.editingDialog = false;
+          // TODO: Close this dialog
         })
         .catch((err) => {
           this.snackbarProps.status = true;
           this.snackbarProps.text = `¡Hubo un error al modificar la orden!`;
           this.snackbarProps.color = "red";
-          this.snackbarProps.icon = "exclamation-circle";
+          this.snackbarProps.icon = "fas fa-exclamation-circle";
 
           console.log(err);
           this.editingDialog = false;

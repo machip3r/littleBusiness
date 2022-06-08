@@ -73,7 +73,7 @@ export default {
       ) {
         return [
           { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
-          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Order" },
           { title: "Productos", icon: "fas fa-tshirt", to: "Products" },
           { title: "Reseñas", icon: "fas fa-star", to: "Review" },
           {
@@ -85,7 +85,7 @@ export default {
       } else {
         return [
           { title: "Inicio", icon: "fas fa-store", to: "Home" },
-          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Cart" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Order" },
           { title: "Perfil", icon: "fas fa-user", to: "User" },
         ];
       }

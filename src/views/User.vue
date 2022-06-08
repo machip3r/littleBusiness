@@ -202,6 +202,7 @@ export default {
       "updateUserName",
       "updateUserPhoto",
       "modifyView",
+      "resetOrder",
     ]),
 
     async getBussines() {},
@@ -210,6 +211,7 @@ export default {
     },
     async logOut() {
       this.removeAccess().then(() => {
+        this.resetOrder();
         this.$router.push({ name: "Login" });
       });
     },

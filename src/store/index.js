@@ -75,6 +75,7 @@ export default new Vuex.Store({
     updateSellerView(state, payload) {
       state.sellerView = payload;
     },
+
     addOrder(state, payload) {
       state.cart = payload;
     },
@@ -128,7 +129,7 @@ export default new Vuex.Store({
         id_user: 0,
         o_products: [],
         o_datetime: "",
-        o_status: "Pending",
+        o_status: "p",
       };
     },
   },

@@ -119,7 +119,6 @@ const routes = [
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {
-
       if (!to.params.id) router.push("/");
 
       store.dispatch("modifyView", true);
@@ -153,6 +152,16 @@ const routes = [
     path: "/order",
     name: "Order",
     component: () => import("../views/Order.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Order" },
+  },
+  {
+    path: "/orderSeller",
+    name: "OrderSeller",
+    component: () => import("../views/business/OrderSeller.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();

@@ -1,7 +1,3 @@
-<!-- [DONE] TODO-1: Agregar un loader que se cierre cuando la orden se actualice en Firebase -->
-<!-- [DONE] TODO-2: Hacer una función que filtre las órdenes -->
-<!-- TODO-3: Hacer función/método para descargar solamente las órdenes del usuario actual -->
-<!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
 <template>
   <div>
     <!-- Cancel Order -->
@@ -162,7 +158,7 @@
       <!-- TODO: Visible para el vendedor solamente -->
       <v-col>
         <v-chip class="pa-4" x-large text-color="secondary" color="primary">
-          Lorem ipsum dolor sit amet
+          {{ myBusiness.b_name }}
         </v-chip>
       </v-col>
     </v-row>
@@ -424,6 +420,7 @@ export default {
       allProducts: [],
 
       allBusinesses: [],
+      myBusiness: {},
 
       badgeColors: {
         d: "#2D3440",
@@ -447,11 +444,17 @@ export default {
   },
 
   methods: {
+    // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
     async getBusinesses() {
       const B = new Business();
-      await B.readBusiness().then(
-        (res) => (this.allBusinesses = B.docsObjectToArray(res))
-      );
+      await B.readBusiness().then((res) => {
+        this.allBusinesses = B.docsObjectToArray(res);
+        for (let i = 0; i < this.allBusinesses.length; i++)
+          if (this.allBusinesses[i].id_user == this.user.uid) {
+            Object.assign(this.myBusiness, this.allBusinesses[i]);
+            break;
+          }
+      });
     },
 
     async getProducts() {
@@ -463,7 +466,7 @@ export default {
 
     async getOrders() {
       const O = new Order();
-      await O.readUserOrders(this.user.uid).then((res) => {
+      await O.readOrders().then((res) => {
         this.allOrders = O.docsObjectToArray(res);
 
         this.allOrders.forEach((order) => {
@@ -497,6 +500,14 @@ export default {
             }
           });
           order.o_total = o_total;
+        });
+
+        this.allOrders.forEach((product) => {
+          for (let i = 0; i < this.allBusinesses.length; i++) {
+            if (product.id_business == this.myBusiness.id_business) {
+              this.filteredOrders.push(this);
+            }
+          }
         });
       });
     },

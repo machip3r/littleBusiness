@@ -132,7 +132,6 @@
       color="primary"
       fab
       fixed
-      small
       right
       bottom
       @click="openAddBusiness()"

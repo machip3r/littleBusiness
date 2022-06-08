@@ -118,7 +118,7 @@
 import { mapState } from "vuex";
 import { Category } from "../../../firebaseAPI/controllers/cateogory";
 import { getAuth } from "firebase/auth";
-import { Business } from "../../../firebaseAPI/controllers/business";
+import { Business } from "../../../firebaseAPI/controllers/business.js";
 export default {
   name: "AddBusiness",
   computed: {

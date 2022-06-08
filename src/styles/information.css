@@ -1,0 +1,106 @@
+.container-info-business {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin: 30px;
+}
+
+.principal-information {
+  width: 40%;
+}
+
+.rating-container {
+}
+
+.rating-container button {
+  max-width: 60px;
+}
+
+.seller-chip {
+  padding: 20px !important;
+  border-radius: 100px !important;
+}
+
+.seller-chip h5 {
+  margin-left: 5px;
+  color: var(--dark-blue);
+}
+
+.seller-chip img {
+  border: 2px solid var(--light-blue);
+}
+
+.principal-information p {
+  font-size: 1.3em;
+  margin-left: 10px;
+}
+
+.chip-prices {
+  font-family: var(--main-font);
+  font-size: 1.2em !important;
+  font-weight: 900;
+  padding: 20px !important;
+}
+
+.schedule-information {
+  width: 40%;
+  padding-left: 80px;
+}
+
+.day-schedule {
+  display: flex;
+  justify-content: space-between;
+}
+
+.no-schedule-chip {
+  width: 280px;
+}
+
+.fab-info {
+  margin-bottom: 50px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 50px !important;
+}
+
+@media (max-width: 1300px) {
+  .no-schedule-chip {
+    width: 200px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .container-info-business {
+    flex-direction: column;
+  }
+  .principal-information {
+    width: 90%;
+  }
+  .schedule-information {
+    width: 90%;
+    margin-top: 30px;
+    padding-left: 0;
+  }
+  .no-schedule-chip {
+    width: 500px;
+  }
+}
+
+@media (max-width: 750px) {
+  .container-info-business {
+    margin-left: 0px;
+  }
+  .no-schedule-chip {
+    width: 300px;
+  }
+}
+
+@media (max-width: 500px) {
+  .no-schedule-chip {
+    width: 200px;
+  }
+}

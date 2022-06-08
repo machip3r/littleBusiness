@@ -17,7 +17,7 @@
       </p>
       <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
     </div>
-    <v-footer absolute color="#fff">
+    <v-footer class="footer-product" absolute color="#fff">
       <div class="product-button-area">
         <div class="container-add-cart-inputs">
           <button @click="decrement" class="button-decrement">

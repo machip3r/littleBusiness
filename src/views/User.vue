@@ -1,8 +1,18 @@
 <template>
   <div class="main-container-user">
     <div class="username-container">
-      <h1>{{ profile.name }}</h1>
-      <v-btn dark large color="error" fixed fab right top @click="logOut()">
+      <h1 class="my-4 mx-4">{{ profile.name }}</h1>
+      <v-btn
+        class="my-4 mx-4"
+        dark
+        large
+        color="error"
+        fixed
+        fab
+        right
+        top
+        @click="logOut()"
+      >
         <v-icon size="20">fas fa-sign-out-alt</v-icon>
       </v-btn>
     </div>
@@ -76,6 +86,7 @@
         <v-col cols="10" sm="7" md="4">
           <h5>Mi información</h5>
           <v-text-field
+            class="mt-3"
             v-model="name"
             label="Nombre de usuario"
             color="primary"
@@ -96,7 +107,7 @@
             <h5>Mi negocio</h5>
 
             <v-btn
-              class="px-16"
+              class="my-3 px-16 py-6"
               label="Add"
               color="primary"
               large
@@ -106,7 +117,7 @@
               :key="item.id_business"
               @click="enterSellerView(item.id_business)"
             >
-              <div class="mx-10">
+              <div class="mx-5">
                 <v-icon left> fas fa-store </v-icon>
                 {{ item.b_name }}
               </div>
@@ -121,7 +132,6 @@
       color="primary"
       fab
       fixed
-      small
       right
       bottom
       @click="openAddBusiness()"
@@ -176,7 +186,9 @@ export default {
     },
   },
   created() {
-    Business.getBussinesByUId()
+    const uid = getAuth().currentUser.uid;
+
+    Business.getBussinesByUId(uid)
       .then((rows) => {
         this.business = rows;
       })
@@ -191,6 +203,7 @@ export default {
       "updateUserPhoto",
       "modifyView",
       "activeBusiness",
+      "resetOrder",
     ]),
 
     async getBussines() {},
@@ -199,6 +212,7 @@ export default {
     },
     async logOut() {
       this.removeAccess().then(() => {
+        this.resetOrder();
         this.$router.push({ name: "Login" });
       });
     },

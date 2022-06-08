@@ -5,7 +5,7 @@
       <br />
       <br />
     </v-main>
-    <BottomNavigationBar :seller="sellerView" />
+    <BottomNavigationBar :seller="seller" />
   </v-app>
 </template>
 
@@ -18,6 +18,7 @@
 @import "./styles/home.css";
 @import "./styles/dashboard.css";
 @import "./styles/business.css";
+@import "./styles/information.css";
 </style>
 
 <script>
@@ -30,6 +31,9 @@ export default {
 
   data: () => ({}),
   computed: {
+    seller() {
+      return this.user != null ? this.user.type : null;
+    },
     ...mapState(["user", "sellerView"]),
   },
   async created() {

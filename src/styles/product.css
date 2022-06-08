@@ -28,6 +28,15 @@
   font-size: 0.9em !important;
 }
 
+.container-product-info {
+  margin-bottom: 150px;
+}
+
+.footer-product {
+  position: fixed !important;
+  padding: 0 !important;
+}
+
 .product-button-area {
   width: 100%;
   background-color: var(--dark-blue);

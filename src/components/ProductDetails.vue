@@ -7,8 +7,8 @@
     />
     <div class="container-product-info text-justify">
       <div class="category-text-container">
-        <v-icon class="icon-category">fas fa-plus</v-icon>
-        <h6 class="category-text">{{ product.p_category }}</h6>
+        <v-icon class="icon-category">{{ product.p_category.c_icon }}</v-icon>
+        <h6 class="category-text">{{ product.p_category.c_name }}</h6>
       </div>
       <h1>{{ product.p_name }}</h1>
       <h4>Descripción</h4>
@@ -17,7 +17,7 @@
       </p>
       <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
     </div>
-    <v-footer absolute color="#fff">
+    <v-footer class="footer-product" absolute color="#fff">
       <div class="product-button-area">
         <div class="container-add-cart-inputs">
           <button @click="decrement" class="button-decrement">
@@ -43,6 +43,8 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { getAuth } from "firebase/auth";
+import { Category } from "/firebaseAPI/controllers/cateogory.js";
 
 export default {
   name: "ProductDetails",
@@ -51,6 +53,8 @@ export default {
 
   data: () => {
     return {
+      allCategories: [],
+
       quantity: 1,
       productDialog: false,
       order: {
@@ -67,15 +71,31 @@ export default {
     ...mapState(["cart"]),
   },
 
+  async created() {
+    this.getCategories();
+  },
+
   methods: {
     ...mapActions(["addOrder", "addProducts", "incrementQuantity"]),
 
+    async getCategories() {
+      const C = new Category();
+      await C.readCategories().then((res) => {
+        this.allCategories = C.docsObjectToArray(res);
+        for (let i = 0; i < this.allCategories.length; i++)
+          if (this.product.p_category == this.allCategories[i].id_category) {
+            this.product.p_category = this.allCategories[i];
+            break;
+          }
+      });
+    },
+
     increment() {
-      this.quantity = this.quantity > 0 ? this.quantity + 1 : 1;
+      this.quantity++;
     },
 
     decrement() {
-      this.quantity = this.quantity > 0 ? this.quantity - 1 : 1;
+      this.quantity = this.quantity - 1 < 1 ? 1 : this.quantity - 1;
     },
 
     addToCart(id_product) {
@@ -113,9 +133,9 @@ export default {
     createOrder(product) {
       const currDate = this.getDateTime();
 
-      this.order.id_user = 1;
+      this.order.id_user = getAuth().currentUser.uid;
       this.order.o_datetime = currDate;
-      this.order.o_status = "Pending";
+      this.order.o_status = "p";
       this.order.o_products.push(product);
 
       this.addOrder(this.order);

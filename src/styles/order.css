@@ -1,0 +1,7 @@
+.filter-select {
+  background-color: var(--light-blue);
+}
+
+.filter-select--active {
+  background-color: var(--dark-blue);
+}

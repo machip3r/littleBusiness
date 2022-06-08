@@ -183,7 +183,7 @@ export default {
           let response = await user.createAccountUser(type);
           this.$store.commit("setSession", response);
           if (this.seller) this.$router.push({ name: "AddBusiness" });
-          else this.$router.push("/products");
+          else this.$router.push("/home");
         } catch (error) {
           this.showError(error);
         }

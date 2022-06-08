@@ -21,7 +21,7 @@
       <v-card
           class="d-flex justify-center align-center"
           elevation="0"
-          v-if="allReviews.length < 1"
+          v-if="businessReviews.length < 1"
         >
           <v-card
             class="d-flex flex-column justify-center align-center rounded-xl"

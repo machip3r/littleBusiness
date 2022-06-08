@@ -57,7 +57,7 @@ const routes = [
     },
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/:id",
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
@@ -66,6 +66,16 @@ const routes = [
       next();
     },
     meta: { title: "Dashboard" },
+  },
+  {
+    path: "/editBusiness:id",
+    name: "EditBusiness",
+    component: () => import("../views/business/EditBusiness.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Edit business" },
   },
   {
     path: "/review",
@@ -79,7 +89,7 @@ const routes = [
     meta: { title: "Review" },
   },
   {
-    path: "/information",
+    path: "/information/:id",
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {

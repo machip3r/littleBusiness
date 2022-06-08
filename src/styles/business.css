@@ -19,15 +19,15 @@
 }
 
 .chips-hour {
-  color: white !important;
+  color: var(--bone) !important;
   margin: 0 0.1rem 0.4rem 0.2rem;
 }
 
 .button-continue {
   width: 100%;
   height: 60px !important;
-  background-color: #2d3440 !important;
-  color: white !important;
+  background-color: var(--dark-blue) !important;
+  color: var(--bone) !important;
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {

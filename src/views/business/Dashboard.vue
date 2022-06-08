@@ -19,22 +19,24 @@
     <div class="quick-stats">
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-        <div class="stat-value">$100.00 (3)</div>
+        <div class="stat-value">
+          {{ totalDaySales + "(" + this.totalProducts + ")" }}
+        </div>
         <div class="stat-text">Ventas</div>
       </div>
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-table"></i></div>
-        <div class="stat-value">5</div>
+        <div class="stat-value">{{ numberOrdersP }}</div>
         <div class="stat-text">Órdenes pendientes</div>
       </div>
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-comment"></i></div>
-        <div class="stat-value">2</div>
+        <div class="stat-value">{{ newReviewsCount }}</div>
         <div class="stat-text">Nuevas reseñas</div>
       </div>
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-star"></i></div>
-        <div class="stat-value">4.5 / 5</div>
+        <div class="stat-value">{{ meanStars }} / 5</div>
         <div class="stat-text">Calificación</div>
       </div>
     </div>
@@ -54,19 +56,25 @@
         class="ml-6"
         v-if="!dayOrMonth"
       >
-        <v-chip v-for="month in months" :key="month">
+        <v-chip
+          v-for="(month, index) in months"
+          @click="setMonth(index)"
+          :key="month"
+        >
           <h5>{{ month }}</h5>
         </v-chip>
       </v-chip-group>
       <v-sparkline
-        :value="value"
+        :value="
+          dayOrMonth ? dataMonth.monthData : dataMonth.dataMonthDay[indexMouth]
+        "
         color="error"
         height="100"
         padding="15"
         stroke-linecap="round"
         smooth
         fill
-        :labels="dayOrMonth ? days : months"
+        :labels="dayOrMonth ? months : days"
       >
       </v-sparkline>
     </div>
@@ -80,7 +88,7 @@
           @click="seeProduct(product)"
         >
           <v-img class="product-home-img" :src="product.p_photo" />
-          <h5>{{ product.sales }} ventas</h5>
+          <h5>{{ product.total }} ventas</h5>
           <p>{{ product.p_name }}</p>
         </v-card>
       </v-slide-item>
@@ -95,7 +103,7 @@
           @click="seeProduct(product)"
         >
           <v-img class="product-home-img" :src="product.p_photo" />
-          <h5>{{ product.sales }} ventas</h5>
+          <h5>{{ product.total }} ventas</h5>
           <p>{{ product.p_name }}</p>
         </v-card>
       </v-slide-item>
@@ -104,15 +112,19 @@
 </template>
 
 <script>
+import {
+  Business,
+  getCountReviewDate,
+  getDataFromDate,
+  getDataOrdersByBusiness,
+  getSumProducts,
+} from "../../../firebaseAPI/controllers/business";
+
 export default {
   name: "Dashboard",
   data() {
     return {
-      value: [423, 446, 675, 510, 590, 610, 760, 423, 446, 675, 510, 590],
-      days: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-      ],
+      days: [],
       dayOrMonth: true,
       months: [
         "Ene",
@@ -128,18 +140,88 @@ export default {
         "Nov",
         "Dic",
       ],
-      bestSoldProducts: {
-        p_name: "",
-        p_sales: 0,
-      },
-      leastSoldProducts: {
-        p_name: "",
-        p_sales: 0,
-      },
+      indexMouth: 0,
+      dataMonth: null,
+      bestSoldProducts: [],
+      leastSoldProducts: [],
+      meanStars: 0,
+      totalDaySales: 0,
+      totalProducts: 0,
+      numberOrdersP: 0,
+      newReviewsCount: 0,
     };
   },
+  mounted() {
+    getDataOrdersByBusiness(this.$route.params.id.toString()).then((listOr) => {
+      let now = new Date(Date.now());
 
+      listOr.forEach((item) => {
+        if (item.o_status == "d") {
+          if (
+            (item.date.getDate() == now.getDate() &&
+              now.getFullYear() == item.date.getFullYear()) ||
+            item.data.getMonth() == now.getMonth()
+          ) {
+            this.totalDaySales = item.op_quantity * item.p_price;
+            this.totalProducts += item.op_quantity;
+          }
+        } else if (item.o_status == "p") {
+          this.numberOrdersP++;
+        }
+      });
+    });
+    getSumProducts(this.$route.params.id.toString()).then((list) => {
+      const listTemp = list.filter((item) => item.o_status == "d");
+
+      if (listTemp.length == 1) {
+        this.bestSoldProducts.push(listTemp[0]);
+        this.leastSoldProducts.push(listTemp[0]);
+      } else if (listTemp.length == 2) {
+        this.bestSoldProducts.push(listTemp[1]);
+        this.leastSoldProducts.push(listTemp[0]);
+      } else if (listTemp.length > 2) {
+        const index = listTemp.length - 1;
+        this.bestSoldProducts.push(listTemp[index]);
+        this.bestSoldProducts.push(listTemp[index - 1]);
+        this.leastSoldProducts.push(listTemp[0]);
+        this.leastSoldProducts.push(listTemp[1]);
+      }
+    });
+    getDataFromDate(this.$route.params.id.toString()).then((value) => {
+      this.dataMonth = value;
+      this.fillDays(this.indexMouth);
+    });
+
+    Business.getstatistics(this.$route.params.id).then((value) => {
+      this.meanStars = value.mean;
+    });
+
+    getCountReviewDate(this.$route.params.id).then((value) => {
+      this.newReviewsCount = value;
+    });
+  },
+  watch: {
+    indexMouth: function (newValue, oldValue) {
+      this.fillDays(newValue);
+    },
+
+    dayOrMonth: function (newValue, oldValue) {
+      if (oldValue == false && newValue == true) {
+        this.indexMouth = 0;
+      }
+    },
+  },
   methods: {
+    fillDays(month) {
+      this.days = [];
+
+      for (let i = 1; i <= this.dataMonth.dataMonthDay[month].length; i++) {
+        this.days.push(i);
+      }
+    },
+    setMonth(index) {
+      this.indexMouth = index;
+    },
     async goBackToProfile() {
       this.$router.push({ name: "User" });
     },

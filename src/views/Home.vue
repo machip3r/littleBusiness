@@ -298,7 +298,7 @@
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business.js";
-import { Category } from "/firebaseAPI/controllers/cateogory.js";
+import { Category } from "/firebaseAPI/controllers/category.js";
 import ProductDetails from "@/components/ProductDetails.vue";
 import Cart from "@/components/Cart.vue";
 import Dialog from "@/components/Dialog.vue";

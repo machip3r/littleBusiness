@@ -10,6 +10,7 @@ import {
   orderBy,
   where,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
@@ -121,14 +122,119 @@ export class Product {
       productsCollection,
       where("id_product", "==", id_product)
     );
-
-    return this.#getObjectFromDocuments(await getDocs(queryRes));
+    const docs = this.#getObjectFromDocuments(await getDocs(queryRes));
+    return this.docsObjectToArray(docs)[0];
   }
 
-  async updateProduct(id_product, body) {
-    const product = doc(db, collectionName, id_product);
+  async readPhotoName(url) {
+    const httpsReference = ref(storage, url);
+    return httpsReference.name;
+  }
 
-    await updateDoc(product, body);
+  async updateProduct(body) {
+    try {
+      //----Comprimir Imagen-------------------------
+      if (body.p_photo.size > 0) {
+        const archivo = body.p_photo;
+        const blob = await comprimirImagen(archivo, 80);
+        //---------------------------------------------
+        const metadata = {
+          contentType: "image/jpeg",
+        };
+        const storageRef = ref(
+          storage,
+          `products/${Date.now()}_${body.p_photo.name}`
+        );
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          //body.p_photo,
+          blob,
+          metadata
+        );
+        body.p_saved = true;
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            // console.log('Upload is ' + progress + '% done');
+            // switch (snapshot.state) {
+            //   case 'paused':
+            //     console.log('Upload is paused');
+            //     break;
+            //   case 'running':
+            //     console.log('Upload is running');
+            //     break;
+            // }
+          },
+          (error) => {
+            switch (error.code) {
+              case "storage/unauthorized":
+                // User doesn't have permission to access the object
+                console.log("No tienes permiso de subir archivos padrino");
+                break;
+              case "storage/canceled":
+                // User canceled the upload
+                console.log("Cancelaste la subida mi hermano");
+                break;
+              case "storage/unknown":
+                // Unknown error occurred, inspect error.serverResponse
+                console.log("¿Qué pasó?");
+                break;
+            }
+            body.p_saved = false;
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              console.log("File available at", downloadURL);
+              async function save() {
+                const docRef = doc(db, collectionName, body.firebaseID);
+                const sendBody = {
+                  p_name: body.p_name,
+                  p_price: body.p_price,
+                  p_photo: downloadURL,
+                  p_description: body.p_description,
+                  p_category: body.p_category,
+                  p_status: body.p_status,
+                };
+                await updateDoc(docRef, sendBody);
+
+                body.p_saved = false;
+                return docRef.id;
+              }
+              return save();
+            });
+          }
+        );
+      } else {
+        body.p_saved = true;
+
+        const docRef = doc(db, collectionName, body.firebaseID);
+        const sendBody = {
+          p_name: body.p_name,
+          p_price: body.p_price,
+          p_description: body.p_description,
+          p_category: body.p_category,
+          p_status: body.p_status,
+        };
+        await updateDoc(docRef, sendBody);
+        body.p_saved = false;
+
+        return docRef.id;
+      }
+    } catch (error) {
+      console.error("Error adding product: ", error);
+      return error;
+    }
+  }
+
+  async deleteProduct(firebaseID) {
+    try {
+      const res = await deleteDoc(doc(db, collectionName, firebaseID));
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   #getObjectFromDocuments(documents) {

@@ -126,12 +126,10 @@ export class User {
             },
             () => {
               getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                console.log("File available at", downloadURL);
                 const auth = getAuth();
                 const user = auth.currentUser;
                 updateProfile(user, { photoURL: downloadURL })
                   .then(() => {
-                    console.log("Perfil actualizado");
                     resolve(downloadURL);
                   })
                   .catch((e) => {

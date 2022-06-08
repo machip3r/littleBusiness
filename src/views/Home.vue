@@ -104,13 +104,15 @@
             :input-value="active"
             @click="toggle"
           >
-            <div class="flex-column">
-              <v-icon class="button-filter-icon-home">{{
-                category.icon
-              }}</v-icon>
-              <h5 class="button-filter-text-home">
-                {{ category.name }}
-              </h5>
+            <div class="flex-column container-info-button-filter">
+              <v-icon class="button-filter-icon-home">
+                {{ category.icon }}
+              </v-icon>
+              <div class="text-truncate">
+                <h5 class="button-filter-text-home">
+                  {{ category.name }}
+                </h5>
+              </div>
             </div>
           </v-btn>
         </v-slide-item>

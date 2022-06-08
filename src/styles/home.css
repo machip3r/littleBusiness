@@ -53,6 +53,13 @@ input::-webkit-inner-spin-button {
   min-width: 300px;
 }
 
+.text-truncate {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 80px;
+}
+
 .button-filter-home {
   width: 7em !important;
   height: 7em !important;

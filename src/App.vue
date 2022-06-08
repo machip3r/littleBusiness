@@ -18,6 +18,7 @@
 @import "./styles/home.css";
 @import "./styles/dashboard.css";
 @import "./styles/business.css";
+@import "./styles/information.css";
 </style>
 
 <script>

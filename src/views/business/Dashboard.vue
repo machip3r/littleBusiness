@@ -36,7 +36,7 @@
       </div>
       <div class="stat-item gradient-background">
         <div class="stat-icon"><i class="fas fa-star"></i></div>
-        <div class="stat-value">{{ meanStars }} / 5</div>
+        <div class="stat-value">{{ meanStars ? meanStars : 0 }} / 5</div>
         <div class="stat-text">Calificación</div>
       </div>
     </div>
@@ -79,7 +79,11 @@
       </v-sparkline>
     </div>
     <h3 class="mt-6">Productos más vendidos</h3>
+
     <v-slide-group class="px-6">
+      <div v-if="bestSoldProducts.length == 0">
+        No hay productos que mostrar
+      </div>
       <v-slide-item v-for="(product, index) in bestSoldProducts" :key="index">
         <v-card
           class="product-home"
@@ -95,6 +99,9 @@
     </v-slide-group>
     <h3 class="mt-6">Productos menos vendidos</h3>
     <v-slide-group class="px-6">
+      <div v-if="leastSoldProducts.length == 0">
+        No hay productos que mostrar
+      </div>
       <v-slide-item v-for="(product, index) in leastSoldProducts" :key="index">
         <v-card
           class="product-home"

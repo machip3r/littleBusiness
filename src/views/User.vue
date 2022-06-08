@@ -1,8 +1,18 @@
 <template>
   <div class="main-container-user">
     <div class="username-container">
-      <h1>{{ profile.name }}</h1>
-      <v-btn dark large color="error" fixed fab right top @click="logOut()">
+      <h1 class="my-4 mx-4">{{ profile.name }}</h1>
+      <v-btn
+        class="my-4 mx-4"
+        dark
+        large
+        color="error"
+        fixed
+        fab
+        right
+        top
+        @click="logOut()"
+      >
         <v-icon size="20">fas fa-sign-out-alt</v-icon>
       </v-btn>
     </div>
@@ -76,6 +86,7 @@
         <v-col cols="10" sm="7" md="4">
           <h5>Mi información</h5>
           <v-text-field
+            class="mt-3"
             v-model="name"
             label="Nombre de usuario"
             color="primary"
@@ -94,18 +105,21 @@
           ></v-text-field>
           <div v-if="profile.type">
             <h5>Mi negocio</h5>
+
             <v-btn
-              class="px-16"
+              class="my-3 px-16 py-6"
               label="Add"
               color="primary"
               large
               block
               rounded
-              @click="enterSellerView"
+              v-for="item in business"
+              :key="item.id_business"
+              @click="enterSellerView(item.id_business)"
             >
-              <div class="mx-10">
+              <div class="mx-5">
                 <v-icon left> fas fa-store </v-icon>
-                {{ business }}
+                {{ item.b_name }}
               </div>
             </v-btn>
           </div>
@@ -130,13 +144,15 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import { getAuth } from "firebase/auth";
+import { Business } from "../../firebaseAPI/controllers/business";
 export default {
   name: "User",
   data() {
     return {
       modifyName: true,
       modifyPhoto: false,
-      business: "Stickers cool",
+      business: [],
 
       modifiedName: null,
       modifiedPhoto: null,
@@ -170,20 +186,33 @@ export default {
       return { name: "", type: false };
     },
   },
-  async created() {},
+  created() {
+    const uid = getAuth().currentUser.uid;
+
+    Business.getBussinesByUId(uid)
+      .then((rows) => {
+        this.business = rows;
+      })
+      .catch((err) => {
+        //console.error(err);
+      });
+  },
   methods: {
     ...mapActions([
       "removeAccess",
       "updateUserName",
       "updateUserPhoto",
       "modifyView",
+      "resetOrder",
     ]),
 
+    async getBussines() {},
     async openAddBusiness() {
       this.$router.push({ name: "AddBusiness" });
     },
     async logOut() {
       this.removeAccess().then(() => {
+        this.resetOrder();
         this.$router.push({ name: "Login" });
       });
     },
@@ -214,9 +243,9 @@ export default {
         this.modifiedPhoto = null;
       } else this.$refs.fiPhoto.click();
     },
-    enterSellerView() {
+    enterSellerView(id) {
       this.modifyView(true);
-      this.$router.push("Dashboard");
+      this.$router.push({ name: "Dashboard", params: { id: id } });
     },
   },
 };

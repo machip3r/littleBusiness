@@ -13,7 +13,7 @@
       >
         <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
       </v-btn>
-      <h1 class="ml-5">Habla sobre tu negocio</h1>
+      <h1 class="ml-5">Editar negocio</h1>
     </v-row>
     <v-form class="mt-10" ref="form" v-model="valid" lazy-validation>
       <div>
@@ -104,10 +104,10 @@
           rounded
           dense
           large
-          @click="addBusiness()"
+          @click="editBusiness()"
         >
-          <v-icon class="mr-3" color="white">fas fa-check</v-icon>
-          Continuar
+          <v-icon class="mr-3" color="white">fas fa-edit</v-icon>
+          Editar
         </v-btn>
       </div>
     </v-form>
@@ -120,7 +120,7 @@ import { Category } from "../../../firebaseAPI/controllers/cateogory";
 import { getAuth } from "firebase/auth";
 import { Business } from "../../../firebaseAPI/controllers/business";
 export default {
-  name: "AddBusiness",
+  name: "EditBusiness",
   computed: {
     ...mapState(["rules"]),
   },
@@ -147,6 +147,8 @@ export default {
         { start: "", end: "" },
       ],
       valid: true,
+      messageErrorShow: false,
+      messageError: "",
       categories: [],
       categorySelected: "",
       b_name: "",
@@ -160,7 +162,27 @@ export default {
     };
   },
 
+  mounted() {
+    const id = this.$route.params.id;
+
+    Business.readBusinessWithID(id).then((business) => {
+      this.dataDay = business.b_schedule;
+      this.b_name = business.b_name;
+      this.b_description = business.b_description;
+
+      getCategories().then((categoriesT) => {
+        this.categories = categoriesT;
+        this.categorySelected = this.categories.find(
+          (item) => item.id_category == business.id_category
+        );
+      });
+    });
+  },
   methods: {
+    clearText(index) {
+      this.textDays[index].end = "";
+      this.textDays[index].start = "";
+    },
     async goBackToProfile() {
       this.$router.push({ name: "User" });
     },
@@ -223,11 +245,7 @@ export default {
         return true;
       }
     },
-    clearText(index) {
-      this.textDays[index].end = "";
-      this.textDays[index].start = "";
-    },
-    async addBusiness() {
+    async editBusiness() {
       const value = this.$refs.form.validate();
       if (value) {
         let validationDataDay = false;
@@ -245,12 +263,16 @@ export default {
             JSON.stringify(this.dataDay)
           );
 
-          let result = await newBusiness.create();
+          let result = await newBusiness.update(this.$route.params.id);
+
           if (result) {
-            this.$router.push({ name: "Dashboard" });
+            this.$router.push({
+              name: "Information",
+              params: { id: this.$route.params.id },
+            });
           } else {
             this.snackbarProps.status = true;
-            this.snackbarProps.text = "No se pudo agregar el negocio";
+            this.snackbarProps.text = "No se pudo actualizar el negocio";
           }
         } else {
           this.snackbarProps.status = true;

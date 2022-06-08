@@ -207,6 +207,45 @@
         </v-slide-item>
       </v-slide-group>
 
+      <!-- * Product skeleton -->
+      <div
+        class="products-container"
+        v-if="filteredProducts.length < 1 && allProducts.length < 1"
+      >
+        <v-card
+          class="product-home"
+          elevation="0"
+          v-for="num in Array(8)"
+          :key="num"
+        >
+          <v-row>
+            <v-col>
+              <v-skeleton-loader type="card-avatar"></v-skeleton-loader>
+            </v-col>
+          </v-row>
+        </v-card>
+      </div>
+
+      <!-- * No products -->
+
+      <v-card
+        v-if="filteredProducts.length < 1"
+        class="my-4 rounded-xl"
+        align="center"
+        elevation="0"
+      >
+        <v-card width="40%" height="500px" color="secondary" elevation="0">
+          <v-icon class="my-8" size="150">fas fa-filter</v-icon>
+          <div class="mx-4">
+            <h1>No existe</h1>
+            <p>
+              Parece que nadie ha decidido vender en esta categoría, ¿por qué no
+              aprovechar?
+            </p>
+          </div>
+        </v-card>
+      </v-card>
+
       <!-- * Product container -->
       <div class="products-container">
         <v-card

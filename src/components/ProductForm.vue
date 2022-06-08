@@ -2,9 +2,9 @@
   <v-container fluid>
     <div class="d-flex pa-4 align-center">
       <v-btn class="" fab elevation="0" color="primary">
-        <v-icon color="secondary" v-on:click="clickBackButton"
-          >fas fa-arrow-left</v-icon
-        >
+        <v-icon color="secondary" v-on:click="clickBackButton">
+          fas fa-arrow-left
+        </v-icon>
       </v-btn>
       <h2 class="font-weight-bold font-nunito ml-8 d-none d-md-inline">
         {{ title }}
@@ -280,7 +280,10 @@ export default {
     async addNewProduct() {
       if (this.$refs.form.validate()) {
         const product = new Product();
-        product.addProduct(this.product).then().catch();
+        product
+          .addProduct(this.product)
+          .then(() => this.$router.push({ name: "Products" }))
+          .catch();
       } else {
         // 0 -> Dialogo de imagen grande
         // 1 -> (Prueba) Dialogo editar producto
@@ -301,7 +304,7 @@ export default {
     async deleteProduct() {
       const product = new Product();
       product.deleteProduct(this.product.firebaseID);
-      this.clickBackButton();
+      this.$router.push({ name: "Products" });
     },
     showDialog(id) {
       this.posts.id = this.dialog[id].id;

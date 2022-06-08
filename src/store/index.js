@@ -75,6 +75,7 @@ export default new Vuex.Store({
     updateSellerView(state, payload) {
       state.sellerView = payload;
     },
+
     addOrder(state, payload) {
       state.cart = payload;
     },

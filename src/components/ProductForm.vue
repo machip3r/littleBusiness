@@ -161,6 +161,7 @@
 <script>
 import { Product } from "/firebaseAPI/controllers/product.js";
 import AlertDialog from "@/components/Dialog.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "ProductForm",
@@ -237,6 +238,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["activeBusiness"]),
     editOrAdd() {
       return this.productProp !== undefined;
     },
@@ -258,6 +260,7 @@ export default {
       this.product = this.productProp;
       this.disabled = true;
     }
+    this.product.id_business = this.activeBusiness;
   },
   methods: {
     clickFormButton() {

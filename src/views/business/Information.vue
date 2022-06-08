@@ -19,86 +19,82 @@
 
         <h1 class="ml-5">Información</h1>
       </v-col>
-
     </v-row>
 
     <v-row>
       <v-col>
-      <v-row>
-      <v-rating
-          color="blue"
-          empty-icon="far fa-star"
-          full-icon="fa-star"
-          half-icon="fa-star-half-alt"
-          
-          length="5"
-          readonly
-          size="60"
-          small
-          half-increments
-          :value="rateMean"
-        
-        ></v-rating>
-      </v-row>
-        
+        <v-row>
+          <v-rating
+            color="blue"
+            empty-icon="far fa-star"
+            full-icon="fa-star"
+            half-icon="fa-star-half-alt"
+            length="5"
+            readonly
+            size="60"
+            small
+            half-increments
+            :value="rateMean"
+          ></v-rating>
+        </v-row>
 
         <div>
           <v-avatar>
-            <img :src="user_photo"></img>
+            <img :src="user_photo" />
           </v-avatar>
-          By 
-           {{ business.name}}
+          By
+          {{ business.name }}
         </div>
-        <p>{{business.b_description}}</p>
-      
+        <p>{{ business.b_description }}</p>
+
         <v-row>
           <v-col>
-          <v-btn dark color="primary" rounded x-large>DICIS</v-btn>
+            <v-btn dark color="primary" rounded x-large>DICIS</v-btn>
           </v-col>
           <v-col>
-          <v-btn dark color="primary" rounded x-large>$ Prices {{ `$ ${minPrice}-$ ${maxPrice}` }}</v-btn>
+            <v-btn dark color="primary" rounded x-large
+              >$ Prices {{ `$ ${minPrice}-$ ${maxPrice}` }}</v-btn
+            >
           </v-col>
         </v-row>
- 
-      
       </v-col>
-      
+
       <v-col>
         <h3>Dias disponibles</h3>
-       <div v-for="(day, index) in daysOfWeek" :key="index">
-        <span>{{day}}</span> <v-chip
-                v-for="(item, indexD) in business.b_schedule[index]"
-                v-bind:key="indexD"
-              
-                color="blue"
-                class="chips-hour"
-              
-              >
-                {{ `${item.start}:00 - ${item.end}:00` }}
-              </v-chip>
-       </div>
-       </v-col>
+        <div v-for="(day, index) in daysOfWeek" :key="index">
+          <span>{{ day }}</span>
+          <v-chip
+            v-for="(item, indexD) in business.b_schedule[index]"
+            v-bind:key="indexD"
+            color="blue"
+            class="chips-hour"
+          >
+            {{ `${item.start}:00 - ${item.end}:00` }}
+          </v-chip>
+        </div>
+      </v-col>
     </v-row>
     <v-row>
-    <v-col></v-col>
-     <v-col>
-      <v-btn @click="goEdit()" dark color="primary" rounded bottom left large>
+      <v-col></v-col>
+      <v-col>
+        <v-btn @click="goEdit()" dark color="primary" rounded bottom left large>
           <v-icon>fa-edit</v-icon>
-        Editar</v-btn>
-       </v-col>
+          Editar</v-btn
+        >
+      </v-col>
     </v-row>
- 
   </div>
 </template>
 
 <script>
-import { getAuth } from '@firebase/auth';
-import { Business } from '../../../firebaseAPI/controllers/business';
+import { getAuth } from "@firebase/auth";
+import { Business } from "../../../firebaseAPI/controllers/business";
+import { mapState } from "vuex";
 export default {
   name: "Information",
   data() {
     return {
-daysOfWeek: [
+      daysOfWeek: [
         "Lunes",
         "Martes",
         "Miércoles",
@@ -110,33 +106,39 @@ daysOfWeek: [
       user_photo: "",
       business: null,
       rateMean: 0,
-      minPrice : 0,
+      minPrice: 0,
       maxPrice: 0,
     };
   },
-  mounted(){
-    Business.readBusinessWithID(this.$route.params.id).then(rows=>{
-      this.business = rows;
-      this.user_photo= getAuth().currentUser.photoURL;
-    }).catch(err=>{
-      console.error(err);
-    });
-    Business.getstatistics(this.$route.params.id).then(value=>{
-       this.rateMean =  value.mean;
+  computed: {
+    ...mapState(["activeBusiness"]),
+  },
+  mounted() {
+    Business.readBusinessWithID(this.activeBusiness)
+      .then((rows) => {
+        this.business = rows;
+        this.user_photo = getAuth().currentUser.photoURL;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    Business.getstatistics(this.activeBusiness)
+      .then((value) => {
+        this.rateMean = value.mean;
         this.minPrice = value.minPrice;
         this.maxPrice = value.maxPrice;
-    }).catch(err=>console.error(err));
+      })
+      .catch((err) => console.error(err));
   },
   methods: {
     async goBackToProfile() {
       this.$router.push({ name: "User" });
     },
 
-    goEdit(){
-
+    goEdit() {
       const id = this.$route.params.id;
       this.$router.push({ name: "EditBusiness", params: { id: id } });
-    }
+    },
   },
 };
 </script>

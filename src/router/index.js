@@ -59,7 +59,7 @@ const routes = [
     },
   },
   {
-    path: "/dashboard/:id",
+    path: "/dashboard",
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
@@ -115,7 +115,7 @@ const routes = [
     meta: { title: "Review" },
   },
   {
-    path: "/information/:id",
+    path: "/information",
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {

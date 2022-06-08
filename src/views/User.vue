@@ -202,6 +202,7 @@ export default {
       "updateUserName",
       "updateUserPhoto",
       "modifyView",
+      "activeBusiness",
       "resetOrder",
     ]),
 
@@ -244,7 +245,8 @@ export default {
     },
     enterSellerView(id) {
       this.modifyView(true);
-      this.$router.push({ name: "Dashboard", params: { id: id } });
+      this.activeBusiness(id);
+      this.$router.push({ name: "Dashboard" });
     },
   },
 };

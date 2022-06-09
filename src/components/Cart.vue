@@ -200,6 +200,7 @@ import { User } from "/firebaseAPI/controllers/user.js";
 import { Order } from "/firebaseAPI/controllers/order.js";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business";
+import { getDataOrdersByBusiness } from "../../firebaseAPI/controllers/business";
 import html2pdf from "html2pdf.js";
 import Dialog from "@/components/Dialog.vue";
 
@@ -235,6 +236,7 @@ export default {
       },
 
       allBusinesses: [],
+      myBusiness: {},
 
       allProducts: [],
       orderedProducts: [],
@@ -245,6 +247,8 @@ export default {
       editable: false,
     };
   },
+
+  mounted() {},
 
   async created() {
     await this.getUsername();

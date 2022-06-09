@@ -137,117 +137,100 @@
     </v-dialog>
 
     <!-- Header -->
-    <div class="container-dashboard">
-      <div>
-        <v-row class="mt-1 ml-1 pb-5">
-          <v-btn
-            class="fab-back-business"
-            dark
-            color="primary"
-            fab
-            small
-            left
-            top
-            @click="goBackToProfile()"
-          >
-            <v-icon class="icon-back-business" size="15"
-              >fas fa-arrow-left</v-icon
-            >
-          </v-btn>
-          <h1 class="ml-5">Mis pedidos</h1>
-        </v-row>
-      </div>
-
-      <v-chip-group
-        mandatory
-        active-class="month-select--active"
-        class="mt-3 ml-6"
-      >
-        <v-chip
-          v-for="filter in orderFilters"
-          :key="filter.id"
-          @change="filterOrders(filter.filterCode)"
-        >
-          <h5>{{ filter.text }}</h5>
+    <v-row class="pt-6 px-6 row-title-home" align="center" justify="center">
+      <v-col class="col-title-home">
+        <h1>Mis pedidos</h1>
+        <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+          {{ myBusiness.b_name }}
         </v-chip>
-      </v-chip-group>
+      </v-col>
+    </v-row>
 
-      <v-card
-        v-if="filteredOrders.length < 1"
-        class="my-4 rounded-xl"
-        align="center"
-        elevation="0"
+    <v-chip-group mandatory active-class="month-select--active" class="ml-6">
+      <v-chip
+        v-for="filter in orderFilters"
+        :key="filter.id"
+        @change="filterOrders(filter.filterCode)"
       >
-        <v-card class="card-empty-cart" color="secondary" elevation="0">
-          <v-icon class="my-8" size="150">fas fa-receipt</v-icon>
-          <div class="mx-4">
-            <h1>{{ emptyFilter[activeFilter].title }}</h1>
-            <p>{{ emptyFilter[activeFilter].message }}</p>
-          </div>
-        </v-card>
+        <h5>{{ filter.text }}</h5>
+      </v-chip>
+    </v-chip-group>
+
+    <v-card
+      v-if="filteredOrders.length < 1"
+      class="my-4 rounded-xl"
+      align="center"
+      elevation="0"
+    >
+      <v-card width="40%" height="500px" color="secondary" elevation="0">
+        <v-icon class="my-8" size="150">fas fa-receipt</v-icon>
+        <div class="mx-4">
+          <h1>{{ emptyFilter[activeFilter].title }}</h1>
+          <p>{{ emptyFilter[activeFilter].message }}</p>
+        </div>
       </v-card>
+    </v-card>
 
-      <v-row v-else>
-        <div class="mx-auto" v-for="order in filteredOrders" :key="order.id">
+    <v-row v-else>
+      <div class="mx-auto" v-for="order in filteredOrders" :key="order.id">
+        <v-card
+          class="ma-8 pb-3"
+          flat
+          width="500"
+          elevation="3"
+          @click="seeOrderDetails(order)"
+        >
+          <v-toolbar class="elevation-0 gradient-background">
+            <div>
+              <v-badge :color="badgeColors[order.o_status]"></v-badge>
+            </div>
+            <v-spacer></v-spacer>
+            <v-toolbar-title
+              >#{{ order.id_order.toUpperCase() }}</v-toolbar-title
+            >
+            <v-spacer></v-spacer>
+            <v-toolbar-title>
+              <strong>{{ order.u_name }}</strong>
+            </v-toolbar-title>
+            <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
+            <v-spacer></v-spacer>
+            <v-toolbar-title>
+              <v-icon>far fa-calendar</v-icon>
+              {{ order.f_datetime }}
+            </v-toolbar-title>
+          </v-toolbar>
+
+          <v-row class="my-3 px-8">
+            <v-col cols="6"><strong>Total</strong></v-col>
+            <v-spacer></v-spacer>
+            <v-col cols="4">
+              <strong>${{ parseFloat(order.o_total).toFixed(2) }} MXN</strong>
+            </v-col>
+          </v-row>
           <v-card
-            class="ma-8 pb-3"
-            flat
-            width="500"
-            elevation="3"
-            @click="seeOrderDetails(order)"
+            class="ma-1"
+            color="secondary"
+            elevation="0"
+            v-for="product in order.o_products"
+            :key="product.id"
           >
-            <v-toolbar class="elevation-0 gradient-background">
-              <div>
-                <v-badge :color="badgeColors[order.o_status]"></v-badge>
-              </div>
-              <v-spacer></v-spacer>
-              <v-toolbar-title
-                >#{{ order.id_order.toUpperCase() }}</v-toolbar-title
-              >
-              <v-spacer></v-spacer>
-              <v-toolbar-title>
-                <strong>{{ order.u_name }}</strong>
-              </v-toolbar-title>
-              <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
-              <v-spacer></v-spacer>
-              <v-toolbar-title>
-                <v-icon>far fa-calendar</v-icon>
-                {{ order.f_datetime }}
-              </v-toolbar-title>
-            </v-toolbar>
-
-            <v-row class="my-3 px-8">
-              <v-col cols="6"><strong>Total</strong></v-col>
-              <v-spacer></v-spacer>
+            <v-row class="px-8">
+              <v-col cols="2">
+                <strong>{{ product.op_quantity }}x</strong>
+              </v-col>
+              <v-col cols="6">
+                <strong>{{ product.p_name }} </strong>
+              </v-col>
               <v-col cols="4">
-                <strong>${{ parseFloat(order.o_total).toFixed(2) }} MXN</strong>
+                <strong>
+                  ${{ parseFloat(product.p_price).toFixed(2) }} MXN
+                </strong>
               </v-col>
             </v-row>
-            <v-card
-              class="ma-1"
-              color="secondary"
-              elevation="0"
-              v-for="product in order.o_products"
-              :key="product.id"
-            >
-              <v-row class="px-8">
-                <v-col cols="2">
-                  <strong>{{ product.op_quantity }}x</strong>
-                </v-col>
-                <v-col cols="6">
-                  <strong>{{ product.p_name }} </strong>
-                </v-col>
-                <v-col cols="4">
-                  <strong>
-                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
-                  </strong>
-                </v-col>
-              </v-row>
-            </v-card>
           </v-card>
-        </div>
-      </v-row>
-    </div>
+        </v-card>
+      </div>
+    </v-row>
 
     <!-- Receipt -->
     <div class="container hidden" id="receipt">
@@ -497,9 +480,6 @@ export default {
   mounted() {},
 
   methods: {
-    async goBackToProfile() {
-      this.$router.push({ name: "User" });
-    },
     // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
     async getBusinesses() {
       const B = new Business();

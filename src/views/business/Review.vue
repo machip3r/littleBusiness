@@ -211,6 +211,7 @@ export default {
           );
         }
       }
+      this.businessReviews = this.businessReviews.sort((a,b) => a.r_datetime > b.r_datetime);
       this.getAllRates();
     },
     getAllRates() {

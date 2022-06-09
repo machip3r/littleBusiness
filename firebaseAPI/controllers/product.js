@@ -82,7 +82,6 @@ export class Product {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
             async function save() {
               const docRef = await addDoc(productsCollection, {
                 id_product: body.id_product,
@@ -186,7 +185,6 @@ export class Product {
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              console.log("File available at", downloadURL);
               async function save() {
                 const docRef = doc(db, collectionName, body.firebaseID);
                 const sendBody = {

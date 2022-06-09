@@ -17,9 +17,16 @@ import { getAuth } from "firebase/auth";
 const collectionName = "review";
 const reviewCollection = collection(db, collectionName);
 
-
 export class Review {
-  constructor(id_user, u_name, id_business, r_rate, r_description, r_datetime, r_status) {
+  constructor(
+    id_user,
+    u_name,
+    id_business,
+    r_rate,
+    r_description,
+    r_datetime,
+    r_status
+  ) {
     this.id_user = id_user;
     this.u_name = u_name;
     this.id_business = id_business;
@@ -42,7 +49,7 @@ export class Review {
         r_rate: this.r_rate,
         r_description: this.r_descrption,
         r_datetime: this.r_datetime,
-        r_status: true
+        r_status: true,
       });
 
       return docRef.id;
@@ -56,9 +63,8 @@ export class Review {
     try {
       body.id_review = await this.#newReviewID();
       const docRef = await addDoc(reviewCollection, body);
-      
-      return docRef.id;
 
+      return docRef.id;
     } catch (error) {
       console.log("Error adding document: ", error);
 
@@ -74,6 +80,11 @@ export class Review {
     return this.#getObjectFromDocuments(await getDocs(reviewCollection));
   }
 
+  async readUserReviews(uid) {
+    const queryRes = query(reviewCollection, where("id_user", "==", uid));
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
+  }
+
   async readReviewWithID(id_review) {
     const queryRes = query(
       reviewCollection,
@@ -87,7 +98,7 @@ export class Review {
     const review = doc(db, collectionName, id_user);
     await updateDoc(review, body);
   }
-  
+
   #getObjectFromDocuments(documents) {
     const obj = {};
 

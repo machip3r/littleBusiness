@@ -259,7 +259,7 @@ export async function getDataOrdersByBusiness(id_business) {
           date: new Date(tempOrder.o_datetime),
           p_price: listProducts[index].p_price,
           op_quantity: item.op_quantity,
-          o_status: tempOrder.o_status,
+          o_status: item.p_status,
           p_name: listProducts[index].p_name,
           p_photo: listProducts[index].p_photo,
         });
@@ -365,6 +365,8 @@ export async function getCountReviewDate(id_business) {
 
   return count;
 }
+
+//d,c,p
 
 export async function getDataBusinessID(id_business) {
   const q = await query(

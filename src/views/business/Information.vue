@@ -256,7 +256,7 @@ export default {
   },
   methods: {
     async goBackToProfile() {
-      if (this.isSeller) {
+      if (this.isSeller && this.isYourBusiness) {
         this.$router.push({ name: "User" });
       } else {
         this.$router.go(-1);

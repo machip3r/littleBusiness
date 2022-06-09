@@ -35,6 +35,8 @@
 .principal-information p {
   font-size: 1.3em;
   margin-left: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
 }
 
 .chip-prices {

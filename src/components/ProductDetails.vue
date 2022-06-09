@@ -78,7 +78,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["cart", "userBusiness"]),
+    ...mapState(["cart", "userBusiness", "user"]),
     dialogSellerView() {
       return this.product.id_business === this.activeBusiness;
     },
@@ -127,6 +127,7 @@ export default {
       const ORDER_PRODUCTS_SIZE = this.cart.o_products.length;
       const product = {
         id_product: id_product,
+        u_name: this.user.displayName,
         op_quantity: this.quantity,
         p_status: "p",
       };

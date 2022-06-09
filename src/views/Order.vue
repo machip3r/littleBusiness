@@ -197,9 +197,6 @@
             <v-spacer></v-spacer>
 
             <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
-            <v-toolbar-title>
-              <strong>Fulanito's name</strong>
-            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title>
               <v-icon>far fa-calendar</v-icon>

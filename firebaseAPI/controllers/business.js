@@ -260,15 +260,18 @@ export async function getDataOrdersByBusiness(id_business) {
       let index = listProducts.findIndex((it) => it.id_product == id_product);
       if (index >= 0) {
         listOrders.push({
+          id_order: tempOrder.id_order,
+          id_user: tempOrder.id_user,
           id_product: id_product,
-          date: new Date(tempOrder.o_datetime),
           p_price: listProducts[index].p_price,
-          op_quantity: item.op_quantity,
-          p_status: item.p_status,
           p_name: listProducts[index].p_name,
           p_photo: listProducts[index].p_photo,
           p_status: item.p_status,
+          date: new Date(tempOrder.o_datetime),
+          o_datetime: tempOrder.o_datetime,
+          op_quantity: item.op_quantity,
           o_status: item.p_status,
+          u_name: tempOrder.u_name,
         });
       }
     });

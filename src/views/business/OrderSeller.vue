@@ -206,11 +206,10 @@
               >#{{ order.id_order.toUpperCase() }}</v-toolbar-title
             >
             <v-spacer></v-spacer>
-
-            <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
             <v-toolbar-title>
-              <strong>Fulanito's name</strong>
+              <strong>{{ order.u_name }}</strong>
             </v-toolbar-title>
+            <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
             <v-spacer></v-spacer>
             <v-toolbar-title>
               <v-icon>far fa-calendar</v-icon>
@@ -323,6 +322,9 @@ import { Business } from "/firebaseAPI/controllers/business.js";
 import html2pdf from "html2pdf.js";
 import OrderDetails from "@/components/OrderDetails.vue";
 import CancelDialog from "@/components/Dialog.vue";
+import { getDataOrdersByBusiness } from "../../../firebaseAPI/controllers/business";
+import { collection } from "@firebase/firestore";
+import { objectToString } from "@vue/shared";
 
 export default {
   name: "Order",
@@ -421,6 +423,7 @@ export default {
 
       allBusinesses: [],
       myBusiness: {},
+      myBusinessOrders: {},
 
       badgeColors: {
         d: "#2D3440",
@@ -439,9 +442,61 @@ export default {
     await this.getProducts();
     await this.getOrders();
 
-    this.filteredOrders = [...this.allOrders];
-    this.userName = this.user.name;
+    console.log(this.user);
+
+    for (let i = 0; i < this.allBusinesses.length; i++)
+      if (this.allBusinesses[i].id_user == this.user.uid) {
+        Object.assign(this.myBusiness, this.allBusinesses[i]);
+        break;
+      }
+
+    // Optimizar
+    getDataOrdersByBusiness(this.myBusiness.id_business).then((res) => {
+      let id_orders = [];
+      res.forEach((product) => {
+        id_orders.push(product.id_order);
+      });
+
+      id_orders = Array.from(new Set([...id_orders]));
+      this.filteredOrders = [];
+
+      id_orders.forEach((id) => {
+        let sum = 0;
+        let tempOrder = {
+          id_order: id,
+          id_user: 0,
+          o_datetime: "",
+          o_products: [],
+          o_status: "p",
+        };
+
+        res.forEach((product) => {
+          if (product.id_order == id) {
+            tempOrder.id_user = product.id_user;
+            tempOrder.o_datetime = product.o_datetime;
+            tempOrder.o_status = "p";
+
+            sum += product.p_price * product.op_quantity;
+
+            tempOrder.f_datetime = this.formatDate(product.o_datetime);
+
+            delete product.id_order;
+            delete product.id_user;
+            delete product.date;
+            delete product.o_datetime;
+            delete product.o_status;
+
+            tempOrder.o_products.push(product);
+          }
+        });
+        tempOrder.o_total = sum;
+
+        this.filteredOrders.push(tempOrder);
+      });
+    });
   },
+
+  mounted() {},
 
   methods: {
     // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
@@ -449,11 +504,6 @@ export default {
       const B = new Business();
       await B.readBusiness().then((res) => {
         this.allBusinesses = B.docsObjectToArray(res);
-        for (let i = 0; i < this.allBusinesses.length; i++)
-          if (this.allBusinesses[i].id_user == this.user.uid) {
-            Object.assign(this.myBusiness, this.allBusinesses[i]);
-            break;
-          }
       });
     },
 
@@ -493,6 +543,7 @@ export default {
                 this.allBusinesses[i].id_business
               ) {
                 Object.assign(orderedProduct, {
+                  id_business: this.allBusinesses[i].id_business,
                   b_name: this.allBusinesses[i].b_name,
                 });
                 break;

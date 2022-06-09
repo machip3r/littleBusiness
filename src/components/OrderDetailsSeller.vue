@@ -119,9 +119,9 @@ import DeleteProductDialog from "@/components/Dialog.vue";
 import DeleteOrderDialog from "@/components/Dialog.vue";
 
 export default {
-  name: "OrderDetails",
+  name: "OrderDetailsSeller",
 
-  props: ["originalOrder", "order"],
+  props: ["originalOrder", "order", "allOrders"],
 
   components: {
     DeleteProductDialog,
@@ -188,9 +188,9 @@ export default {
 
   created() {
     this.calcTotal();
+    console.log("origOrd: ", this.originalOrder);
+    console.log("Ord: ", this.order);
   },
-
-  mounted() {},
 
   methods: {
     ...mapActions([
@@ -237,20 +237,27 @@ export default {
     async updateOrder() {
       const O = new Order();
 
-      // this.disableInteraction = true;
-      // this.editingDialog = true;
+      this.disableInteraction = true;
+      this.editingDialog = true;
 
-      let tempOrder = JSON.parse(JSON.stringify(this.order)),
-        completeProducts = JSON.parse(JSON.stringify(this.order.o_products));
+      let tempOrder = {},
+        completeProducts = [];
 
-      tempOrder.o_products = JSON.parse(JSON.stringify(this.order.o_products));
+      for (let i = 0; i < this.allOrders.length; i++)
+        if (this.order.id_order == this.allOrders[i].id_order) {
+          tempOrder = JSON.parse(JSON.stringify(this.allOrders[i]));
+          completeProducts = JSON.parse(
+            JSON.stringify(this.allOrders[i].o_products)
+          );
+          tempOrder.o_products = JSON.parse(
+            JSON.stringify(this.allOrders[i].o_products)
+          );
+          break;
+        }
 
       delete tempOrder.firebaseID;
       delete tempOrder.f_datetime;
       delete tempOrder.o_total;
-
-      console.log("tempOrder: ", tempOrder);
-      console.log("completeProducts: ", completeProducts);
 
       tempOrder.o_products.forEach((product) => {
         delete product.firebaseID;
@@ -263,8 +270,28 @@ export default {
         delete product.b_name;
       });
 
-      this.originalOrder
-        .updateOrder(this.order.firebaseID, tempOrder)
+      let deliveredCount = 0;
+
+      console.log("Order: ", this.order);
+      console.log("tempOrder: ", tempOrder);
+      console.log("completeProducts: ", completeProducts);
+
+      this.order.o_products.forEach((product) => {
+        tempOrder.o_products.forEach((tempProduct) => {
+          if (product.id_product == tempProduct.id_product)
+            tempProduct.p_status = "d";
+        });
+      });
+
+      tempOrder.o_products.forEach((product) => {
+        if (product.p_status == "d" || product.p_status == true)
+          deliveredCount++;
+      });
+
+      if (deliveredCount === tempOrder.o_products.length)
+        tempOrder.o_status = "d";
+
+      O.updateOrder(this.originalOrder.firebaseID, tempOrder)
         .then((res) => {
           this.originalOrder.o_products = [];
           completeProducts.forEach((product) => {
@@ -293,11 +320,13 @@ export default {
           }, 1000);
         })
         .catch((err) => {
+          console.log(err);
           this.snackbarProps.status = true;
-          this.snackbarProps.text = `¡Hubo un error al modificar la orden!`;
+          this.snackbarProps.text = `¡Hubo un error al entregar los productos!`;
           this.snackbarProps.color = "red";
           this.snackbarProps.icon = "fas fa-exclamation-circle";
 
+          this.disableInteraction = false;
           this.editingDialog = false;
         });
     },

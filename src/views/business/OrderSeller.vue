@@ -116,6 +116,7 @@
           </v-row>
 
           <OrderDetailsSeller
+            :allOrders="allOrders"
             :originalOrder="selectedOrder"
             :order="editableOrder"
             @close-dialog="closeConfirmDialog()"
@@ -124,15 +125,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Header -->
-    <!-- <v-row class="pt-6 px-6 row-title-home" align="center" justify="center">
-      <v-col class="col-title-home">
-        <h1>Mis pedidos</h1>
-        <v-chip class="pa-4" x-large text-color="secondary" color="primary">
-          {{ myBusiness.b_name }}
-        </v-chip>
-      </v-col>
-    </v-row> -->
     <div class="container-dashboard">
       <div>
         <v-row class="mt-1 ml-1 pb-5">
@@ -467,6 +459,7 @@ export default {
 
         res.forEach((product) => {
           if (product.id_order == id) {
+            tempOrder.firebaseID = product.firebaseID;
             tempOrder.id_user = product.id_user;
             tempOrder.o_datetime = product.o_datetime;
             tempOrder.o_status = "p";
@@ -475,6 +468,7 @@ export default {
 
             tempOrder.f_datetime = this.formatDate(product.o_datetime);
 
+            delete product.firebaseID;
             delete product.id_order;
             delete product.id_user;
             delete product.date;

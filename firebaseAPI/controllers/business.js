@@ -272,6 +272,7 @@ export async function getDataOrdersByBusiness(id_business) {
           op_quantity: item.op_quantity,
           o_status: item.p_status,
           u_name: tempOrder.u_name,
+          firebaseID: order.id,
         });
       }
     });

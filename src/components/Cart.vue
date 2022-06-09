@@ -440,8 +440,6 @@ export default {
           this.resetOrder();
         })
         .catch((error) => {
-          console.log(error);
-
           this.snackbarProps.status = true;
           this.snackbarProps.text = "Ha habido un error almacenando la orden";
           this.snackbarProps.color = "error";

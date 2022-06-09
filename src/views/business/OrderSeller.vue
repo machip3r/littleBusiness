@@ -577,7 +577,6 @@ export default {
           this.snackbarProps.color = "red";
           this.snackbarProps.icon = "exclamation-circle";
 
-          console.log(err);
           this.cancellingDialog = false;
         });
     },

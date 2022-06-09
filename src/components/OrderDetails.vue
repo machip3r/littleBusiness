@@ -449,7 +449,6 @@ export default {
           this.snackbarProps.color = "red";
           this.snackbarProps.icon = "fas fa-exclamation-circle";
 
-          console.log(err);
           this.editingDialog = false;
         });
     },

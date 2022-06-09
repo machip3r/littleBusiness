@@ -54,7 +54,6 @@ export class Review {
 
       return docRef.id;
     } catch (err) {
-      console.log("Error adding document: ", err);
       return undefined;
     }
   }
@@ -66,8 +65,6 @@ export class Review {
 
       return docRef.id;
     } catch (error) {
-      console.log("Error adding document: ", error);
-
       return error;
     }
   }

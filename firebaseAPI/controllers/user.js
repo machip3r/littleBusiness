@@ -112,15 +112,15 @@ export class User {
               switch (error.code) {
                 case "storage/unauthorized":
                   // User doesn't have permission to access the object
-                  console.log("No tienes permiso de subir archivos padrino");
+
                   break;
                 case "storage/canceled":
                   // User canceled the upload
-                  console.log("Cancelaste la subida mi hermano");
+
                   break;
                 case "storage/unknown":
                   // Unknown error occurred, inspect error.serverResponse
-                  console.log("¿Qué pasó?");
+
                   break;
               }
             },
@@ -134,8 +134,6 @@ export class User {
                       resolve(downloadURL);
                     })
                     .catch((e) => {
-                      console.log("Error al actualizar el perfil");
-
                       return false;
                     });
                 }
@@ -246,11 +244,9 @@ export class User {
     return new Promise((resolve) =>
       signOut(auth)
         .then(() => {
-          console.log("Saliendo de la sesión");
           resolve("Ok");
         })
         .catch((error) => {
-          console.log("Error al salir de la sesión");
           resolve("Fail");
         })
     );

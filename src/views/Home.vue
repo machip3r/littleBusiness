@@ -276,7 +276,8 @@
           <div class="mx-4">
             <h1>Sin tiendas</h1>
             <p>
-              Parece que no hay tiendas activas. ¿Por qué no aprovechar y abrir una?
+              Parece que no hay tiendas activas. ¿Por qué no aprovechar y abrir
+              una?
             </p>
           </div>
         </v-card>
@@ -557,7 +558,7 @@ export default {
     getActiveBusiness() {
       let hour = new Date().getHours();
       let minutes = new Date().getMinutes();
-      let dayOfWeek = new Date().getDay()-1;
+      let dayOfWeek = new Date().getDay() - 1;
       this.allBusiness.forEach((business) => {
         let schedule = JSON.parse(business.b_schedule);
         let active = false;
@@ -569,7 +570,6 @@ export default {
               this.validateHourGreatest([hour, minutes], start) &&
               this.validateHourMin([hour, minutes], end)
             ) {
-              console.log(dayOfWeek, " - ", key);
               if (dayOfWeek === key) {
                 this.activeBusiness.push(business);
               }

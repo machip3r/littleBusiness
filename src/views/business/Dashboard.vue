@@ -163,7 +163,7 @@ export default {
     ...mapState(["activeBusiness"]),
   },
   mounted() {
-    getDataOrdersByBusiness(this.activeBusiness.toString()).then((listOr) => {
+    getDataOrdersByBusiness(this.$route.params.id).then((listOr) => {
       let now = new Date(Date.now());
 
       listOr.forEach((item) => {
@@ -181,7 +181,7 @@ export default {
         }
       });
     });
-    getSumProducts(this.activeBusiness.toString()).then((list) => {
+    getSumProducts(this.$route.params.id).then((list) => {
       const listTemp = list.filter((item) => item.o_status == "d");
 
       if (listTemp.length == 1) {
@@ -198,7 +198,7 @@ export default {
         this.leastSoldProducts.push(listTemp[1]);
       }
     });
-    getDataFromDate(this.activeBusiness.toString()).then((value) => {
+    getDataFromDate(this.$route.params.id).then((value) => {
       this.dataMonth = value;
       this.fillDays(this.indexMouth);
     });

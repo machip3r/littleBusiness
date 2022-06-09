@@ -66,7 +66,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -82,7 +82,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -98,7 +98,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -114,7 +114,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -130,7 +130,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -146,7 +146,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -162,7 +162,7 @@
                 color="accent"
                 class="chips-hour ml-2"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
             <div v-else>
@@ -191,6 +191,7 @@
 
 <script>
 import { getAuth } from "@firebase/auth";
+import { User } from "../../../firebaseAPI/controllers/user";
 import { Business } from "../../../firebaseAPI/controllers/business";
 import { mapState } from "vuex";
 
@@ -221,24 +222,34 @@ export default {
   mounted() {
     const id = this.$route.params.id;
     const uid = getAuth().currentUser.uid;
-    Business.getBussinesByUId(uid).then((value) => {
-      this.isYourBusiness = value.some((item) => (item.id_business = id));
-    });
-    Business.readBusinessWithID(this.$route.params.id)
-      .then((rows) => {
-        this.business = rows;
-        this.user_photo = getAuth().currentUser.photoURL;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
 
-    Business.getstatistics(this.$route.params.id).then(value=>{
-       this.rateMean =  value.mean;
-        this.minPrice = value.minPrice;
-        this.maxPrice = value.maxPrice;
-      })
-      .catch((err) => console.error(err));
+    User.getAdditionalDataUser(uid).then((valUser) => {
+      Business.getBussinesByUId(uid).then((value) => {
+        this.isYourBusiness = value.some((item) => item.id_business == id);
+
+        if (this.isYourBusiness && valUser.type) {
+          Business.readBusinessWithID(this.$route.params.id)
+            .then((rows) => {
+              this.business = rows;
+              this.user_photo = getAuth().currentUser.photoURL;
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        } else {
+          getDataBusinessID(id).then((val) => {
+            this.business = val;
+            this.user_photo = val.u_photo;
+          });
+        }
+      });
+    });
+
+    Business.getstatistics(id).then((value) => {
+      this.rateMean = value.mean;
+      this.minPrice = value.minPrice;
+      this.maxPrice = value.maxPrice;
+    });
   },
   methods: {
     async goBackToProfile() {

@@ -64,6 +64,7 @@ export class User {
       });
       const docRef = await addDoc(collection(db, "user"), additionalData);
 
+      await User.login(this.email, this.password);
       user = response.user;
     } else if (t == "g") {
       user = await User.loginGoolge(this.u_type);
@@ -88,7 +89,7 @@ export class User {
   }
 
   static async updateUserPhoto(photo) {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       if (photo !== null && photo !== undefined) {
         try {
           //----Compress Image-------------------------
@@ -97,10 +98,7 @@ export class User {
           const metadata = {
             contentType: "image/jpeg",
           };
-          const storageRef = ref(
-            storage,
-            `users/${Date.now()}_${photo.name}`
-          );
+          const storageRef = ref(storage, `users/${Date.now()}_${photo.name}`);
           const uploadTask = uploadBytesResumable(
             storageRef,
             compressedPhoto,
@@ -109,7 +107,7 @@ export class User {
 
           uploadTask.on(
             "state_changed",
-            (snapshot) => { },
+            (snapshot) => {},
             (error) => {
               switch (error.code) {
                 case "storage/unauthorized":
@@ -127,19 +125,21 @@ export class User {
               }
             },
             () => {
-              getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                const auth = getAuth();
-                const user = auth.currentUser;
-                updateProfile(user, { photoURL: downloadURL })
-                  .then(() => {
-                    resolve(downloadURL);
-                  })
-                  .catch((e) => {
-                    console.log("Error al actualizar el perfil");
-                    console.log(e)
-                    return false;
-                  });
-              });
+              getDownloadURL(uploadTask.snapshot.ref).then(
+                async (downloadURL) => {
+                  const auth = getAuth();
+                  const user = auth.currentUser;
+                  updateProfile(user, { photoURL: downloadURL })
+                    .then(() => {
+                      resolve(downloadURL);
+                    })
+                    .catch((e) => {
+                      console.log("Error al actualizar el perfil");
+
+                      return false;
+                    });
+                }
+              );
             }
           );
         } catch (error) {
@@ -203,8 +203,6 @@ export class User {
       };
       const docRef = await addDoc(collection(db, "user"), additionalData);
     }
-
-    console.log(result.user.photoURL, " ", result.user.displayName);
 
     return result.user;
   }

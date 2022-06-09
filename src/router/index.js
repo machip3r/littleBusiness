@@ -54,8 +54,21 @@ const routes = [
     path: "/addBusiness",
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
+
     beforeEnter: (to, from, next) => {
-      next();
+      store.dispatch("modifyView", true);
+
+      if (!store.getters.getAccessToken) router.push("/");
+
+      const uid = getAuth().currentUser.uid;
+
+      User.getAdditionalDataUser(uid).then((value) => {
+        if (value.type) {
+          next();
+        } else {
+          router.push("/");
+        }
+      });
     },
   },
   {
@@ -65,6 +78,16 @@ const routes = [
     beforeEnter: (to, from, next) => {
       store.dispatch("modifyView", true);
       if (!store.getters.getAccessToken) router.push("/");
+      let id = to.params.id;
+      const uid = getAuth().currentUser.uid;
+      Business.getBussinesByUId(uid).then((value) => {
+        let validate = value.some((item) => item.id_business == id);
+        if (validate) {
+          next();
+        } else {
+          router.push("/");
+        }
+      });
       next();
     },
     meta: { title: "Dashboard" },
@@ -79,7 +102,7 @@ const routes = [
       let id = to.params.id;
       const uid = getAuth().currentUser.uid;
       Business.getBussinesByUId(uid).then((value) => {
-        let validate = value.some((item) => (item.id_business = id));
+        let validate = value.some((item) => item.id_business == id);
         if (validate) {
           next();
         } else {

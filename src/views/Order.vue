@@ -137,19 +137,6 @@
       <v-col class="col-title-home">
         <h1>Mis pedidos</h1>
       </v-col>
-      <v-spacer></v-spacer>
-      <v-col>
-        <v-text-field
-          label="Buscar"
-          color="primary"
-          background-color="secondary"
-          append-icon="fas fa-search"
-          class="input-search"
-          filled
-          rounded
-          dense
-        ></v-text-field>
-      </v-col>
     </v-row>
 
     <v-chip-group mandatory active-class="month-select--active" class="ml-6">

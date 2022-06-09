@@ -136,51 +136,6 @@
         </v-card>
       </v-dialog>
 
-      <v-row class="pt-6 px-6 row-title-home" fixed>
-        <v-col class="col-title-home" cols="7">
-          <h1>Descubre</h1>
-        </v-col>
-        <v-col>
-          <v-row>
-            <v-text-field
-              label="Buscar"
-              color="primary"
-              background-color="secondary"
-              append-icon="fas fa-search"
-              class="input-search"
-              filled
-              rounded
-              dense
-            ></v-text-field>
-            <v-badge
-              v-if="cart.o_products.length > 0"
-              color="red"
-              :content="cart.o_products.length"
-              overlap
-            >
-              <v-btn
-                fab
-                elevation="0"
-                color="primary"
-                @click="cartDialog = true"
-              >
-                <v-icon color="secondary">fas fa-shopping-cart</v-icon>
-              </v-btn>
-            </v-badge>
-            <v-btn
-              v-else
-              fab
-              elevation="0"
-              color="primary"
-              class="button-cart"
-              @click="cartDialog = true"
-            >
-              <v-icon color="secondary">fas fa-shopping-cart</v-icon>
-            </v-btn>
-          </v-row>
-        </v-col>
-      </v-row>
-
       <div v-if="homeView">
         <div class="d-flex mb-4 px-6">
           <h3>Categorías</h3>

@@ -196,14 +196,14 @@ const routes = [
     meta: { title: "Order" },
   },
   {
-    path: "/orderSeller",
+    path: "/orderSeller/:id",
     name: "OrderSeller",
     component: () => import("../views/business/OrderSeller.vue"),
     beforeEnter: (to, from, next) => {
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: { title: "Order" },
+    meta: { title: "OrderSeller" },
   },
   {
     path: "/cart",

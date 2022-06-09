@@ -98,7 +98,10 @@
   .container-dashboard h1 {
     font-size: 2em;
   }
-  .container-dashboard h3 {
+  .title-orders {
+    font-size: 1.5em;
+  }
+  .title-orders {
     font-size: 1.5em;
   }
   .quick-stats {

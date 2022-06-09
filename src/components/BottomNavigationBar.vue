@@ -48,9 +48,9 @@ export default {
   methods: {
     isRouteValid() {
       return this.$route.name == "AddBusiness" ||
+        this.$route.name == "EditBusiness" ||
         this.$route.name == "AddProduct" ||
-        this.$route.name == "EditProduct" ||
-        this.$route.name == "EditBusiness"
+        this.$route.name == "EditProduct"
         ? false
         : true;
     },
@@ -85,7 +85,7 @@ export default {
           },
         ];
       } else if (
-        (!this.seller && this.$route.name == "OrderClient") ||
+        this.$route.name == "OrderClient" ||
         this.$route.name == "ProductsClient" ||
         this.$route.name == "ReviewClient" ||
         this.$route.name == "InformationClient"

@@ -259,7 +259,7 @@ export async function getDataOrdersByBusiness(id_business) {
           date: new Date(tempOrder.o_datetime),
           p_price: listProducts[index].p_price,
           op_quantity: item.op_quantity,
-          o_status: tempOrder.o_status,
+          p_status: item.p_status,
           p_name: listProducts[index].p_name,
           p_photo: listProducts[index].p_photo,
         });
@@ -283,7 +283,7 @@ export async function getSumProducts(id_business) {
       p_name: listOrders[0].p_name,
       p_photo: listOrders[0].p_photo,
       p_price: listOrders[0].p_price,
-      o_status: listOrders[0].o_status,
+      o_status: listOrders[0].p_status,
     });
     listOrders.forEach((order) => {
       const id = order.id_product;
@@ -299,12 +299,13 @@ export async function getSumProducts(id_business) {
           p_name: order.p_name,
           p_photo: order.p_photo,
           p_price: order.p_price,
-          o_status: order.o_status,
+          o_status: order.p_status,
         });
       }
     });
   }
 
+  //listSumProducts = listSumProducts.filter(item=> item.p_status == 'c');
   listSumProducts.sort((a, b) => {
     if (a.total > b.total) {
       return 1;
@@ -312,6 +313,7 @@ export async function getSumProducts(id_business) {
       return -1;
     }
   });
+
   return listSumProducts;
 }
 
@@ -332,7 +334,7 @@ export async function getDataFromDate(id_business) {
 
   const listOrders = await getDataOrdersByBusiness(id_business);
   listOrders.forEach((order) => {
-    if (order.o_status == "d") {
+    if (order.p_status == "d") {
       const date = order.date;
       if (date.getFullYear() == year) {
         monthData[date.getMonth()] += order.p_price * order.op_quantity;
@@ -365,6 +367,8 @@ export async function getCountReviewDate(id_business) {
 
   return count;
 }
+
+//d,p
 
 export async function getDataBusinessID(id_business) {
   const q = await query(

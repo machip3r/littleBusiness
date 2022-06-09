@@ -78,22 +78,22 @@
               </v-btn>
             </v-col>
             <v-col cols="10" class="ma-0">
-              <v-row>
+              <v-row class="row-title-cart">
                 <v-col>
                   <h1 class="title-cart">Carrito de compras</h1>
                   <h4 class="font-weight-light date-cart">{{ date }}</h4>
                 </v-col>
+                <v-btn
+                  v-if="cart.o_products.length > 0"
+                  fab
+                  elevation="0"
+                  color="lighterred"
+                  @click="resetCartDialog = true"
+                  class="reset-cart-btn"
+                >
+                  <v-icon color="error">fas fa-trash</v-icon>
+                </v-btn>
               </v-row>
-            </v-col>
-            <v-col cols="1" v-if="cart.o_products.length > 0">
-              <v-btn
-                fab
-                elevation="0"
-                color="lighterred"
-                @click="resetCartDialog = true"
-              >
-                <v-icon color="error">fas fa-trash</v-icon>
-              </v-btn>
             </v-col>
           </v-row>
         </div>

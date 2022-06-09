@@ -58,115 +58,76 @@
       </strong>
     </v-snackbar>
 
-    <v-row>
-      <v-col
+    <v-container class="order-container">
+      <v-card
         v-for="(product, index) in orderedProducts"
         :key="index"
         v-model="orderedProducts"
+        elevation="4"
+        color="secondary"
+        class="card-order"
       >
-        <v-card
-          width="400"
-          class="ml-4 pa-5 mb-5 rounded-xl fill-height"
-          elevation="4"
-          color="secondary"
+        <div class="container-img-order">
+          <v-img
+            class="order-img"
+            centered
+            contain
+            lazy-src="https://www.purina-latam.com/sites/g/files/auxxlc391/files/styles/large/public/2021-10/los-mejores-juegos-de-perritos-cachorros-por-mes-de-edad.png?itok=UNEbd6Xh"
+            :src="product.p_photo"
+          ></v-img>
+        </div>
+
+        <div class="container-info-order">
+          <h4 class="ma-0 font-weight-bold">
+            {{ product.p_name }}
+          </h4>
+
+          <p class="ma-0 font-weigth-light">
+            {{ product.b_name }}
+          </p>
+
+          <h3 class="ma-0 font-weight-bold">
+            ${{ parseInt(product.p_price) }}
+          </h3>
+        </div>
+
+        <div class="container-buttons-order">
+          <div class="d-flex quantityContainer">
+            <button @click="decrement(product.id_product)">-</button>
+            <input type="number" v-model="product.op_quantity" min="1" />
+            <button @click="increment(product.id_product)">+</button>
+          </div>
+          <v-btn
+            large
+            color="lighterred"
+            rounded
+            elevation="0"
+            class="button-delete-order"
+            @click="openDeleteDialog(product.id_product)"
+          >
+            <v-icon color="error">fas fa-trash</v-icon>
+          </v-btn>
+        </div>
+      </v-card>
+    </v-container>
+
+    <v-footer class="footer-order" absolute>
+      <div class="total-order-container">
+        <h4>${{ calcTotal() }}</h4>
+        <h6 class="ml-3">MXN</h6>
+      </div>
+      <div class="button-order-area">
+        <v-btn
+          class="btn-confirm-order"
+          @click="uploadOrder()"
+          text-color="secondary"
+          color="primary"
         >
-          <v-row>
-            <v-col>
-              <v-img
-                max-width="90"
-                max-height="90"
-                centered
-                contain
-                lazy-src="https://www.purina-latam.com/sites/g/files/auxxlc391/files/styles/large/public/2021-10/los-mejores-juegos-de-perritos-cachorros-por-mes-de-edad.png?itok=UNEbd6Xh"
-                :src="product.p_photo"
-              ></v-img>
-            </v-col>
-
-            <v-col class="text-left">
-              <v-row>
-                <v-col justify-content="start" class="pa-0">
-                  <span class="ma-0 font-weight-bold">
-                    {{ product.p_name }}
-                  </span>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col class="pa-0">
-                  <span class="ma-0 font-weigth-light">
-                    {{ product.b_name }}
-                  </span>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col class="pa-0">
-                  <span class="ma-0 font-weight-bold">
-                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
-                  </span>
-                </v-col>
-              </v-row>
-            </v-col>
-
-            <v-col align-self="center">
-              <v-row>
-                <v-col>
-                  <div class="d-flex quantityContainer">
-                    <button @click="decrement(product.id_product)">-</button>
-                    <input
-                      type="number"
-                      v-model="product.op_quantity"
-                      min="1"
-                    />
-                    <button @click="increment(product.id_product)">+</button>
-                  </div>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col>
-                  <v-btn
-                    large
-                    color="lighterred"
-                    width="99px"
-                    height="33px"
-                    rounded
-                    elevation="0"
-                    @click="openDeleteDialog(product.id_product)"
-                  >
-                    <v-icon color="error">fas fa-trash</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <div style="background-color: var(--bone); margin-top: 50px">
-      <v-row color="bone">
-        <v-col cols="9">
-          <p>Total</p>
-          <h1>${{ calcTotal() }} MXN</h1>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-col class="my-auto" cols="3">
-          <v-row class="mb-2">
-            <v-chip
-              large
-              class="mr-2 pa-6"
-              @click="uploadOrder()"
-              text-color="secondary"
-              color="green"
-            >
-              <v-icon left>fas fa-cart-plus</v-icon>
-              Realizar pedido
-            </v-chip>
-          </v-row>
-        </v-col>
-      </v-row>
-    </div>
+          <v-icon size="18">fas fa-cube</v-icon>
+          <h6 class="ml-3">Continuar</h6>
+        </v-btn>
+      </div>
+    </v-footer>
 
     <!-- Receipt -->
     <div class="container hidden" id="receipt">

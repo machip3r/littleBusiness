@@ -54,8 +54,21 @@ const routes = [
     path: "/addBusiness",
     name: "AddBusiness",
     component: () => import("../views/business/AddBusiness.vue"),
+
     beforeEnter: (to, from, next) => {
-      next();
+      store.dispatch("modifyView", true);
+
+      if (!store.getters.getAccessToken) router.push("/");
+
+      const uid = getAuth().currentUser.uid;
+
+      User.getAdditionalDataUser(uid).then((value) => {
+        if (value.type) {
+          next();
+        } else {
+          router.push("/");
+        }
+      });
     },
   },
   {
@@ -63,22 +76,23 @@ const routes = [
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
-      if (!to.params.id) router.push("/user");
-
       store.dispatch("modifyView", true);
 
       if (!store.getters.getAccessToken) router.push("/");
+
       let id = to.params.id;
+
       const uid = getAuth().currentUser.uid;
-      console.log(uid);
       Business.getBussinesByUId(uid).then((value) => {
-        let validate = value.some((item) => (item.id_business = id));
+        let validate = value.some((item) => item.id_business == id);
+
         if (validate) {
           next();
         } else {
           router.push("/");
         }
       });
+      next();
     },
     meta: { title: "Dashboard" },
   },
@@ -92,7 +106,7 @@ const routes = [
       let id = to.params.id;
       const uid = getAuth().currentUser.uid;
       Business.getBussinesByUId(uid).then((value) => {
-        let validate = value.some((item) => (item.id_business = id));
+        let validate = value.some((item) => item.id_business == id);
         if (validate) {
           next();
         } else {
@@ -104,7 +118,7 @@ const routes = [
     meta: { title: "Edit business" },
   },
   {
-    path: "/review",
+    path: "/review/:id",
     name: "Review",
     component: () => import("../views/business/Review.vue"),
     beforeEnter: (to, from, next) => {
@@ -119,9 +133,8 @@ const routes = [
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {
-      if (!to.params.id) router.push("/");
-
       store.dispatch("modifyView", true);
+      if (!to.params.id) router.push("/");
 
       if (!store.getters.getAccessToken) router.push("/");
       next();
@@ -190,7 +203,7 @@ const routes = [
     },
   },
   {
-    path: "/products",
+    path: "/products/:id",
     name: "Products",
     component: () => import("../views/products/Products.vue"),
     beforeEnter: (to, from, next) => {
@@ -203,6 +216,15 @@ const routes = [
       next();
     },
     meta: { title: "Products" },
+  },
+  {
+    path: "/addReview",
+    name: "AddReview",
+    component: () => import("../views/review/AddReview.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
   },
 ];
 

@@ -119,6 +119,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import {
   Business,
   getCountReviewDate,
@@ -148,7 +149,7 @@ export default {
         "Dic",
       ],
       indexMouth: 0,
-      dataMonth: null,
+      dataMonth: [],
       bestSoldProducts: [],
       leastSoldProducts: [],
       meanStars: 0,
@@ -158,8 +159,11 @@ export default {
       newReviewsCount: 0,
     };
   },
+  computed: {
+    ...mapState(["activeBusiness"]),
+  },
   mounted() {
-    getDataOrdersByBusiness(this.$route.params.id.toString()).then((listOr) => {
+    getDataOrdersByBusiness(this.$route.params.id).then((listOr) => {
       let now = new Date(Date.now());
 
       listOr.forEach((item) => {
@@ -177,7 +181,7 @@ export default {
         }
       });
     });
-    getSumProducts(this.$route.params.id.toString()).then((list) => {
+    getSumProducts(this.$route.params.id).then((list) => {
       const listTemp = list.filter((item) => item.o_status == "d");
 
       if (listTemp.length == 1) {
@@ -194,16 +198,16 @@ export default {
         this.leastSoldProducts.push(listTemp[1]);
       }
     });
-    getDataFromDate(this.$route.params.id.toString()).then((value) => {
+    getDataFromDate(this.$route.params.id).then((value) => {
       this.dataMonth = value;
       this.fillDays(this.indexMouth);
     });
 
-    Business.getstatistics(this.$route.params.id).then((value) => {
+    Business.getstatistics(this.activeBusiness).then((value) => {
       this.meanStars = value.mean;
     });
 
-    getCountReviewDate(this.$route.params.id).then((value) => {
+    getCountReviewDate(this.activeBusiness).then((value) => {
       this.newReviewsCount = value;
     });
   },

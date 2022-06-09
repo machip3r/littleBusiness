@@ -10,8 +10,14 @@
         {{ title }}
       </h2>
       <v-spacer></v-spacer>
-      <v-chip class="pa-4" large text-color="secondary" color="primary">
-        Stickers Cool
+      <v-chip
+        class="pa-4"
+        large
+        text-color="secondary"
+        color="primary"
+        @click="infoBusiness"
+      >
+        {{ businessName }}
       </v-chip>
       <v-btn
         class="ml-3"
@@ -96,6 +102,8 @@
           <v-select
             v-model="product.p_category"
             :items="items"
+            item-text="text"
+            item-value="value"
             label="Categoria"
             color="primary"
             background-color="secondary"
@@ -161,6 +169,9 @@
 <script>
 import { Product } from "/firebaseAPI/controllers/product.js";
 import AlertDialog from "@/components/Dialog.vue";
+import { mapState } from "vuex";
+import { Category } from "/firebaseAPI/controllers/category.js";
+import { Business } from "/firebaseAPI/controllers/business.js";
 
 export default {
   name: "ProductForm",
@@ -233,10 +244,13 @@ export default {
         p_status: false,
         p_saved: false,
       },
-      items: ["Comida", "Stickers", "Dulces", "Bebidas", "Ropa", "Panaderia"],
+      businessName: "",
+      businessID: 0,
+      items: [],
     };
   },
   computed: {
+    ...mapState(["activeBusiness"]),
     editOrAdd() {
       return this.productProp !== undefined;
     },
@@ -258,6 +272,9 @@ export default {
       this.product = this.productProp;
       this.disabled = true;
     }
+    this.product.id_business = this.activeBusiness;
+    this.getCategories();
+    this.getBusiness();
   },
   methods: {
     clickFormButton() {
@@ -276,6 +293,28 @@ export default {
     cancelEdit() {
       this.product = this.productProp;
       this.disabled = true;
+    },
+    infoBusiness() {
+      this.$router.push({
+        name: "Information",
+        params: { id: this.businessID },
+      });
+    },
+    async getCategories() {
+      const C = new Category();
+      await C.readCategories().then((res) => {
+        let array = C.docsObjectToArray(res);
+        array.forEach((element) => {
+          this.items.push({ text: element.c_name, value: element.id_category });
+        });
+      });
+    },
+
+    async getBusiness() {
+      await Business.readBusinessWithID(this.activeBusiness).then((res) => {
+        this.businessName = res.b_name;
+        this.businessID = res.id_business;
+      });
     },
     async addNewProduct() {
       if (this.$refs.form.validate()) {

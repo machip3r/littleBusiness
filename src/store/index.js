@@ -21,6 +21,7 @@ export default new Vuex.Store({
       ],
     },
     user: null,
+    activeBusiness: null,
     accessToken: null,
     sellerView: null,
     cart: {
@@ -75,7 +76,10 @@ export default new Vuex.Store({
     updateSellerView(state, payload) {
       state.sellerView = payload;
     },
-
+    loadBusiness(state, payload) {
+      state.activeBusiness = payload;
+      localStorage.setItem("activeBusinessID", payload);
+    },
     addOrder(state, payload) {
       state.cart = payload;
     },
@@ -173,6 +177,12 @@ export default new Vuex.Store({
     },
     modifyView({ commit }, data) {
       commit("updateSellerView", data);
+    },
+    activeBusiness({ commit }, businessId) {
+      commit("loadBusiness", businessId);
+    },
+    closeBusiness({ commit }) {
+      commit("loadBusiness", null);
     },
     addOrder({ commit }, cart) {
       commit("addOrder", cart);

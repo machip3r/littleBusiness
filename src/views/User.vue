@@ -63,7 +63,7 @@
             <v-col cols="3">
               <div align="center">
                 <v-icon class="mr-2 pb-2">far fa-star</v-icon>
-                <h5 class="d-inline">10</h5>
+                <h5 class="d-inline">{{ reviews }}</h5>
                 <h5>Reseñas</h5>
               </div>
             </v-col>
@@ -73,7 +73,7 @@
             <v-col cols="3">
               <div align="center">
                 <v-icon class="mr-2 pb-2">fas fa-shopping-bag</v-icon>
-                <h5 class="d-inline">5</h5>
+                <h5 class="d-inline">{{ orders }}</h5>
                 <h5>Compras</h5>
               </div>
             </v-col>
@@ -134,6 +134,7 @@
       fixed
       right
       bottom
+      v-if="user.type"
       @click="openAddBusiness()"
     >
       <v-icon class="icon-back-business" size="15">fas fa-plus</v-icon>
@@ -143,8 +144,9 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { getAuth } from "firebase/auth";
 import { Business } from "../../firebaseAPI/controllers/business";
+import { Review } from "/firebaseAPI/controllers/review.js";
+import { Order } from "/firebaseAPI/controllers/order.js";
 export default {
   name: "User",
   data() {
@@ -152,6 +154,8 @@ export default {
       modifyName: true,
       modifyPhoto: false,
       business: [],
+      reviews: 0,
+      orders: 0,
 
       modifiedName: null,
       modifiedPhoto: null,
@@ -186,9 +190,9 @@ export default {
     },
   },
   created() {
-    const uid = getAuth().currentUser.uid;
-
-    Business.getBussinesByUId(uid)
+    this.getUserReviews();
+    this.getUserOrders();
+    Business.getBussinesByUId(this.user.uid)
       .then((rows) => {
         this.business = rows;
       })
@@ -202,11 +206,13 @@ export default {
       "updateUserName",
       "updateUserPhoto",
       "modifyView",
+      "activeBusiness",
       "resetOrder",
     ]),
 
     async getBussines() {},
     async openAddBusiness() {
+      //this.$router.push({ name: "Information", params: { id: 468873 } });
       this.$router.push({ name: "AddBusiness" });
     },
     async logOut() {
@@ -215,6 +221,22 @@ export default {
         this.$router.push({ name: "Login" });
       });
     },
+
+    async getUserReviews() {
+      const R = new Review();
+      await R.readUserReviews(this.user.uid).then((res) => {
+        const allReviews = R.docsObjectToArray(res);
+        this.reviews = allReviews.length;
+      });
+    },
+    async getUserOrders() {
+      const O = new Order();
+      await O.readUserOrders(this.user.uid).then((res) => {
+        const allOrders = O.docsObjectToArray(res);
+        this.orders = allOrders.length;
+      });
+    },
+
     updateName() {
       if (this.modifyName) this.modifyName = false;
       else if (this.modifiedName != this.user.name) {
@@ -244,7 +266,11 @@ export default {
     },
     enterSellerView(id) {
       this.modifyView(true);
-      this.$router.push({ name: "Dashboard", params: { id: id } });
+      this.activeBusiness(id);
+      this.$router.push({
+        name: "Dashboard",
+        params: { id: id },
+      });
     },
   },
 };

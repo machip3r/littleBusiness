@@ -276,6 +276,24 @@
         <h3>Tiendas</h3>
       </div>
 
+      <v-card
+        v-if="allBusiness.length < 1"
+        class="my-4 rounded-xl"
+        align="center"
+        elevation="0"
+      >
+        <v-card width="40%" height="500px" color="secondary" elevation="0">
+          <v-icon class="my-8" size="150">fas fa-filter</v-icon>
+          <div class="mx-4">
+            <h1>Sin tiendas</h1>
+            <p>
+              Parece que nadie ha abierto una tienda, ¿por qué no
+              aprovechar?
+            </p>
+          </div>
+        </v-card>
+      </v-card>
+
       <v-container fluid>
         <v-row class="mx-md-16 px-md-16">
           <v-col

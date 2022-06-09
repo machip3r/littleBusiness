@@ -10,6 +10,7 @@ import {
   where,
   getDoc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const collectionName = "order";
@@ -43,6 +44,12 @@ export class Order {
     return this.#getObjectFromDocuments(await getDocs(ordersCollection));
   }
 
+  async readUserOrders(id_user) {
+    const queryRes = query(ordersCollection, where("id_user", "==", id_user));
+
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
+  }
+
   async readOrderWithID(id_order) {
     const queryRes = query(ordersCollection, where("id_order", "==", id_order));
 
@@ -57,6 +64,11 @@ export class Order {
   async updateOrder(id_order, body) {
     const order = doc(db, collectionName, id_order);
     await updateDoc(order, body);
+  }
+
+  async deleteOrder(id_order) {
+    const order = doc(db, collectionName, id_order);
+    await deleteDoc(order);
   }
 
   #getObjectFromDocuments(documents) {

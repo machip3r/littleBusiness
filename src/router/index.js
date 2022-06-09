@@ -172,6 +172,16 @@ const routes = [
     meta: { title: "Order" },
   },
   {
+    path: "/orderSeller",
+    name: "OrderSeller",
+    component: () => import("../views/business/OrderSeller.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Order" },
+  },
+  {
     path: "/cart",
     name: "Cart",
     component: () => import("../components/OrderDetails.vue"),

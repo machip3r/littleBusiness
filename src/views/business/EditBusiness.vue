@@ -142,9 +142,9 @@
 
 <script>
 import { mapState } from "vuex";
+import { Category } from "../../../firebaseAPI/controllers/category";
 import { getAuth } from "firebase/auth";
 import { Business } from "../../../firebaseAPI/controllers/business.js";
-import { Category } from "../../../firebaseAPI/controllers/category.js";
 
 export default {
   name: "EditBusiness",

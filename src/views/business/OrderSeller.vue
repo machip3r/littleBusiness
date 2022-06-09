@@ -1,4 +1,3 @@
-<!-- TODO-4: (Tal vez) hacer que todas las comparaciones de órdenes se basen en el total de la orden para que sea menor carga de computación -->
 <template>
   <div>
     <!-- Cancel Order -->
@@ -75,7 +74,7 @@
                 <v-icon color="secondary">fas fa-arrow-left</v-icon>
               </v-btn>
             </v-col>
-            <v-col cols="9">
+            <v-col cols="8">
               <v-row>
                 <v-col><h1>Mi pedido</h1></v-col>
               </v-row>
@@ -86,6 +85,11 @@
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
+            <v-col cols="1">
+              <v-chip class="pa-4" large text-color="secondary" color="primary">
+                amip ixula
+              </v-chip>
+            </v-col>
             <v-col cols="1">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -149,6 +153,13 @@
           rounded
           dense
         ></v-text-field>
+      </v-col>
+
+      <!-- TODO: Visible para el vendedor solamente -->
+      <v-col>
+        <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+          {{ myBusiness.b_name }}
+        </v-chip>
       </v-col>
     </v-row>
 
@@ -409,6 +420,7 @@ export default {
       allProducts: [],
 
       allBusinesses: [],
+      myBusiness: {},
 
       badgeColors: {
         d: "#2D3440",
@@ -432,11 +444,17 @@ export default {
   },
 
   methods: {
+    // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
     async getBusinesses() {
       const B = new Business();
-      await B.readBusiness().then(
-        (res) => (this.allBusinesses = B.docsObjectToArray(res))
-      );
+      await B.readBusiness().then((res) => {
+        this.allBusinesses = B.docsObjectToArray(res);
+        for (let i = 0; i < this.allBusinesses.length; i++)
+          if (this.allBusinesses[i].id_user == this.user.uid) {
+            Object.assign(this.myBusiness, this.allBusinesses[i]);
+            break;
+          }
+      });
     },
 
     async getProducts() {
@@ -448,7 +466,7 @@ export default {
 
     async getOrders() {
       const O = new Order();
-      await O.readUserOrders(this.user.uid).then((res) => {
+      await O.readOrders().then((res) => {
         this.allOrders = O.docsObjectToArray(res);
 
         this.allOrders.forEach((order) => {
@@ -482,6 +500,14 @@ export default {
             }
           });
           order.o_total = o_total;
+        });
+
+        this.allOrders.forEach((product) => {
+          for (let i = 0; i < this.allBusinesses.length; i++) {
+            if (product.id_business == this.myBusiness.id_business) {
+              this.filteredOrders.push(this);
+            }
+          }
         });
       });
     },
@@ -622,12 +648,9 @@ export default {
       this.closeConfirmDialog();
     },
 
-    async closeConfirmDialog() {
+    closeConfirmDialog() {
       this.confirmChangesDialog = false;
       this.orderDialog = false;
-
-      await this.getOrders();
-      this.filterOrders("a");
 
       this.editableOrder = JSON.parse(JSON.stringify(this.selectedOrder));
       this.editableOrder.o_products = JSON.parse(

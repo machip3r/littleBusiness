@@ -214,7 +214,7 @@
       <!-- * No products -->
 
       <v-card
-        v-if="filteredProducts.length < 1"
+        v-if="filteredProducts.length < 1 && allProducts.length > 1"
         class="my-4 rounded-xl"
         align="center"
         elevation="0"

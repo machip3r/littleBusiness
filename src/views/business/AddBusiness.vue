@@ -13,7 +13,7 @@
       >
         <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
       </v-btn>
-      <h3 class="ml-5">Agregar Negocio</h3>
+      <h3 class="ml-3 title-add-business">Agregar Negocio</h3>
     </v-row>
     <v-form class="mt-10" ref="form" v-model="valid" lazy-validation>
       <div>

@@ -149,7 +149,7 @@ export default {
         "Dic",
       ],
       indexMouth: 0,
-      dataMonth: null,
+      dataMonth: [],
       bestSoldProducts: [],
       leastSoldProducts: [],
       meanStars: 0,

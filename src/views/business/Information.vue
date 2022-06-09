@@ -192,7 +192,10 @@
 <script>
 import { getAuth } from "@firebase/auth";
 import { User } from "../../../firebaseAPI/controllers/user";
-import { Business } from "../../../firebaseAPI/controllers/business";
+import {
+  Business,
+  getDataBusinessID,
+} from "../../../firebaseAPI/controllers/business";
 import { mapState } from "vuex";
 
 export default {
@@ -209,11 +212,15 @@ export default {
         "Domingo",
       ],
       user_photo: "",
-      business: null,
+      business: {
+        name: "",
+        b_schedule: [[], [], [], [], [], [], []],
+      },
       rateMean: 0,
       minPrice: 0,
       maxPrice: 0,
       isYourBusiness: false,
+      isSeller: false,
     };
   },
   computed: {
@@ -226,16 +233,12 @@ export default {
     User.getAdditionalDataUser(uid).then((valUser) => {
       Business.getBussinesByUId(uid).then((value) => {
         this.isYourBusiness = value.some((item) => item.id_business == id);
-
+        this.isSeller = valUser.type;
         if (this.isYourBusiness && valUser.type) {
-          Business.readBusinessWithID(this.$route.params.id)
-            .then((rows) => {
-              this.business = rows;
-              this.user_photo = getAuth().currentUser.photoURL;
-            })
-            .catch((err) => {
-              console.error(err);
-            });
+          Business.readBusinessWithID(this.$route.params.id).then((rows) => {
+            this.business = rows;
+            this.user_photo = getAuth().currentUser.photoURL;
+          });
         } else {
           getDataBusinessID(id).then((val) => {
             this.business = val;
@@ -253,7 +256,11 @@ export default {
   },
   methods: {
     async goBackToProfile() {
-      this.$router.push({ name: "User" });
+      if (this.isSeller) {
+        this.$router.push({ name: "User" });
+      } else {
+        this.$router.go(-1);
+      }
     },
 
     goEdit() {

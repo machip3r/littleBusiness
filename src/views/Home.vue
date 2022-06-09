@@ -660,7 +660,7 @@ export default {
     },
 
     seeBusiness(id) {
-      this.$router.push({ name: "Information", params: { id } });
+      this.$router.push({ name: "Information", params: { id: id } });
     },
 
     leadingZeros(number) {

@@ -35,29 +35,18 @@
       transition="dialog-bottom-transition"
     >
       <v-card elevation="0">
-        <div class="pa-4">
-          <v-row align="center">
-            <v-col cols="10">
-              <v-btn
-                @click="productDialog = false"
-                fab
-                elevation="0"
-                color="primary"
-              >
-                <v-icon color="secondary">fas fa-arrow-left</v-icon>
-              </v-btn>
-            </v-col>
-            <v-spacer></v-spacer>
-            <v-col>
-              <v-chip
-                class="pa-4"
-                x-large
-                text-color="secondary"
-                color="primary"
-                >{{ product.b_name }}</v-chip
-              >
-            </v-col>
-          </v-row>
+        <div class="pa-4 top-bar-product">
+          <v-btn
+            @click="productDialog = false"
+            fab
+            elevation="0"
+            color="primary"
+          >
+            <v-icon color="secondary">fas fa-arrow-left</v-icon>
+          </v-btn>
+          <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+            {{ product.b_name }}
+          </v-chip>
         </div>
 
         <ProductDetails

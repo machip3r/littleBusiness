@@ -18,9 +18,21 @@
   justify-content: flex-start;
 }
 
+.schedule-input {
+  padding-top: 25px !important;
+}
+
 .chips-hour {
   color: var(--bone) !important;
   margin: 0 0.1rem 0.4rem 0.2rem;
+}
+
+.button-add-hour {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  margin-left: 10px;
+  background-color: var(--light-blue) !important;
 }
 
 .button-continue {
@@ -61,4 +73,20 @@
 }
 
 @media only screen and (min-width: 1824px) {
+}
+
+@media screen and (min-width: 900px) {
+  .container-addBusiness h3 {
+    margin-top: 10px;
+    font-size: 2.5em;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .container-addBusiness {
+    margin: 3em !important;
+  }
+  .container-addBusiness h3 {
+    margin-top: -2px;
+  }
 }

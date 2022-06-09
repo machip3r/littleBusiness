@@ -13,37 +13,36 @@
       >
         <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
       </v-btn>
-      <h1 class="ml-5">Habla sobre tu negocio</h1>
+      <h3 class="ml-5">Agregar Negocio</h3>
     </v-row>
     <v-form class="mt-10" ref="form" v-model="valid" lazy-validation>
       <div>
         <v-text-field
-          filled
           label="Nombre de tu negocio"
+          color="primary"
+          background-color="secondary"
           prepend-inner-icon="fas fa-store"
           :rules="this.rules.required"
           v-model="b_name"
-        >
-        </v-text-field>
-        <v-textarea
           filled
+          rounded
+          dense
+          required
+        ></v-text-field>
+        <v-textarea
           auto-grow
           prepend-inner-icon="fas fa-comment"
-          label="¿Cómo describirías tu negocio?"
+          label="Descripción de tu negocio"
+          background-color="secondary"
           rows="4"
           v-model="b_description"
           :rules="this.rules.required"
           row-height="30"
-        ></v-textarea>
-        <v-combobox
-          :items="categories"
-          item-text="c_name"
-          v-model="categorySelected"
-          label="Categoria"
-          @mouseover="getCategoriesCbx()"
-          :rules="this.rules.required"
           filled
-        ></v-combobox>
+          rounded
+          dense
+          required
+        ></v-textarea>
         <h4>Horario</h4>
         <div>
           <v-snackbar
@@ -66,23 +65,28 @@
                 filled
                 rounded
                 dense
+                prepend-inner-icon="fas fa-clock"
+                class="schedule-input"
+                background-color="secondary"
                 v-model="textDays[index].start"
               ></v-text-field>
               <v-text-field
+                class="ml-3 schedule-input"
                 placeholder="Final"
                 filled
+                prepend-inner-icon="fas fa-clock"
+                background-color="secondary"
                 v-model="textDays[index].end"
                 rounded
                 dense
               ></v-text-field>
               <v-btn
-                class="mx-2"
+                class="button-add-hour"
+                elevation="0"
                 fab
-                dark
-                color="indigo"
                 @click="addHour(index)"
               >
-                <v-icon color="white">fas fa-plus</v-icon>
+                <v-icon color="primary" size="18">fas fa-plus</v-icon>
               </v-btn>
             </div>
             <div class="container-hours">
@@ -147,8 +151,6 @@ export default {
         { start: "", end: "" },
       ],
       valid: true,
-      categories: [],
-      categorySelected: "",
       b_name: "",
       b_description: "",
       snackbarProps: {

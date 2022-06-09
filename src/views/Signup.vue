@@ -181,6 +181,7 @@ export default {
 
         try {
           let response = await user.createAccountUser(type);
+
           this.$store.commit("setSession", response);
           if (this.seller) this.$router.push({ name: "AddBusiness" });
           else this.$router.push("/home");
@@ -211,7 +212,6 @@ export default {
       ) {
         this.messageError = "Se cerró la ventana emergente";
       } else {
-        console.log(error);
         this.messageError = "Hubo un error. Contacte con servicio al cliente.";
       }
       this.messageErrorShow = true;

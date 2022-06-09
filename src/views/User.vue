@@ -207,6 +207,7 @@ export default {
 
     async getBussines() {},
     async openAddBusiness() {
+      //this.$router.push({ name: "Information", params: { id: 468873 } });
       this.$router.push({ name: "AddBusiness" });
     },
     async logOut() {

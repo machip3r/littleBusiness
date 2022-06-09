@@ -35,15 +35,7 @@
           :rules="this.rules.required"
           row-height="30"
         ></v-textarea>
-        <v-combobox
-          :items="categories"
-          item-text="c_name"
-          v-model="categorySelected"
-          label="Categoria"
-          @mouseover="getCategoriesCbx()"
-          :rules="this.rules.required"
-          filled
-        ></v-combobox>
+
         <h4>Horario</h4>
         <div>
           <v-snackbar
@@ -61,20 +53,24 @@
           <div v-for="(day, index) in daysOfWeek" :key="index">
             <div class="d-flex align-center-flex">
               <label class="flex-col1">{{ day }}</label>
+
               <v-text-field
                 placeholder="Inicio"
                 filled
                 rounded
                 dense
+                @click="openDate(index, true)"
                 v-model="textDays[index].start"
               ></v-text-field>
               <v-text-field
                 placeholder="Final"
                 filled
                 v-model="textDays[index].end"
+                @click="openDate(index, false)"
                 rounded
                 dense
               ></v-text-field>
+
               <v-btn
                 class="mx-2"
                 fab
@@ -94,7 +90,7 @@
                 class="chips-hour"
                 @click:close="deleteHour(index, indexD)"
               >
-                {{ `${item.start}:00 - ${item.end}:00` }}
+                {{ `${item.start} - ${item.end}` }}
               </v-chip>
             </div>
           </div>
@@ -109,6 +105,29 @@
           <v-icon class="mr-3" color="white">fas fa-check</v-icon>
           Continuar
         </v-btn>
+
+        <v-dialog
+          ref="dialog"
+          v-model="modal2"
+          :return-value.sync="timeTemp"
+          persistent
+          width="290px"
+        >
+          <v-time-picker
+            format="24hr"
+            v-if="modal2"
+            v-model="timeTemp"
+            full-width
+          >
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="modal2 = false">
+              Cancelar
+            </v-btn>
+            <v-btn text color="primary" @click="saveDate(timeTemp)">
+              Aceptar
+            </v-btn>
+          </v-time-picker>
+        </v-dialog>
       </div>
     </v-form>
   </div>
@@ -116,7 +135,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { Category } from "../../../firebaseAPI/controllers/cateogory";
+
 import { getAuth } from "firebase/auth";
 import { Business } from "../../../firebaseAPI/controllers/business.js";
 export default {
@@ -147,8 +166,6 @@ export default {
         { start: "", end: "" },
       ],
       valid: true,
-      categories: [],
-      categorySelected: "",
       b_name: "",
       b_description: "",
       snackbarProps: {
@@ -157,19 +174,33 @@ export default {
         timeout: 3000,
         icon: "",
       },
+      menu2: false,
+      modal2: false,
+      indexTextDay: 0,
+      timeTemp: "",
+      isStart: true,
     };
   },
 
   methods: {
+    openDate(index, isSt) {
+      this.indexTextDay = index;
+      this.modal2 = true;
+      this.timeTemp = "";
+      this.isStart = isSt;
+    },
+    saveDate(datam) {
+      if (this.isStart) {
+        this.textDays[this.indexTextDay].start = this.timeTemp;
+      } else {
+        this.textDays[this.indexTextDay].end = this.timeTemp;
+      }
+      this.modal2 = false;
+    },
     async goBackToProfile() {
       this.$router.push({ name: "User" });
     },
-    async getCategoriesCbx() {
-      const C = new Category();
-      await C.readCategories().then((res) => {
-        this.categories = C.docsObjectToArray(res);
-      });
-    },
+
     addHour(index) {
       const hourToAdd = {
         start: this.textDays[index].start,
@@ -184,49 +215,97 @@ export default {
     deleteHour(index, indexD) {
       this.dataDay[index].splice(indexD, 1);
     },
-    validateHour(hourToAdd, index) {
-      const end = Number.isInteger(Number(hourToAdd.end))
-        ? Number(hourToAdd.end)
-        : null;
-      const start = Number.isInteger(Number(hourToAdd.start))
-        ? Number(hourToAdd.start)
-        : null;
 
-      if (!end || !start) {
-        this.snackbarProps.status = true;
-        this.snackbarProps.text = "Escriba valores correctos";
-        return false;
-      } else if (end == "" || start == "") {
-        this.snackbarProps.status = true;
-        this.snackbarProps.text = "Horario vacio";
-        return false;
-      } else if (end <= 0 || end > 24 || start <= 0 || start > 24) {
-        this.snackbarProps.status = true;
-        this.snackbarProps.text = "Escriba un horario correcto";
-        return false;
-      } else if (end - start <= 0) {
-        this.snackbarProps.status = true;
-        this.snackbarProps.text = "Escriba un horario congruente";
-      } else if (this.dataDay[index].length > 0) {
-        const finded = this.dataDay[index].some(
-          (hour) => end <= hour.end && start >= hour.start
-        );
+    hourToNumber(hour) {
+      const reg = new RegExp("[0-2][0-9][':'][0-5][0-9]");
+      if (reg.test(hour.toString())) {
+        const tokens = hour.toString().split(":");
+        const hourNumber = Number(tokens[0]);
+        const minutesNumber = Number(tokens[1]);
 
-        if (finded) {
-          this.snackbarProps.status = true;
-          this.snackbarProps.text = "Horas repetidas";
-          return false;
-        } else {
-          return true;
-        }
+        return [hourNumber, minutesNumber];
       } else {
-        return true;
+        return -1;
       }
+    },
+
+    validateHour(hourToAdd, index) {
+      const reg = new RegExp("[0-2][0-9][':'][0-5][0-9]");
+
+      const end = hourToAdd.end.toString().trim();
+      const start = hourToAdd.start.toString().trim();
+
+      if (!reg.test(end) || !reg.test(start)) {
+        this.snackbarProps.status = true;
+        this.snackbarProps.text = "Escriba la hora en formato correcto (hh:mm)";
+        return false;
+      }
+      const endNumber = this.hourToNumber(end);
+      const startNumber = this.hourToNumber(start);
+
+      const timeEnd = this.arrayToDate(endNumber);
+      const timeStart = this.arrayToDate(startNumber);
+
+      if (timeEnd <= timeStart) {
+        this.snackbarProps.status = true;
+        this.snackbarProps.text =
+          "Horario no correcto, recuerda que el horario de inicio debe ser menor al de salida";
+        return false;
+      } else {
+        if (this.dataDay[index].length > 0) {
+          const finded = this.dataDay[index].some((hour) => {
+            const hourTempEnd = this.arrayToDate(
+              this.hourToNumber(hour.end.toString().trim())
+            );
+            const hourTempStart = this.arrayToDate(
+              this.hourToNumber(hour.start.toString().trim())
+            );
+
+            if (
+              timeStart < hourTempStart &&
+              timeEnd > hourTempStart &&
+              timeEnd < hourTempEnd
+            ) {
+              return true;
+            } else if (
+              timeStart > hourTempStart &&
+              timeStart < hourTempEnd &&
+              timeEnd > hourTempEnd
+            ) {
+              return true;
+            } else if (timeStart >= hourTempStart && timeEnd <= hourTempEnd) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+
+          if (finded) {
+            this.snackbarProps.status = true;
+            this.snackbarProps.text = "Horarios repetidos o traslapados";
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+      return true;
     },
     clearText(index) {
       this.textDays[index].end = "";
       this.textDays[index].start = "";
     },
+
+    arrayToDate(arr) {
+      let time = new Date();
+      time.setHours(arr[0]);
+      time.setMinutes(arr[1]);
+      time.setSeconds(0);
+
+      return time;
+    },
+    //True si a es mayor o igual que b
+
     async addBusiness() {
       const value = this.$refs.form.validate();
       if (value) {
@@ -238,7 +317,6 @@ export default {
         if (validationDataDay) {
           let newBusiness = new Business(
             getAuth().currentUser.uid,
-            this.categorySelected.id_category,
             this.b_name,
             this.b_description,
             true,
@@ -247,7 +325,7 @@ export default {
 
           let result = await newBusiness.create();
           if (result) {
-            this.$router.push({ name: "Dashboard" });
+            this.$router.push({ name: "Dashboard", params: { id: result } });
           } else {
             this.snackbarProps.status = true;
             this.snackbarProps.text = "No se pudo agregar el negocio";

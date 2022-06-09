@@ -195,7 +195,6 @@ export default {
       ) {
         this.messageError = "Se cerró la ventana emergente";
       } else {
-        console.log(error);
         this.messageError = "Hubo un error. Contacte con servicio al cliente.";
       }
       this.messageErrorShow = true;

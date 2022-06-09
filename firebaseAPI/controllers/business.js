@@ -13,6 +13,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { User } from "./user";
 
 const collectionName = "business";
 const businessCollection = collection(db, collectionName);
@@ -20,16 +21,8 @@ const reviews = collection(db, "review");
 const productsCollection = collection(db, "product");
 
 export class Business {
-  constructor(
-    id_user,
-    id_category,
-    b_name,
-    b_descrption,
-    b_status,
-    b_schedule
-  ) {
+  constructor(id_user, b_name, b_descrption, b_status, b_schedule) {
     this.id_user = id_user;
-    this.id_category = id_category;
     this.b_name = b_name;
     this.b_descrption = b_descrption;
     this.b_status = b_status;
@@ -44,14 +37,13 @@ export class Business {
       const docRef = await addDoc(businessCollection, {
         id_business: id_business,
         id_user: this.id_user,
-        id_category: this.id_category,
         b_name: this.b_name,
         b_description: this.b_descrption,
         b_schedule: this.b_schedule,
         b_status: true,
       });
 
-      return docRef.id;
+      return id_business;
     } catch (err) {
       return undefined;
     }
@@ -65,8 +57,6 @@ export class Business {
 
       return docRef.id;
     } catch (error) {
-      console.log("Error adding document: ", error);
-
       return error;
     }
   }
@@ -89,7 +79,7 @@ export class Business {
       count++;
     });
 
-    statistics.mean = promedio / count;
+    statistics.mean = count > 0 ? promedio / count : 0;
 
     await this.getMinMax(id_business, statistics);
 
@@ -152,7 +142,6 @@ export class Business {
       await updateDoc(docRef, {
         id_business: id_business,
         id_user: this.id_user,
-        id_category: this.id_category,
         b_name: this.b_name,
         b_description: this.b_descrption,
         b_schedule: this.b_schedule,
@@ -171,7 +160,10 @@ export class Business {
   }
 
   static async getBussinesByUId(uid) {
-    const q = await query(businessCollection, where("id_user", "==", uid));
+    const q = await query(
+      businessCollection,
+      where("id_user", "==", uid.toString())
+    );
 
     const docs = await getDocs(q);
 
@@ -372,4 +364,28 @@ export async function getCountReviewDate(id_business) {
   });
 
   return count;
+}
+
+export async function getDataBusinessID(id_business) {
+  const q = await query(
+    businessCollection,
+    where("id_business", "==", id_business)
+  );
+  const docs = await getDocs(q);
+
+  let data = null;
+  docs.forEach((item) => {
+    data = item.data();
+  });
+
+  data.b_schedule = JSON.parse(data.b_schedule);
+
+  if (data) {
+    let uid = data.id_user;
+    const aditionalUserData = await User.getAdditionalDataUser(uid);
+    data.name = aditionalUserData.u_name;
+    data.u_photo = aditionalUserData.u_photo;
+  }
+
+  return data;
 }

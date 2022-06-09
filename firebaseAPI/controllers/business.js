@@ -117,7 +117,7 @@ export class Business {
 
     const doc = await getDocs(q);
 
-    //console.log(list);
+    //
     let business = doc.docs[0].data();
     business.b_schedule = JSON.parse(business.b_schedule);
     business.name = getAuth().currentUser.displayName;
@@ -172,7 +172,7 @@ export class Business {
       list.push(value.data());
     });
 
-    //console.log(list);
+    //
     return list;
   }
 
@@ -387,7 +387,7 @@ export async function getDataBusinessID(id_business) {
   if (data) {
     let uid = data.id_user;
     const aditionalUserData = await User.getAdditionalDataUser(uid);
-    console.log("wadasdasd               penen pene pene  ", aditionalUserData);
+
     data.name = aditionalUserData.u_name;
     data.u_photo = aditionalUserData.u_photo;
   }

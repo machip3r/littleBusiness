@@ -497,6 +497,9 @@ export default {
   mounted() {},
 
   methods: {
+    async goBackToProfile() {
+      this.$router.push({ name: "User" });
+    },
     // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
     async getBusinesses() {
       const B = new Business();

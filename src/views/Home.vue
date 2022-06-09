@@ -687,7 +687,7 @@ export default {
     },
 
     seeBusiness(id) {
-      this.$router.push({ name: "Information", params: { id: id } });
+      this.$router.push({ name: "InformationClient", params: { id: id } });
     },
 
     leadingZeros(number) {

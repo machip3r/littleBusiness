@@ -142,6 +142,19 @@ const routes = [
     meta: { title: "Information" },
   },
   {
+    path: "/informationClient/:id",
+    name: "InformationClient",
+    component: () => import("../views/business/InformationClient.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
+      if (!to.params.id) router.push("/");
+
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "Information" },
+  },
+  {
     path: "/addProduct",
     name: "AddProduct",
     component: () => import("../views/products/AddProduct.vue"),

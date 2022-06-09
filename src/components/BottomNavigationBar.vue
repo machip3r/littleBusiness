@@ -67,20 +67,36 @@ export default {
       if (
         this.seller &&
         (this.$route.name == "Dashboard" ||
-          this.$route.name == "Cart" ||
+          this.$route.name == "OrderSeller" ||
           this.$route.name == "Products" ||
           this.$route.name == "Review" ||
           this.$route.name == "Information")
       ) {
         return [
           { title: "Inicio", icon: "fas fa-chart-bar", to: "Dashboard" },
-          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "Order" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "OrderSeller" },
           { title: "Productos", icon: "fas fa-tshirt", to: "Products" },
           { title: "Reseñas", icon: "fas fa-star", to: "Review" },
           {
             title: "Información",
             icon: "fas fa-info-circle",
             to: "Information",
+          },
+        ];
+      } else if (
+        (!this.seller && this.$route.name == "OrderClient") ||
+        this.$route.name == "ProductsClient" ||
+        this.$route.name == "ReviewClient" ||
+        this.$route.name == "InformationClient"
+      ) {
+        return [
+          { title: "Productos", icon: "fas fa-tshirt", to: "ProductsClient" },
+          { title: "Pedidos", icon: "fas fa-shopping-cart", to: "OrderClient" },
+          { title: "Reseñas", icon: "fas fa-star", to: "ReviewClient" },
+          {
+            title: "Información",
+            icon: "fas fa-info-circle",
+            to: "InformationClient",
           },
         ];
       } else {

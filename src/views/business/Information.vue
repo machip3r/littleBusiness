@@ -172,25 +172,6 @@
         </div>
       </div>
     </div>
-    <!-- <v-row>
-      <v-col></v-col>
-      <v-col>
-        <v-btn
-          v-if="isYourBusiness"
-          @click="goEdit()"
-          dark
-          color="primary"
-          rounded
-          bottom
-          left
-          large
-        >
-          <v-icon>fa-edit</v-icon>
-          Editar</v-btn
-        >
-      </v-col>
-    </v-row> -->
-
     <v-btn
       v-if="isYourBusiness"
       class="fab-home"
@@ -210,11 +191,10 @@
 
 <script>
 import { getAuth } from "@firebase/auth";
-import {
-  Business,
-  getDataBusinessID,
-} from "../../../firebaseAPI/controllers/business";
 import { User } from "../../../firebaseAPI/controllers/user";
+import { Business } from "../../../firebaseAPI/controllers/business";
+import { mapState } from "vuex";
+
 export default {
   name: "Information",
   data() {
@@ -235,6 +215,9 @@ export default {
       maxPrice: 0,
       isYourBusiness: false,
     };
+  },
+  computed: {
+    ...mapState(["activeBusiness"]),
   },
   mounted() {
     const id = this.$route.params.id;

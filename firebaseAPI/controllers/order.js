@@ -49,6 +49,11 @@ export class Order {
     return this.#getObjectFromDocuments(await getDocs(queryRes));
   }
 
+  async readUserOrders(uid) {
+    const queryRes = query(ordersCollection, where("id_user", "==", uid));
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
+  }
+
   async updateOrder(id_order, body) {
     const order = doc(db, collectionName, id_order);
     await updateDoc(order, body);

@@ -44,7 +44,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import { getAuth } from "firebase/auth";
-import { Category } from "../../firebaseAPI/controllers/category";
+import { Category } from "/firebaseAPI/controllers/category.js";
 
 export default {
   name: "ProductDetails",

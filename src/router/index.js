@@ -72,14 +72,11 @@ const routes = [
     },
   },
   {
-    path: "/dashboard/:id",
+    path: "/dashboard",
     name: "Dashboard",
     component: () => import("../views/business/Dashboard.vue"),
     beforeEnter: (to, from, next) => {
-      if (!to.params.id) router.push("/user");
-
       store.dispatch("modifyView", true);
-
       if (!store.getters.getAccessToken) router.push("/");
       let id = to.params.id;
       const uid = getAuth().currentUser.uid;
@@ -91,6 +88,7 @@ const routes = [
           router.push("/");
         }
       });
+      next();
     },
     meta: { title: "Dashboard" },
   },
@@ -127,7 +125,7 @@ const routes = [
     meta: { title: "Review" },
   },
   {
-    path: "/information/:id",
+    path: "/information",
     name: "Information",
     component: () => import("../views/business/Information.vue"),
     beforeEnter: (to, from, next) => {
@@ -205,6 +203,15 @@ const routes = [
       next();
     },
     meta: { title: "Products" },
+  },
+  {
+    path: "/addReview",
+    name: "AddReview",
+    component: () => import("../views/review/AddReview.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
   },
 ];
 

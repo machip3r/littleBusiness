@@ -9,33 +9,40 @@
         small
         left
         top
-        @click="goBackToProfile()"
+        @click="goBackToInformation()"
       >
         <v-icon class="icon-back-business" size="15">fas fa-arrow-left</v-icon>
       </v-btn>
-      <h1 class="ml-5">Editar negocio</h1>
+      <h3 class="ml-5">Editar Negocio</h3>
     </v-row>
     <v-form class="mt-10" ref="form" v-model="valid" lazy-validation>
       <div>
         <v-text-field
-          filled
           label="Nombre de tu negocio"
+          color="primary"
+          background-color="secondary"
           prepend-inner-icon="fas fa-store"
           :rules="this.rules.required"
           v-model="b_name"
-        >
-        </v-text-field>
-        <v-textarea
           filled
+          rounded
+          dense
+          required
+        ></v-text-field>
+        <v-textarea
           auto-grow
           prepend-inner-icon="fas fa-comment"
-          label="¿Cómo describirías tu negocio?"
+          label="Descripción de tu negocio"
+          background-color="secondary"
           rows="4"
           v-model="b_description"
           :rules="this.rules.required"
           row-height="30"
+          filled
+          rounded
+          dense
+          required
         ></v-textarea>
-
         <h4>Horario</h4>
         <div>
           <v-snackbar
@@ -59,24 +66,29 @@
                 rounded
                 dense
                 @click="openDate(index, true)"
+                prepend-inner-icon="fas fa-clock"
+                class="schedule-input"
+                background-color="secondary"
                 v-model="textDays[index].start"
               ></v-text-field>
               <v-text-field
+                class="ml-3 schedule-input"
                 placeholder="Final"
                 filled
+                prepend-inner-icon="fas fa-clock"
+                background-color="secondary"
                 v-model="textDays[index].end"
                 @click="openDate(index, false)"
                 rounded
                 dense
               ></v-text-field>
               <v-btn
-                class="mx-2"
+                class="button-add-hour"
+                elevation="0"
                 fab
-                dark
-                color="indigo"
                 @click="addHour(index)"
               >
-                <v-icon color="white">fas fa-plus</v-icon>
+                <v-icon color="primary" size="18">fas fa-plus</v-icon>
               </v-btn>
             </div>
             <div class="container-hours">
@@ -130,11 +142,10 @@
 
 <script>
 import { mapState } from "vuex";
-
-import { getCategories } from "../../../firebaseAPI/controllers/category.js";
-
 import { getAuth } from "firebase/auth";
 import { Business } from "../../../firebaseAPI/controllers/business.js";
+import { Category } from "../../../firebaseAPI/controllers/category.js";
+
 export default {
   name: "EditBusiness",
   computed: {
@@ -163,6 +174,8 @@ export default {
         { start: "", end: "" },
       ],
       valid: true,
+      messageErrorShow: false,
+      messageError: "",
       b_name: "",
       b_description: "",
       snackbarProps: {
@@ -204,7 +217,7 @@ export default {
       this.modal2 = false;
     },
     async goBackToProfile() {
-      this.$router.push({ name: "User" });
+      this.$router.push({ name: "Information" });
     },
     async getCategoriesCbx() {
       const C = new Category();

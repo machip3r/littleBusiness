@@ -55,6 +55,8 @@ export class User {
         uid: uid,
         type: this.u_type,
         status: this.u_status,
+        u_name: this.u_name,
+        u_photo: this.u_photo,
       };
       let resUpdate = await updateProfile(response.user, {
         displayName: this.u_name,

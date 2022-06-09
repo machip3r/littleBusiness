@@ -116,47 +116,43 @@
       </v-card>
     </v-dialog>
 
-    <v-row
-      class="pt-6 px-6 row-title-home"
-      align="center"
-      justify="center"
-      fixed
-    >
+    <v-row class="pt-6 px-6 row-title-home" fixed>
       <v-col class="col-title-home" cols="7">
         <h1>Descubre</h1>
       </v-col>
-      <v-col cols="4">
-        <v-text-field
-          label="Buscar"
-          color="primary"
-          background-color="secondary"
-          append-icon="fas fa-search"
-          class="input-search"
-          filled
-          rounded
-          dense
-        ></v-text-field>
-      </v-col>
-      <v-col cols="1">
-        <v-badge
-          v-if="cart.o_products.length > 0"
-          color="red"
-          :content="cart.o_products.length"
-          overlap
-        >
-          <v-btn fab elevation="0" color="primary" @click="cartDialog = true">
+      <v-col>
+        <v-row>
+          <v-text-field
+            label="Buscar"
+            color="primary"
+            background-color="secondary"
+            append-icon="fas fa-search"
+            class="input-search"
+            filled
+            rounded
+            dense
+          ></v-text-field>
+          <v-badge
+            v-if="cart.o_products.length > 0"
+            color="red"
+            :content="cart.o_products.length"
+            overlap
+          >
+            <v-btn fab elevation="0" color="primary" @click="cartDialog = true">
+              <v-icon color="secondary">fas fa-shopping-cart</v-icon>
+            </v-btn>
+          </v-badge>
+          <v-btn
+            v-else
+            fab
+            elevation="0"
+            color="primary"
+            class="button-cart"
+            @click="cartDialog = true"
+          >
             <v-icon color="secondary">fas fa-shopping-cart</v-icon>
           </v-btn>
-        </v-badge>
-        <v-btn
-          v-else
-          fab
-          elevation="0"
-          color="primary"
-          @click="cartDialog = true"
-        >
-          <v-icon color="secondary">fas fa-shopping-cart</v-icon>
-        </v-btn>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -176,7 +172,7 @@
             :input-value="active"
             @click="filterProducts(0)"
           >
-            <div class="flex-column">
+            <div class="info-category-button flex-column">
               <v-icon class="button-filter-icon-home"> fas fa-globe </v-icon>
               <h5 class="button-filter-text-home">Todos</h5>
             </div>
@@ -195,7 +191,7 @@
             :input-value="active"
             @click="filterProducts(category.id_category)"
           >
-            <div class="flex-column">
+            <div class="info-category-button flex-column">
               <v-icon class="button-filter-icon-home">
                 {{ category.c_icon }}
               </v-icon>
@@ -269,14 +265,121 @@
         fixed
         right
         bottom
-        @click="homeView = !homeView"
+        @click="readBusinessDocuments"
       >
         <v-icon size="15">fas fa-store</v-icon>
         <h6>Tiendas</h6>
       </v-btn>
     </div>
     <div v-else>
-      <h3>hover</h3>
+      <div class="d-flex mb-4 mx-6">
+        <h3>Tiendas</h3>
+      </div>
+
+      <v-container fluid>
+        <v-row class="mx-md-16 px-md-16">
+          <v-col
+            cols="12"
+            lg="6"
+            v-for="(business, index) in allBusiness"
+            :key="index"
+          >
+            <v-card
+              color="secondary"
+              elevation="0"
+              rounded="xl"
+              class="pa-2"
+              @click="seeBusiness(business.id_business)"
+            >
+              <template slot="progress">
+                <v-progress-linear
+                  color="deep-purple"
+                  height="10"
+                  indeterminate
+                ></v-progress-linear>
+              </template>
+
+              <v-row>
+                <v-col cols="4">
+                  <v-img
+                    max-width="300"
+                    height="200"
+                    :src="business.photo"
+                    class="rounded-xl"
+                  ></v-img>
+                </v-col>
+                <v-col cols="8">
+                  <v-card-title>
+                    {{ truncateText(business.b_name, 15) }}
+                    <v-spacer></v-spacer>
+                    <v-chip color="primary" class="font-weight-bold">
+                      <v-icon left size="16" class="ml-0">
+                        fas fa-check-circle</v-icon
+                      >
+                      Open</v-chip
+                    >
+                  </v-card-title>
+
+                  <v-card-text>
+                    <div>
+                      <p>
+                        {{ truncateText(business.b_description, 70) }}
+                      </p>
+                    </div>
+                    <v-row
+                      align="center"
+                      justify="center"
+                      class="mr-16 ml-n5 mt-0"
+                    >
+                      <v-rating
+                        :value="business.rating"
+                        color="primary"
+                        dense
+                        half-increments
+                        readonly
+                        size="23"
+                      ></v-rating>
+                    </v-row>
+                  </v-card-text>
+
+                  <v-card-text>
+                    <v-row class="mt-0 mx-0">
+                      <v-chip
+                        color="primary"
+                        class="font-weight-bold"
+                        v-if="business.minPrice != null"
+                      >
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-dollar-sign</v-icon
+                        >
+                        <span>
+                          Prices: ${{ business.minPrice }} - ${{
+                            business.maxPrice
+                          }}</span
+                        >
+                      </v-chip>
+                      <v-chip color="primary" class="font-weight-bold" v-else>
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-sad-tear</v-icon
+                        >
+                        <span>No products</span>
+                      </v-chip>
+                      <v-spacer></v-spacer>
+                      <v-chip color="primary" class="font-weight-bold">
+                        <v-icon left size="16" class="ml-0">
+                          fas fa-map-marker-alt</v-icon
+                        >
+                        DICIS</v-chip
+                      >
+                    </v-row>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+
       <v-btn
         class="fab-home"
         dark
@@ -298,7 +401,8 @@
 import { mapState, mapActions } from "vuex";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business.js";
-
+import { Category } from "/firebaseAPI/controllers/category.js";
+import { Review } from "/firebaseAPI/controllers/review.js";
 import ProductDetails from "@/components/ProductDetails.vue";
 import Cart from "@/components/Cart.vue";
 import Dialog from "@/components/Dialog.vue";
@@ -360,7 +464,10 @@ export default {
       activeFilter: 0,
       filteredProducts: [],
 
-      allBusinesses: [],
+      allBusiness: [],
+      allReviews: [],
+      businessPhotos: new Map(),
+      businessReviews: new Map(),
       business: {
         id_business: "",
         b_name: "",
@@ -427,6 +534,120 @@ export default {
       });
     },
 
+    async readBusinessDocuments() {
+      this.homeView = !this.homeView;
+      if (this.allBusiness.length === 0) {
+        const B = new Business();
+        const R = new Review();
+        await B.readBusiness().then((res) => {
+          this.allBusiness = B.docsObjectToArray(res);
+        });
+        await R.readReviews().then((res) => {
+          this.allReviews = R.docsObjectToArray(res);
+        });
+        this.getBusinessProducts();
+        this.setBusinessImage();
+
+        this.getBusinessReviews();
+        this.setBusinessReview();
+      }
+    },
+
+    getBusinessProducts() {
+      let productsInBusiness = new Map();
+      this.allProducts.forEach((product) => {
+        if (productsInBusiness.has(+product.id_business)) {
+          let tmp = productsInBusiness.get(+product.id_business);
+          tmp.photos.push(product.p_photo);
+
+          if (+product.p_price < tmp.minPrice) tmp.minPrice = +product.p_price;
+          else if (+product.p_price > tmp.maxPrice)
+            tmp.maxPrice = +product.p_price;
+
+          productsInBusiness.set(+product.id_business, tmp);
+        } else {
+          productsInBusiness.set(+product.id_business, {
+            photos: [product.p_photo],
+            minPrice: product.p_price,
+            maxPrice: product.p_price,
+          });
+        }
+      });
+
+      productsInBusiness.forEach((business, key) => {
+        this.businessPhotos.set(key, {
+          photo: this.getRandomProductImage(business.photos),
+          minPrice: business.minPrice,
+          maxPrice: business.maxPrice,
+        });
+      });
+    },
+
+    getRandomProductImage(businessProducts) {
+      return businessProducts[
+        Math.floor(Math.random() * businessProducts.length)
+      ];
+    },
+
+    setBusinessImage() {
+      for (let i = 0; i < this.allBusiness.length; i++) {
+        let idBusiness = this.allBusiness[i].id_business;
+        if (this.businessPhotos.has(idBusiness)) {
+          this.$set(
+            this.allBusiness[i],
+            "photo",
+            this.businessPhotos.get(idBusiness).photo
+          );
+          this.$set(
+            this.allBusiness[i],
+            "minPrice",
+            this.businessPhotos.get(idBusiness).minPrice
+          );
+          this.$set(
+            this.allBusiness[i],
+            "maxPrice",
+            this.businessPhotos.get(idBusiness).maxPrice
+          );
+        } else {
+          this.$set(
+            this.allBusiness[i],
+            "photo",
+            "https://cdn.vuetifyjs.com/images/cards/cooking.png"
+          );
+        }
+      }
+    },
+
+    getBusinessReviews() {
+      this.allReviews.forEach((review) => {
+        if (this.businessReviews.has(+review.id_business)) {
+          let tmp = this.businessReviews.get(+review.id_business);
+          tmp.rating += review.r_rate;
+          tmp.reviews++;
+          this.businessReviews.set(+review.id_business, tmp);
+        } else {
+          this.businessReviews.set(+review.id_business, {
+            rating: +review.r_rate,
+            reviews: 1,
+          });
+        }
+      });
+    },
+
+    setBusinessReview() {
+      for (let i = 0; i < this.allBusiness.length; i++) {
+        let idBusiness = this.allBusiness[i].id_business;
+        if (this.businessReviews.has(idBusiness)) {
+          const reviews = this.businessReviews.get(idBusiness);
+          const rating = reviews.rating / reviews.reviews;
+
+          this.$set(this.allBusiness[i], "rating", rating);
+        } else {
+          this.$set(this.allBusiness[i], "rating", null);
+        }
+      }
+    },
+
     closeDialog() {
       this.productDialog = false;
       this.cartDialog = false;
@@ -437,6 +658,10 @@ export default {
       this.product = item;
       this.productDialog = true;
       this.updateProductDialog++;
+    },
+
+    seeBusiness(id) {
+      this.$router.push({ name: "Information", params: { id } });
     },
 
     leadingZeros(number) {
@@ -483,6 +708,12 @@ export default {
           }
         });
       }
+    },
+    truncateText(text, length) {
+      if (text.length <= length) {
+        return text;
+      }
+      return text.slice(0, length) + "...";
     },
   },
 };

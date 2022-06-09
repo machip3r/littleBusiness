@@ -119,6 +119,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import {
   Business,
   getCountReviewDate,
@@ -157,6 +158,9 @@ export default {
       numberOrdersP: 0,
       newReviewsCount: 0,
     };
+  },
+  computed: {
+    ...mapState(["activeBusiness"]),
   },
   mounted() {
     getDataOrdersByBusiness(this.$route.params.id).then((listOr) => {
@@ -199,11 +203,11 @@ export default {
       this.fillDays(this.indexMouth);
     });
 
-    Business.getstatistics(this.$route.params.id).then((value) => {
+    Business.getstatistics(this.activeBusiness).then((value) => {
       this.meanStars = value.mean;
     });
 
-    getCountReviewDate(this.$route.params.id).then((value) => {
+    getCountReviewDate(this.activeBusiness).then((value) => {
       this.newReviewsCount = value;
     });
   },

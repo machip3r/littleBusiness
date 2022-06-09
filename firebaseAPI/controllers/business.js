@@ -267,6 +267,8 @@ export async function getDataOrdersByBusiness(id_business) {
           p_status: item.p_status,
           p_name: listProducts[index].p_name,
           p_photo: listProducts[index].p_photo,
+          p_status: item.p_status,
+          o_status: item.p_status,
         });
       }
     });
@@ -339,7 +341,7 @@ export async function getDataFromDate(id_business) {
 
   const listOrders = await getDataOrdersByBusiness(id_business);
   listOrders.forEach((order) => {
-    if (order.p_status == "d") {
+    if (order.o_status == "d") {
       const date = order.date;
       if (date.getFullYear() == year) {
         monthData[date.getMonth()] += order.p_price * order.op_quantity;

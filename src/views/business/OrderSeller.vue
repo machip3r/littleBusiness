@@ -85,9 +85,14 @@
               </v-row>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col cols="1">
-              <v-chip class="pa-4" large text-color="secondary" color="primary">
-                amip ixula
+            <v-col cols="2">
+              <v-chip
+                class="pa-4"
+                x-large
+                text-color="secondary"
+                color="primary"
+              >
+                {{ myBusiness.b_name }}
               </v-chip>
             </v-col>
             <v-col cols="1">
@@ -105,29 +110,12 @@
                     <v-icon color="secondary">fas fa-receipt</v-icon>
                   </v-btn>
                 </template>
-                <span>Imprimir recibo (¿cuál?)</span>
-              </v-tooltip>
-            </v-col>
-            <v-col cols="1" v-if="selectedOrder.o_status === 'p'">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    fab
-                    elevation="0"
-                    color="lighterred"
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="cancelOrderDialog = true"
-                  >
-                    <v-icon color="error">fas fa-trash</v-icon>
-                  </v-btn>
-                </template>
-                <span>Cancelar la orden</span>
+                <span>Imprimir recibo</span>
               </v-tooltip>
             </v-col>
           </v-row>
 
-          <OrderDetails
+          <OrderDetailsSeller
             :originalOrder="selectedOrder"
             :order="editableOrder"
             @close-dialog="closeConfirmDialog()"
@@ -194,7 +182,7 @@
             flat
             width="500"
             elevation="3"
-            @click="seeOrderDetails(order)"
+            @click="seeOrderDetailsSeller(order)"
           >
             <v-toolbar class="elevation-0 gradient-background">
               <div>
@@ -224,25 +212,62 @@
               </v-col>
             </v-row>
             <v-card
-              class="ma-1"
-              color="secondary"
-              elevation="0"
-              v-for="product in order.o_products"
-              :key="product.id"
+              class="ma-8 pb-3"
+              flat
+              width="500"
+              elevation="3"
+              @click="seeOrderDetails(order)"
             >
-              <v-row class="px-8">
-                <v-col cols="2">
-                  <strong>{{ product.op_quantity }}x</strong>
-                </v-col>
-                <v-col cols="6">
-                  <strong>{{ product.p_name }} </strong>
-                </v-col>
+              <v-toolbar class="elevation-0 gradient-background">
+                <div>
+                  <v-badge :color="badgeColors[order.o_status]"></v-badge>
+                </div>
+                <v-spacer></v-spacer>
+                <v-toolbar-title
+                  >#{{ order.id_order.toUpperCase() }}</v-toolbar-title
+                >
+                <v-spacer></v-spacer>
+                <v-toolbar-title>
+                  <strong>{{ order.u_name }}</strong>
+                </v-toolbar-title>
+                <!-- TODO: Mostrar el nombre del usuario que hizo la orden (vista de vendedor) -->
+                <v-spacer></v-spacer>
+                <v-toolbar-title>
+                  <v-icon>far fa-calendar</v-icon>
+                  {{ order.f_datetime }}
+                </v-toolbar-title>
+              </v-toolbar>
+
+              <v-row class="my-3 px-8">
+                <v-col cols="6"><strong>Total</strong></v-col>
+                <v-spacer></v-spacer>
                 <v-col cols="4">
-                  <strong>
-                    ${{ parseFloat(product.p_price).toFixed(2) }} MXN
-                  </strong>
+                  <strong
+                    >${{ parseFloat(order.o_total).toFixed(2) }} MXN</strong
+                  >
                 </v-col>
               </v-row>
+              <v-card
+                class="ma-1"
+                color="secondary"
+                elevation="0"
+                v-for="product in order.o_products"
+                :key="product.id"
+              >
+                <v-row class="px-8">
+                  <v-col cols="2">
+                    <strong>{{ product.op_quantity }}x</strong>
+                  </v-col>
+                  <v-col cols="6">
+                    <strong>{{ product.p_name }} </strong>
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>
+                      ${{ parseFloat(product.p_price).toFixed(2) }} MXN
+                    </strong>
+                  </v-col>
+                </v-row>
+              </v-card>
             </v-card>
           </v-card>
         </div>
@@ -320,7 +345,7 @@ import { Order } from "/firebaseAPI/controllers/order.js";
 import { Product } from "/firebaseAPI/controllers/product.js";
 import { Business } from "/firebaseAPI/controllers/business.js";
 import html2pdf from "html2pdf.js";
-import OrderDetails from "@/components/OrderDetails.vue";
+import OrderDetailsSeller from "@/components/OrderDetailsSeller.vue";
 import CancelDialog from "@/components/Dialog.vue";
 import { getDataOrdersByBusiness } from "../../../firebaseAPI/controllers/business";
 
@@ -328,7 +353,7 @@ export default {
   name: "OrderSeller",
 
   components: {
-    OrderDetails,
+    OrderDetailsSeller,
     CancelDialog,
   },
 
@@ -655,7 +680,7 @@ export default {
       } ${date.substring(0, 4)}`;
     },
 
-    seeOrderDetails(order) {
+    seeOrderDetailsSeller(order) {
       this.updateDetails++;
       this.selectedOrder = order;
 

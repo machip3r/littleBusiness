@@ -101,7 +101,7 @@
                     <v-icon color="secondary">fas fa-receipt</v-icon>
                   </v-btn>
                 </template>
-                <span>Imprimir recibo (¿cuál?)</span>
+                <span>Imprimir recibo</span>
               </v-tooltip>
             </v-col>
             <v-col cols="1" v-if="selectedOrder.o_status === 'p'">

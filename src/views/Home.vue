@@ -406,7 +406,6 @@ import { Review } from "/firebaseAPI/controllers/review.js";
 import ProductDetails from "@/components/ProductDetails.vue";
 import Cart from "@/components/Cart.vue";
 import Dialog from "@/components/Dialog.vue";
-import { Category } from "../../firebaseAPI/controllers/category";
 
 export default {
   name: "Home",

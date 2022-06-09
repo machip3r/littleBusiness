@@ -383,6 +383,7 @@ export async function getDataBusinessID(id_business) {
   if (data) {
     let uid = data.id_user;
     const aditionalUserData = await User.getAdditionalDataUser(uid);
+    console.log("wadasdasd               penen pene pene  ", aditionalUserData);
     data.name = aditionalUserData.u_name;
     data.u_photo = aditionalUserData.u_photo;
   }

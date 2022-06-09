@@ -267,7 +267,10 @@ export default {
     enterSellerView(id) {
       this.modifyView(true);
       this.activeBusiness(id);
-      this.$router.push({ name: "Dashboard" });
+      this.$router.push({
+        name: "Dashboard",
+        params: { id: id },
+      });
     },
   },
 };

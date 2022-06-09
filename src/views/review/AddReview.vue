@@ -102,11 +102,11 @@ export default {
       if (this.$refs.form.validate()) {
         const review = new Review();
         this.review.id_user = getAuth().currentUser.uid;
-        this.review.id_business = 1;
+        this.review.id_business = this.$route.params.id;
         this.review.r_rate = this.rating;
         this.review.r_datetime = this.getDate();
         await review.addReview(this.review).then().catch();
-        this.$router.push("Review");
+        this.$router.back();
       } else {
         //
       }

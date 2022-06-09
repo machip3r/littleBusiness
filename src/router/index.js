@@ -208,7 +208,7 @@ const routes = [
     meta: { title: "Products" },
   },
   {
-    path: "/addReview",
+    path: "/addReview/:id",
     name: "AddReview",
     component: () => import("../views/review/AddReview.vue"),
     beforeEnter: (to, from, next) => {

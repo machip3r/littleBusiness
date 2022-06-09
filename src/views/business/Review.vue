@@ -198,25 +198,23 @@ export default {
       for (let n = 0; n < REVIEWS_SIZE; n++) {
         names[n] = await User.getAdditionalDataUser(this.allReviews[n].id_user);
       }
-      this.allReviews.forEach((prod) => {
-        for (i; i < REVIEWS_SIZE; i++) { 
-          if (prod.id_review == this.allReviews[i].id_review) {
-            this.businessReviews.push(
-              Object.assign(this.allReviews[i], {
-                r_description: prod.r_description,
-                r_rate: prod.r_rate,
-                id_user: prod.id_user,
-                u_name: names[i].u_name,
-              })
-            );
-            break;
-          }
+      const id = this.$route.params.id;
+      for (i; i < REVIEWS_SIZE; i++) { 
+        if (this.allReviews[i].id_business == id) {
+          this.businessReviews.push(
+            Object.assign(this.allReviews[i], {
+              r_description: this.allReviews[i].r_description,
+              r_rate: parseFloat(this.allReviews[i].r_rate),
+              id_user: this.allReviews[i].id_user,
+              u_name: names[i].u_name,
+            })
+          );
         }
-      });
+      }
       this.getAllRates();
     },
     getAllRates() {
-      const REVIEWS_SIZE = this.allReviews.length;
+      const REVIEWS_SIZE = this.businessReviews.length;
       let i = 0;
       this.businessReviews.forEach((prod) => {
         for (i; i < REVIEWS_SIZE; i++) {
@@ -233,7 +231,8 @@ export default {
       this.already = true;
     },
     addReview() {
-      this.$router.push("AddReview");
+      let id = this.$route.params.id;
+      this.$router.push({ name: "AddReview", params: { id: id } });
     },
     setMinMax(mi, ma) {
       this.min = mi;

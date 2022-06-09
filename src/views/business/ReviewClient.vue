@@ -148,6 +148,18 @@
         </v-row>
       </v-card>
     </v-container>
+    <v-btn
+      class="mb-15"
+      dark
+      color="primary"
+      fab
+      fixed
+      right
+      bottom
+      v-on:click="addReview"
+    >
+      <v-icon class="icon-back-business" size="15">fas fa-plus</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -156,7 +168,7 @@ import { Review } from "/firebaseAPI/controllers/review.js";
 import { User } from "/firebaseAPI/controllers/user.js";
 
 export default {
-  name: "Review",
+  name: "ReviewClient",
   props: ["reviews"],
   components: {},
   data: () => {
@@ -224,12 +236,16 @@ export default {
       this.averageRate = parseFloat(this.averageRate.toFixed(1));
       this.already = true;
     },
+    addReview() {
+      let id = this.$route.params.id;
+      this.$router.push({ name: "AddReview", params: { id: id } });
+    },
     setMinMax(mi, ma) {
       this.min = mi;
       this.max = ma;
     },
     async goBackToProfile() {
-      this.$router.push({ name: "User" });
+      this.$router.push({ name: "Home" });
     },
   },
 };

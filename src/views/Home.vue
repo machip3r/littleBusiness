@@ -154,8 +154,8 @@
             class="gradient-background button-filter-home"
             elevation="0"
             rounded
-            active-class="button-filter-home--active"
             :input-value="active"
+            active-class="button-filter-home--active"
             @click="filterProducts(0)"
           >
             <div class="info-category-button flex-column">
@@ -167,7 +167,7 @@
         <v-slide-item
           v-for="(category, index) in allCategories"
           :key="index"
-          v-slot="{ active }"
+          v-slot="{ active, toggle }"
         >
           <v-btn
             class="gradient-background button-filter-home"
@@ -175,7 +175,7 @@
             rounded
             active-class="button-filter-home--active"
             :input-value="active"
-            @click="filterProducts(category.id_category)"
+            @click="toggle && filterProducts(category.id_category)"
           >
             <div class="info-category-button flex-column">
               <v-icon class="button-filter-icon-home">
@@ -469,6 +469,8 @@ export default {
         id_business: "",
         b_name: "",
       },
+
+      selectedCategory: 0,
 
       allCategories: [],
     };

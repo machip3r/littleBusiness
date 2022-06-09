@@ -1,0 +1,13 @@
+.active-filter-review {
+  background-color: var(--dark-blue) !important;
+  color: var(--bone) !important;
+}
+
+@media screen and (max-width: 500px) {
+  .rating {
+    margin-left: 20px;
+  }
+  .rating button {
+    max-width: 20% !important;
+  }
+}

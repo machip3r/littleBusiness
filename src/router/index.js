@@ -129,6 +129,17 @@ const routes = [
     meta: { title: "Review" },
   },
   {
+    path: "/reviewClient/:id",
+    name: "ReviewClient",
+    component: () => import("../views/business/ReviewClient.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
+      if (!store.getters.getAccessToken) router.push("/");
+      next();
+    },
+    meta: { title: "ReviewClient" },
+  },
+  {
     path: "/information/:id",
     name: "Information",
     component: () => import("../views/business/Information.vue"),
@@ -152,7 +163,7 @@ const routes = [
       if (!store.getters.getAccessToken) router.push("/");
       next();
     },
-    meta: { title: "Information" },
+    meta: { title: "InformationClient" },
   },
   {
     path: "/addProduct",
@@ -229,6 +240,21 @@ const routes = [
       next();
     },
     meta: { title: "Products" },
+  },
+  {
+    path: "/productsClient/:id",
+    name: "ProductsClient",
+    component: () => import("../views/products/ProductsClient.vue"),
+    beforeEnter: (to, from, next) => {
+      store.dispatch("modifyView", true);
+      const user = getAuth().currentUser;
+
+      const dataAdditional = User.getAdditionalDataUser(user.uid);
+
+      if (!user && !dataAdditional.type) router.push("/");
+      next();
+    },
+    meta: { title: "ProductsClient" },
   },
   {
     path: "/addReview/:id",

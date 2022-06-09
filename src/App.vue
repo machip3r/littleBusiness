@@ -20,6 +20,7 @@
 @import "./styles/business.css";
 @import "./styles/information.css";
 @import "./styles/order.css";
+@import "./styles/review.css";
 </style>
 
 <script>

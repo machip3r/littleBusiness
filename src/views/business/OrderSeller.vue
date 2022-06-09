@@ -323,8 +323,6 @@ import html2pdf from "html2pdf.js";
 import OrderDetails from "@/components/OrderDetails.vue";
 import CancelDialog from "@/components/Dialog.vue";
 import { getDataOrdersByBusiness } from "../../../firebaseAPI/controllers/business";
-import { collection } from "@firebase/firestore";
-import { objectToString } from "@vue/shared";
 
 export default {
   name: "Order",

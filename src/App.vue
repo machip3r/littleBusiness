@@ -19,6 +19,7 @@
 @import "./styles/dashboard.css";
 @import "./styles/business.css";
 @import "./styles/information.css";
+@import "./styles/order.css";
 </style>
 
 <script>

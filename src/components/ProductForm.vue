@@ -287,8 +287,12 @@ export default {
         this.addNewProduct();
       }
     },
-    clickBackButton() {
-      this.$router.push({ name: "Dashboard" });
+    async clickBackButton() {
+      if (this.$route.name == "EditProduct") {
+        this.$router.push({ name: "Products" });
+      } else {
+        this.$router.push({ name: "Dashboard" });
+      }
     },
     cancelEdit() {
       this.product = this.productProp;

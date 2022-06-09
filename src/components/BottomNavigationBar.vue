@@ -49,6 +49,7 @@ export default {
     isRouteValid() {
       return this.$route.name == "AddBusiness" ||
         this.$route.name == "AddProduct" ||
+        this.$route.name == "EditProduct" ||
         this.$route.name == "EditBusiness"
         ? false
         : true;

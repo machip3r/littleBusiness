@@ -18,7 +18,7 @@
       <h1>${{ parseFloat(product.p_price).toFixed(2) }} c/u</h1>
     </div>
     <v-footer class="footer-product" absolute color="#fff">
-      <div class="product-button-area">
+      <div class="product-button-area" v-if="!sellerView">
         <div class="container-add-cart-inputs">
           <button @click="decrement" class="button-decrement">
             <v-icon class="icon-decrement">fas fa-minus</v-icon>
@@ -35,6 +35,15 @@
         >
           <v-icon class="icon-add-cart">fas fa-rocket</v-icon>
           <h5>Comprar</h5>
+        </v-btn>
+      </div>
+      <div class="product-button-area" v-else>
+        <v-btn
+          class="button btn-add-cart"
+          @click="goEditProduct(product.id_product)"
+        >
+          <v-icon class="mr-3">fas fa-edit</v-icon>
+          <h5>Editar Producto</h5>
         </v-btn>
       </div>
     </v-footer>
@@ -54,6 +63,7 @@ export default {
   data: () => {
     return {
       allCategories: [],
+      sellerView: false,
 
       quantity: 1,
       productDialog: false,
@@ -68,15 +78,30 @@ export default {
   },
 
   computed: {
-    ...mapState(["cart"]),
+    ...mapState(["cart", "userBusiness"]),
+    dialogSellerView() {
+      return this.product.id_business === this.activeBusiness;
+    },
   },
 
   async created() {
     this.getCategories();
+    this.userBusiness.forEach((business) => {
+      if (business.id_business === this.product.id_business) {
+        this.sellerView = true;
+      } else {
+        this.sellerView = false;
+      }
+    });
   },
 
   methods: {
-    ...mapActions(["addOrder", "addProducts", "incrementQuantity"]),
+    ...mapActions([
+      "addOrder",
+      "addProducts",
+      "incrementQuantity",
+      "activeBusiness",
+    ]),
 
     async getCategories() {
       const C = new Category();
@@ -132,6 +157,10 @@ export default {
 
         return;
       }
+    },
+    goEditProduct(id_product) {
+      this.activeBusiness(this.product.id_business);
+      this.$router.push({ name: "EditProduct", params: { id: id_product } });
     },
 
     createOrder(product) {

@@ -25,6 +25,7 @@
 import BottomNavigationBar from "@/components/BottomNavigationBar";
 import { mapActions, mapState } from "vuex";
 import { User } from "/firebaseAPI/controllers/user.js";
+import { Business } from "/firebaseAPI/controllers/business.js";
 
 export default {
   name: "App",
@@ -48,6 +49,11 @@ export default {
           type: doc.type,
         };
         this.loadAccess({ user: userData, accessToken: user.accessToken });
+        if (doc.type) {
+          let B = new Business();
+          let business = await B.readUserBusiness(this.user.uid);
+          this.setUserBusiness(B.docsObjectToArray(business));
+        }
       }
     });
   },
@@ -55,7 +61,7 @@ export default {
     BottomNavigationBar,
   },
   methods: {
-    ...mapActions(["loadAccess", "activeBusiness"]),
+    ...mapActions(["loadAccess", "activeBusiness", "setUserBusiness"]),
   },
 };
 </script>

@@ -65,6 +65,11 @@ export class Business {
     return this.#getObjectFromDocuments(await getDocs(businessCollection));
   }
 
+  async readUserBusiness(uid) {
+    const queryRes = query(businessCollection, where("id_user", "==", uid));
+    return this.#getObjectFromDocuments(await getDocs(queryRes));
+  }
+
   static async getstatistics(id_business) {
     let statistics = {};
 

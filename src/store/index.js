@@ -21,6 +21,7 @@ export default new Vuex.Store({
       ],
     },
     user: null,
+    userBusiness: [],
     activeBusiness: null,
     accessToken: null,
     sellerView: null,
@@ -75,6 +76,9 @@ export default new Vuex.Store({
     },
     updateSellerView(state, payload) {
       state.sellerView = payload;
+    },
+    setUserBusiness(state, payload) {
+      state.userBusiness = payload;
     },
     loadBusiness(state, payload) {
       state.activeBusiness = payload;
@@ -180,6 +184,9 @@ export default new Vuex.Store({
     },
     activeBusiness({ commit }, businessId) {
       commit("loadBusiness", businessId);
+    },
+    setUserBusiness({ commit }, businessIDS) {
+      commit("setUserBusiness", businessIDS);
     },
     closeBusiness({ commit }) {
       commit("loadBusiness", null);

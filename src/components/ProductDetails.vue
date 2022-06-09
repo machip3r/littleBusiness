@@ -100,7 +100,11 @@ export default {
 
     addToCart(id_product) {
       const ORDER_PRODUCTS_SIZE = this.cart.o_products.length;
-      const product = { id_product: id_product, op_quantity: this.quantity };
+      const product = {
+        id_product: id_product,
+        op_quantity: this.quantity,
+        p_status: "p",
+      };
 
       if (ORDER_PRODUCTS_SIZE > 0) {
         for (let i = 0; i < ORDER_PRODUCTS_SIZE; i++) {

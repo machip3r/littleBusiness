@@ -166,7 +166,7 @@
           flat
           width="500"
           elevation="3"
-          @click="seeOrderDetails(order)"
+          @click="seeOrderDetailsSeller(order)"
         >
           <v-toolbar class="elevation-0 gradient-background">
             <div>

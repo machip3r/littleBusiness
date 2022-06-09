@@ -176,7 +176,7 @@
             :input-value="active"
             @click="filterProducts(0)"
           >
-            <div class="flex-column">
+            <div class="info-category-button flex-column">
               <v-icon class="button-filter-icon-home"> fas fa-globe </v-icon>
               <h5 class="button-filter-text-home">Todos</h5>
             </div>
@@ -195,7 +195,7 @@
             :input-value="active"
             @click="filterProducts(category.id_category)"
           >
-            <div class="flex-column">
+            <div class="info-category-button flex-column">
               <v-icon class="button-filter-icon-home">
                 {{ category.c_icon }}
               </v-icon>

@@ -35,29 +35,18 @@
       transition="dialog-bottom-transition"
     >
       <v-card elevation="0">
-        <div class="pa-4">
-          <v-row align="center">
-            <v-col cols="10">
-              <v-btn
-                @click="productDialog = false"
-                fab
-                elevation="0"
-                color="primary"
-              >
-                <v-icon color="secondary">fas fa-arrow-left</v-icon>
-              </v-btn>
-            </v-col>
-            <v-spacer></v-spacer>
-            <v-col>
-              <v-chip
-                class="pa-4"
-                x-large
-                text-color="secondary"
-                color="primary"
-                >{{ product.b_name }}</v-chip
-              >
-            </v-col>
-          </v-row>
+        <div class="pa-4 top-bar-product">
+          <v-btn
+            @click="productDialog = false"
+            fab
+            elevation="0"
+            color="primary"
+          >
+            <v-icon color="secondary">fas fa-arrow-left</v-icon>
+          </v-btn>
+          <v-chip class="pa-4" x-large text-color="secondary" color="primary">
+            {{ product.b_name }}
+          </v-chip>
         </div>
 
         <ProductDetails
@@ -277,7 +266,7 @@
       </div>
 
       <v-card
-        v-if="allBusiness.length < 1"
+        v-if="activeBusiness.length < 1"
         class="my-4 rounded-xl"
         align="center"
         elevation="0"
@@ -287,7 +276,7 @@
           <div class="mx-4">
             <h1>Sin tiendas</h1>
             <p>
-              Parece que nadie ha abierto una tienda, ¿por qué no aprovechar?
+              Parece que no hay tiendas activas. ¿Por qué no aprovechar y abrir una?
             </p>
           </div>
         </v-card>
@@ -298,7 +287,7 @@
           <v-col
             cols="12"
             lg="6"
-            v-for="(business, index) in allBusiness"
+            v-for="(business, index) in activeBusiness"
             :key="index"
           >
             <v-card
@@ -381,13 +370,6 @@
                         >
                         <span>No products</span>
                       </v-chip>
-                      <v-spacer></v-spacer>
-                      <v-chip color="primary" class="font-weight-bold">
-                        <v-icon left size="16" class="ml-0">
-                          fas fa-map-marker-alt</v-icon
-                        >
-                        DICIS</v-chip
-                      >
                     </v-row>
                   </v-card-text>
                 </v-col>
@@ -481,6 +463,7 @@ export default {
       filteredProducts: [],
 
       allBusiness: [],
+      activeBusiness: [],
       allReviews: [],
       businessPhotos: new Map(),
       businessReviews: new Map(),
@@ -566,7 +549,34 @@ export default {
 
         this.getBusinessReviews();
         this.setBusinessReview();
+
+        this.getActiveBusiness();
       }
+    },
+
+    getActiveBusiness() {
+      let hour = new Date().getHours();
+      let minutes = new Date().getMinutes();
+      let dayOfWeek = new Date().getDay()-1;
+      this.allBusiness.forEach((business) => {
+        let schedule = JSON.parse(business.b_schedule);
+        let active = false;
+        schedule.forEach((day, key) => {
+          day.forEach((time) => {
+            let start = this.hourToNumber(time.start);
+            let end = this.hourToNumber(time.end);
+            if (
+              this.validateHourGreatest([hour, minutes], start) &&
+              this.validateHourMin([hour, minutes], end)
+            ) {
+              console.log(dayOfWeek, " - ", key);
+              if (dayOfWeek === key) {
+                this.activeBusiness.push(business);
+              }
+            }
+          });
+        });
+      });
     },
 
     getBusinessProducts() {
@@ -730,6 +740,48 @@ export default {
         return text;
       }
       return text.slice(0, length) + "...";
+    },
+    hourToNumber(hour) {
+      const reg = new RegExp("[0-2][0-9][':'][0-5][0-9]");
+      if (reg.test(hour.toString())) {
+        const tokens = hour.toString().split(":");
+        const hourNumber = Number(tokens[0]);
+        const minutesNumber = Number(tokens[1]);
+
+        return [hourNumber, minutesNumber];
+      } else {
+        return -1;
+      }
+    },
+    validateHourGreatest(a, b) {
+      const aHour = a[0];
+      const bHour = b[0];
+
+      const aMinutes = a[1];
+      const bMinutes = b[1];
+
+      if (aHour > bHour) {
+        return true;
+      } else if (aHour == bHour && aMinutes >= bMinutes) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    validateHourMin(a, b) {
+      const aHour = a[0];
+      const bHour = b[0];
+
+      const aMinutes = a[1];
+      const bMinutes = b[1];
+
+      if (aHour < bHour) {
+        return true;
+      } else if (aHour == bHour && aMinutes <= bMinutes) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

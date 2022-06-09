@@ -2,6 +2,10 @@
   flex-basis: 70%;
 }
 
+.title-add-business {
+  font-size: 1.9em;
+}
+
 .align-center-flex {
   align-items: center !important;
   justify-content: center !important;

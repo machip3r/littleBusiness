@@ -48,7 +48,8 @@ export default {
   methods: {
     isRouteValid() {
       return this.$route.name == "AddBusiness" ||
-        this.$route.name == "AddProduct"
+        this.$route.name == "AddProduct" ||
+        this.$route.name == "EditBusiness"
         ? false
         : true;
     },

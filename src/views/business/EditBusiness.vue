@@ -216,7 +216,7 @@ export default {
       }
       this.modal2 = false;
     },
-    async goBackToProfile() {
+    async goBackToInformation() {
       this.$router.push({ name: "Information" });
     },
     async getCategoriesCbx() {
@@ -364,5 +364,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

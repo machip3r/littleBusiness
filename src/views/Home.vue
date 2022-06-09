@@ -79,12 +79,9 @@
             </v-col>
             <v-col cols="10" class="ma-0">
               <v-row>
-                <v-col> <h1>Carrito de compras</h1> </v-col>
-              </v-row>
-              <v-row>
                 <v-col>
-                  <!-- TODO: Place formated date -->
-                  <h3 class="font-weight-light">{{ date }}</h3>
+                  <h1 class="title-cart">Carrito de compras</h1>
+                  <h4 class="font-weight-light date-cart">{{ date }}</h4>
                 </v-col>
               </v-row>
             </v-col>

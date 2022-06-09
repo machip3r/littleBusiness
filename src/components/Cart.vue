@@ -6,7 +6,7 @@
     align="center"
     elevation="0"
   >
-    <v-card width="40%" height="350px" color="secondary" elevation="0">
+    <v-card class="card-empty-cart" color="secondary" elevation="0">
       <v-icon class="my-8" size="150">fas fa-receipt</v-icon>
       <div class="mx-4">
         <h1>Carrito vacío</h1>

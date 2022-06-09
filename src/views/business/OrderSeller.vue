@@ -125,16 +125,42 @@
     </v-dialog>
 
     <!-- Header -->
-    <v-row class="pt-6 px-6 row-title-home" align="center" justify="center">
+    <!-- <v-row class="pt-6 px-6 row-title-home" align="center" justify="center">
       <v-col class="col-title-home">
         <h1>Mis pedidos</h1>
         <v-chip class="pa-4" x-large text-color="secondary" color="primary">
           {{ myBusiness.b_name }}
         </v-chip>
       </v-col>
-    </v-row>
+    </v-row> -->
+    <div class="container-dashboard">
+      <div>
+        <v-row class="mt-1 ml-1 pb-5">
+          <v-btn
+            class="fab-back-business"
+            dark
+            color="primary"
+            fab
+            small
+            left
+            top
+            @click="goBackToProfile()"
+          >
+            <v-icon class="icon-back-business" size="15"
+              >fas fa-arrow-left</v-icon
+            >
+          </v-btn>
+          <h1 class="ml-5">Mis pedidos</h1>
+        </v-row>
+      </div>
+    </div>
 
-    <v-chip-group mandatory active-class="month-select--active" class="ml-6">
+    <v-chip-group
+      mandatory
+      active-class="month-select--active"
+      class="ml-6"
+      style="margin-top: -30px"
+    >
       <v-chip
         v-for="filter in orderFilters"
         :key="filter.id"
@@ -468,6 +494,9 @@ export default {
   mounted() {},
 
   methods: {
+    async goBackToProfile() {
+      this.$router.push({ name: "User" });
+    },
     // TODO: Actualizar para que se obtenga el id del negocio desde la ruta
     async getBusinesses() {
       const B = new Business();
